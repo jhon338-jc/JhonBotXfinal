@@ -1,16 +1,13 @@
 import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const configPath = path.join(__dirname, '../../config.json')
-
-let handler = async (m, { notifReply }) => {
-    const config = JSON.parse(fs.readFileSync(configPath))
+let handler = async (m, { conn }) => {
+    if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
+    
+    let config = JSON.parse(fs.readFileSync('./config.json'))
     config.botMode = 'public'
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2))
-
-    await notifReply('Bot mode berhasil diubah ke Public.', 'Mode Public')
+    fs.writeFileSync('./config.json', JSON.stringify(config, null, 2))
+    
+    conn.sendMessage(m.chat, { text: '✅ Bot sekarang mode *PUBLIC*\n\nSemua user bisa menggunakan bot!' })
 }
 
 handler.command = ['public']

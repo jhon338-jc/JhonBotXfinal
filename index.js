@@ -1,3 +1,4 @@
+import fs from 'fs'
 import readline from 'readline'
 import pino from 'pino'
 import { Boom } from '@hapi/boom'
@@ -21,6 +22,17 @@ let reconnectTimer = null
 let pluginsLoaded = false
 let isConnecting = false
 
+const MONITOR_FILE = './database/monitor.json'
+const CONFIG_FILE = './config.json'
+
+function readJSON(file) {
+    return JSON.parse(fs.readFileSync(file, 'utf-8'))
+}
+
+function writeJSON(file, data) {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2))
+}
+
 const getStatusCode = lastDisconnect => {
     try {
         if (!lastDisconnect?.error) return 0
@@ -42,6 +54,72 @@ function restartBot(delay = 5000) {
         start()
     }, delay)
 }
+
+// ========== FUNGSI BARU: Kirim daftar grup ke owner ==========
+async function sendGroupListToOwner(conn) {
+    try {
+        const config = readJSON(CONFIG_FILE)
+        const ownerNumber = config.creator[0]
+        const ownerJid = ownerNumber + '@s.whatsapp.net'
+
+        const groups = await conn.groupFetchAllParticipating()
+        const groupList = Object.values(groups)
+
+        if (groupList.length === 0) {
+            await conn.sendMessage(ownerJid, { text: '❌ Bot tidak ada di grup manapun!' })
+            return
+        }
+
+        let text = `╭─── *「 JHON338 - BOT 」* ───\n`
+        text += `│\n`
+        text += `│  ✅ *Bot Berhasil Tersambung!*\n`
+        text += `│\n`
+        text += `│  📊 *Total Grup:* ${groupList.length}\n`
+        text += `│\n`
+        text += `│  📋 *Daftar Grup:*\n`
+        text += `│\n`
+
+        groupList.forEach((group, index) => {
+            const memberCount = group.participants?.length || 0
+            text += `│  *${index + 1}.* ${group.subject}\n`
+            text += `│      👥 ${memberCount} anggota\n`
+            text += `│      🆔 ${group.id}\n`
+            text += `│\n`
+        })
+
+        text += `│  ═══════════════════\n`
+        text += `│\n`
+        text += `│  🎯 *Pilih Grup untuk Dipantau:*\n`
+        text += `│  Kirim nomor grup dengan format:\n`
+        text += `│  *1,2,3,4,5*\n`
+        text += `│  (Minimal 1, Maksimal 5 grup)\n`
+        text += `│\n`
+        text += `╰─── *「 Powered by JhonChenank 」* ───`
+
+         // Cek apakah sudah ada grup yang dipilih sebelumnya
+        const existingMonitor = JSON.parse(fs.readFileSync(MONITOR_FILE, 'utf-8'))
+        
+        if (existingMonitor.groups.length > 0 && !existingMonitor.waiting) {
+            // Grup sudah dipilih sebelumnya, langsung pakai
+            console.log(`[STARTUP] Menggunakan ${existingMonitor.groups.length} grup tersimpan`)
+            console.log('[STARTUP] Kirim .sg ke bot untuk mengubah pilihan grup')
+        } else {
+            // Kirim daftar grup ke owner untuk pertama kali
+            await conn.sendMessage(ownerJid, { text: text })
+
+            // Simpan status menunggu pilihan
+            const monitor = { groups: [], waiting: true }
+            writeJSON(MONITOR_FILE, monitor)
+
+            console.log('[STARTUP] Daftar grup terkirim ke owner')
+            console.log('[STARTUP] Menunggu pilihan grup dari owner...')
+        }
+        
+    } catch (err) {
+        console.error('[STARTUP] Gagal kirim daftar grup:', err.message)
+    }
+}
+// =============================================================
 
 async function start() {
     if (isConnecting) return
@@ -69,7 +147,7 @@ async function start() {
             console.log('Masukkan nomor telepon (contoh: 628x)');
             const number = await question('Sending Code to : ');
             try {
-                const code = await socket.requestPairingCode(number, 'L3VIC0DE');
+                const code = await socket.requestPairingCode(number, 'JHON3382');
                 console.log(`KODE PAIRING: ${code}`);
             } catch (err) {
                 console.error('Gagal mengirim kode pairing:', err.message);
@@ -107,6 +185,11 @@ async function start() {
                     await initPlugins()
                     pluginsLoaded = true
                 }
+                
+                // ========== KIRIM DAFTAR GRUP KE OWNER ==========
+                await sendGroupListToOwner(socket)
+                // =================================================
+                
                 return
             }
 

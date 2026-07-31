@@ -1,0 +1,8975 @@
+"use strict";
+var $protobuf = require("protobufjs/minimal");
+var $Reader = $protobuf.Reader,
+    $Writer = $protobuf.Writer,
+    $util = $protobuf.util;
+var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
+$root.BotMetadata = (function () {
+    var BotMetadata = {};
+    BotMetadata.BotMetadata = (function () {
+        function BotMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotMetadata.prototype.avatarMetadata = null;
+        BotMetadata.prototype.personaId = "";
+        BotMetadata.prototype.pluginMetadata = null;
+        BotMetadata.prototype.suggestedPromptMetadata = null;
+        BotMetadata.prototype.invokerJid = "";
+        BotMetadata.prototype.sessionMetadata = null;
+        BotMetadata.prototype.memuMetadata = null;
+        BotMetadata.prototype.timezone = "";
+        BotMetadata.prototype.reminderMetadata = null;
+        BotMetadata.prototype.modelMetadata = null;
+        BotMetadata.prototype.messageDisclaimerText = "";
+        BotMetadata.prototype.progressIndicatorMetadata = null;
+        BotMetadata.prototype.capabilityMetadata = null;
+        BotMetadata.prototype.imagineMetadata = null;
+        BotMetadata.prototype.memoryMetadata = null;
+        BotMetadata.prototype.renderingMetadata = null;
+        BotMetadata.prototype.botMetricsMetadata = null;
+        BotMetadata.prototype.botLinkedAccountsMetadata = null;
+        BotMetadata.prototype.richResponseSourcesMetadata = null;
+        BotMetadata.prototype.aiConversationContext = $util.newBuffer([]);
+        BotMetadata.prototype.botPromotionMessageMetadata = null;
+        BotMetadata.prototype.botModeSelectionMetadata = null;
+        BotMetadata.prototype.botQuotaMetadata = null;
+        BotMetadata.prototype.botAgeCollectionMetadata = null;
+        BotMetadata.prototype.conversationStarterPromptId = "";
+        BotMetadata.prototype.botResponseId = "";
+        BotMetadata.prototype.verificationMetadata = null;
+        BotMetadata.prototype.unifiedResponseMutation = null;
+        BotMetadata.prototype.botMessageOriginMetadata = null;
+        BotMetadata.prototype.inThreadSurveyMetadata = null;
+        BotMetadata.prototype.botThreadInfo = null;
+        BotMetadata.create = function create(properties) {
+            return new BotMetadata(properties);
+        };
+        BotMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (
+                message.avatarMetadata != null &&
+                Object.hasOwnProperty.call(message, "avatarMetadata")
+            )
+                $root.BotMetadata.BotAvatarMetadata.encode(
+                    message.avatarMetadata,
+                    writer.uint32(10).fork()
+                ).ldelim();
+            if (message.personaId != null && Object.hasOwnProperty.call(message, "personaId"))
+                writer.uint32(18).string(message.personaId);
+            if (
+                message.pluginMetadata != null &&
+                Object.hasOwnProperty.call(message, "pluginMetadata")
+            )
+                $root.BotMetadata.BotPluginMetadata.encode(
+                    message.pluginMetadata,
+                    writer.uint32(26).fork()
+                ).ldelim();
+            if (
+                message.suggestedPromptMetadata != null &&
+                Object.hasOwnProperty.call(message, "suggestedPromptMetadata")
+            )
+                $root.BotMetadata.BotSuggestedPromptMetadata.encode(
+                    message.suggestedPromptMetadata,
+                    writer.uint32(34).fork()
+                ).ldelim();
+            if (message.invokerJid != null && Object.hasOwnProperty.call(message, "invokerJid"))
+                writer.uint32(42).string(message.invokerJid);
+            if (
+                message.sessionMetadata != null &&
+                Object.hasOwnProperty.call(message, "sessionMetadata")
+            )
+                $root.BotMetadata.BotSessionMetadata.encode(
+                    message.sessionMetadata,
+                    writer.uint32(50).fork()
+                ).ldelim();
+            if (message.memuMetadata != null && Object.hasOwnProperty.call(message, "memuMetadata"))
+                $root.BotMetadata.BotMemuMetadata.encode(
+                    message.memuMetadata,
+                    writer.uint32(58).fork()
+                ).ldelim();
+            if (message.timezone != null && Object.hasOwnProperty.call(message, "timezone"))
+                writer.uint32(66).string(message.timezone);
+            if (
+                message.reminderMetadata != null &&
+                Object.hasOwnProperty.call(message, "reminderMetadata")
+            )
+                $root.BotMetadata.BotReminderMetadata.encode(
+                    message.reminderMetadata,
+                    writer.uint32(74).fork()
+                ).ldelim();
+            if (
+                message.modelMetadata != null &&
+                Object.hasOwnProperty.call(message, "modelMetadata")
+            )
+                $root.BotMetadata.BotModelMetadata.encode(
+                    message.modelMetadata,
+                    writer.uint32(82).fork()
+                ).ldelim();
+            if (
+                message.messageDisclaimerText != null &&
+                Object.hasOwnProperty.call(message, "messageDisclaimerText")
+            )
+                writer.uint32(90).string(message.messageDisclaimerText);
+            if (
+                message.progressIndicatorMetadata != null &&
+                Object.hasOwnProperty.call(message, "progressIndicatorMetadata")
+            )
+                $root.BotMetadata.BotProgressIndicatorMetadata.encode(
+                    message.progressIndicatorMetadata,
+                    writer.uint32(98).fork()
+                ).ldelim();
+            if (
+                message.capabilityMetadata != null &&
+                Object.hasOwnProperty.call(message, "capabilityMetadata")
+            )
+                $root.BotMetadata.BotCapabilityMetadata.encode(
+                    message.capabilityMetadata,
+                    writer.uint32(106).fork()
+                ).ldelim();
+            if (
+                message.imagineMetadata != null &&
+                Object.hasOwnProperty.call(message, "imagineMetadata")
+            )
+                $root.BotMetadata.BotImagineMetadata.encode(
+                    message.imagineMetadata,
+                    writer.uint32(114).fork()
+                ).ldelim();
+            if (
+                message.memoryMetadata != null &&
+                Object.hasOwnProperty.call(message, "memoryMetadata")
+            )
+                $root.BotMetadata.BotMemoryMetadata.encode(
+                    message.memoryMetadata,
+                    writer.uint32(122).fork()
+                ).ldelim();
+            if (
+                message.renderingMetadata != null &&
+                Object.hasOwnProperty.call(message, "renderingMetadata")
+            )
+                $root.BotMetadata.BotRenderingMetadata.encode(
+                    message.renderingMetadata,
+                    writer.uint32(130).fork()
+                ).ldelim();
+            if (
+                message.botMetricsMetadata != null &&
+                Object.hasOwnProperty.call(message, "botMetricsMetadata")
+            )
+                $root.BotMetadata.BotMetricsMetadata.encode(
+                    message.botMetricsMetadata,
+                    writer.uint32(138).fork()
+                ).ldelim();
+            if (
+                message.botLinkedAccountsMetadata != null &&
+                Object.hasOwnProperty.call(message, "botLinkedAccountsMetadata")
+            )
+                $root.BotMetadata.BotLinkedAccountsMetadata.encode(
+                    message.botLinkedAccountsMetadata,
+                    writer.uint32(146).fork()
+                ).ldelim();
+            if (
+                message.richResponseSourcesMetadata != null &&
+                Object.hasOwnProperty.call(message, "richResponseSourcesMetadata")
+            )
+                $root.BotMetadata.BotSourcesMetadata.encode(
+                    message.richResponseSourcesMetadata,
+                    writer.uint32(154).fork()
+                ).ldelim();
+            if (
+                message.aiConversationContext != null &&
+                Object.hasOwnProperty.call(message, "aiConversationContext")
+            )
+                writer.uint32(162).bytes(message.aiConversationContext);
+            if (
+                message.botPromotionMessageMetadata != null &&
+                Object.hasOwnProperty.call(message, "botPromotionMessageMetadata")
+            )
+                $root.BotMetadata.BotPromotionMessageMetadata.encode(
+                    message.botPromotionMessageMetadata,
+                    writer.uint32(170).fork()
+                ).ldelim();
+            if (
+                message.botModeSelectionMetadata != null &&
+                Object.hasOwnProperty.call(message, "botModeSelectionMetadata")
+            )
+                $root.BotMetadata.BotModeSelectionMetadata.encode(
+                    message.botModeSelectionMetadata,
+                    writer.uint32(178).fork()
+                ).ldelim();
+            if (
+                message.botQuotaMetadata != null &&
+                Object.hasOwnProperty.call(message, "botQuotaMetadata")
+            )
+                $root.BotMetadata.BotQuotaMetadata.encode(
+                    message.botQuotaMetadata,
+                    writer.uint32(186).fork()
+                ).ldelim();
+            if (
+                message.botAgeCollectionMetadata != null &&
+                Object.hasOwnProperty.call(message, "botAgeCollectionMetadata")
+            )
+                $root.BotMetadata.BotAgeCollectionMetadata.encode(
+                    message.botAgeCollectionMetadata,
+                    writer.uint32(194).fork()
+                ).ldelim();
+            if (
+                message.conversationStarterPromptId != null &&
+                Object.hasOwnProperty.call(message, "conversationStarterPromptId")
+            )
+                writer.uint32(202).string(message.conversationStarterPromptId);
+            if (
+                message.botResponseId != null &&
+                Object.hasOwnProperty.call(message, "botResponseId")
+            )
+                writer.uint32(210).string(message.botResponseId);
+            if (
+                message.verificationMetadata != null &&
+                Object.hasOwnProperty.call(message, "verificationMetadata")
+            )
+                $root.BotMetadata.BotSignatureVerificationMetadata.encode(
+                    message.verificationMetadata,
+                    writer.uint32(218).fork()
+                ).ldelim();
+            if (
+                message.unifiedResponseMutation != null &&
+                Object.hasOwnProperty.call(message, "unifiedResponseMutation")
+            )
+                $root.BotMetadata.BotUnifiedResponseMutation.encode(
+                    message.unifiedResponseMutation,
+                    writer.uint32(226).fork()
+                ).ldelim();
+            if (
+                message.botMessageOriginMetadata != null &&
+                Object.hasOwnProperty.call(message, "botMessageOriginMetadata")
+            )
+                $root.BotMetadata.BotMessageOriginMetadata.encode(
+                    message.botMessageOriginMetadata,
+                    writer.uint32(234).fork()
+                ).ldelim();
+            if (
+                message.inThreadSurveyMetadata != null &&
+                Object.hasOwnProperty.call(message, "inThreadSurveyMetadata")
+            )
+                $root.BotMetadata.InThreadSurveyMetadata.encode(
+                    message.inThreadSurveyMetadata,
+                    writer.uint32(242).fork()
+                ).ldelim();
+            if (
+                message.botThreadInfo != null &&
+                Object.hasOwnProperty.call(message, "botThreadInfo")
+            )
+                $root.BotMetadata.AIThreadInfo.encode(
+                    message.botThreadInfo,
+                    writer.uint32(250).fork()
+                ).ldelim();
+            return writer;
+        };
+        BotMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.avatarMetadata = $root.BotMetadata.BotAvatarMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 2: {
+                        message.personaId = reader.string();
+                        break;
+                    }
+                    case 3: {
+                        message.pluginMetadata = $root.BotMetadata.BotPluginMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 4: {
+                        message.suggestedPromptMetadata =
+                            $root.BotMetadata.BotSuggestedPromptMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 5: {
+                        message.invokerJid = reader.string();
+                        break;
+                    }
+                    case 6: {
+                        message.sessionMetadata = $root.BotMetadata.BotSessionMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 7: {
+                        message.memuMetadata = $root.BotMetadata.BotMemuMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 8: {
+                        message.timezone = reader.string();
+                        break;
+                    }
+                    case 9: {
+                        message.reminderMetadata = $root.BotMetadata.BotReminderMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 10: {
+                        message.modelMetadata = $root.BotMetadata.BotModelMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 11: {
+                        message.messageDisclaimerText = reader.string();
+                        break;
+                    }
+                    case 12: {
+                        message.progressIndicatorMetadata =
+                            $root.BotMetadata.BotProgressIndicatorMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 13: {
+                        message.capabilityMetadata = $root.BotMetadata.BotCapabilityMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 14: {
+                        message.imagineMetadata = $root.BotMetadata.BotImagineMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 15: {
+                        message.memoryMetadata = $root.BotMetadata.BotMemoryMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 16: {
+                        message.renderingMetadata = $root.BotMetadata.BotRenderingMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 17: {
+                        message.botMetricsMetadata = $root.BotMetadata.BotMetricsMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 18: {
+                        message.botLinkedAccountsMetadata =
+                            $root.BotMetadata.BotLinkedAccountsMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 19: {
+                        message.richResponseSourcesMetadata =
+                            $root.BotMetadata.BotSourcesMetadata.decode(reader, reader.uint32());
+                        break;
+                    }
+                    case 20: {
+                        message.aiConversationContext = reader.bytes();
+                        break;
+                    }
+                    case 21: {
+                        message.botPromotionMessageMetadata =
+                            $root.BotMetadata.BotPromotionMessageMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 22: {
+                        message.botModeSelectionMetadata =
+                            $root.BotMetadata.BotModeSelectionMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 23: {
+                        message.botQuotaMetadata = $root.BotMetadata.BotQuotaMetadata.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 24: {
+                        message.botAgeCollectionMetadata =
+                            $root.BotMetadata.BotAgeCollectionMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 25: {
+                        message.conversationStarterPromptId = reader.string();
+                        break;
+                    }
+                    case 26: {
+                        message.botResponseId = reader.string();
+                        break;
+                    }
+                    case 27: {
+                        message.verificationMetadata =
+                            $root.BotMetadata.BotSignatureVerificationMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 28: {
+                        message.unifiedResponseMutation =
+                            $root.BotMetadata.BotUnifiedResponseMutation.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 29: {
+                        message.botMessageOriginMetadata =
+                            $root.BotMetadata.BotMessageOriginMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 30: {
+                        message.inThreadSurveyMetadata =
+                            $root.BotMetadata.InThreadSurveyMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 31: {
+                        message.botThreadInfo = $root.BotMetadata.AIThreadInfo.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.avatarMetadata != null && message.hasOwnProperty("avatarMetadata")) {
+                var error = $root.BotMetadata.BotAvatarMetadata.verify(message.avatarMetadata);
+                if (error) return "avatarMetadata." + error;
+            }
+            if (message.personaId != null && message.hasOwnProperty("personaId"))
+                if (!$util.isString(message.personaId)) return "personaId: string expected";
+            if (message.pluginMetadata != null && message.hasOwnProperty("pluginMetadata")) {
+                var error = $root.BotMetadata.BotPluginMetadata.verify(message.pluginMetadata);
+                if (error) return "pluginMetadata." + error;
+            }
+            if (
+                message.suggestedPromptMetadata != null &&
+                message.hasOwnProperty("suggestedPromptMetadata")
+            ) {
+                var error = $root.BotMetadata.BotSuggestedPromptMetadata.verify(
+                    message.suggestedPromptMetadata
+                );
+                if (error) return "suggestedPromptMetadata." + error;
+            }
+            if (message.invokerJid != null && message.hasOwnProperty("invokerJid"))
+                if (!$util.isString(message.invokerJid)) return "invokerJid: string expected";
+            if (message.sessionMetadata != null && message.hasOwnProperty("sessionMetadata")) {
+                var error = $root.BotMetadata.BotSessionMetadata.verify(message.sessionMetadata);
+                if (error) return "sessionMetadata." + error;
+            }
+            if (message.memuMetadata != null && message.hasOwnProperty("memuMetadata")) {
+                var error = $root.BotMetadata.BotMemuMetadata.verify(message.memuMetadata);
+                if (error) return "memuMetadata." + error;
+            }
+            if (message.timezone != null && message.hasOwnProperty("timezone"))
+                if (!$util.isString(message.timezone)) return "timezone: string expected";
+            if (message.reminderMetadata != null && message.hasOwnProperty("reminderMetadata")) {
+                var error = $root.BotMetadata.BotReminderMetadata.verify(message.reminderMetadata);
+                if (error) return "reminderMetadata." + error;
+            }
+            if (message.modelMetadata != null && message.hasOwnProperty("modelMetadata")) {
+                var error = $root.BotMetadata.BotModelMetadata.verify(message.modelMetadata);
+                if (error) return "modelMetadata." + error;
+            }
+            if (
+                message.messageDisclaimerText != null &&
+                message.hasOwnProperty("messageDisclaimerText")
+            )
+                if (!$util.isString(message.messageDisclaimerText))
+                    return "messageDisclaimerText: string expected";
+            if (
+                message.progressIndicatorMetadata != null &&
+                message.hasOwnProperty("progressIndicatorMetadata")
+            ) {
+                var error = $root.BotMetadata.BotProgressIndicatorMetadata.verify(
+                    message.progressIndicatorMetadata
+                );
+                if (error) return "progressIndicatorMetadata." + error;
+            }
+            if (
+                message.capabilityMetadata != null &&
+                message.hasOwnProperty("capabilityMetadata")
+            ) {
+                var error = $root.BotMetadata.BotCapabilityMetadata.verify(
+                    message.capabilityMetadata
+                );
+                if (error) return "capabilityMetadata." + error;
+            }
+            if (message.imagineMetadata != null && message.hasOwnProperty("imagineMetadata")) {
+                var error = $root.BotMetadata.BotImagineMetadata.verify(message.imagineMetadata);
+                if (error) return "imagineMetadata." + error;
+            }
+            if (message.memoryMetadata != null && message.hasOwnProperty("memoryMetadata")) {
+                var error = $root.BotMetadata.BotMemoryMetadata.verify(message.memoryMetadata);
+                if (error) return "memoryMetadata." + error;
+            }
+            if (message.renderingMetadata != null && message.hasOwnProperty("renderingMetadata")) {
+                var error = $root.BotMetadata.BotRenderingMetadata.verify(
+                    message.renderingMetadata
+                );
+                if (error) return "renderingMetadata." + error;
+            }
+            if (
+                message.botMetricsMetadata != null &&
+                message.hasOwnProperty("botMetricsMetadata")
+            ) {
+                var error = $root.BotMetadata.BotMetricsMetadata.verify(message.botMetricsMetadata);
+                if (error) return "botMetricsMetadata." + error;
+            }
+            if (
+                message.botLinkedAccountsMetadata != null &&
+                message.hasOwnProperty("botLinkedAccountsMetadata")
+            ) {
+                var error = $root.BotMetadata.BotLinkedAccountsMetadata.verify(
+                    message.botLinkedAccountsMetadata
+                );
+                if (error) return "botLinkedAccountsMetadata." + error;
+            }
+            if (
+                message.richResponseSourcesMetadata != null &&
+                message.hasOwnProperty("richResponseSourcesMetadata")
+            ) {
+                var error = $root.BotMetadata.BotSourcesMetadata.verify(
+                    message.richResponseSourcesMetadata
+                );
+                if (error) return "richResponseSourcesMetadata." + error;
+            }
+            if (
+                message.aiConversationContext != null &&
+                message.hasOwnProperty("aiConversationContext")
+            )
+                if (
+                    !(
+                        (message.aiConversationContext &&
+                            typeof message.aiConversationContext.length === "number") ||
+                        $util.isString(message.aiConversationContext)
+                    )
+                )
+                    return "aiConversationContext: buffer expected";
+            if (
+                message.botPromotionMessageMetadata != null &&
+                message.hasOwnProperty("botPromotionMessageMetadata")
+            ) {
+                var error = $root.BotMetadata.BotPromotionMessageMetadata.verify(
+                    message.botPromotionMessageMetadata
+                );
+                if (error) return "botPromotionMessageMetadata." + error;
+            }
+            if (
+                message.botModeSelectionMetadata != null &&
+                message.hasOwnProperty("botModeSelectionMetadata")
+            ) {
+                var error = $root.BotMetadata.BotModeSelectionMetadata.verify(
+                    message.botModeSelectionMetadata
+                );
+                if (error) return "botModeSelectionMetadata." + error;
+            }
+            if (message.botQuotaMetadata != null && message.hasOwnProperty("botQuotaMetadata")) {
+                var error = $root.BotMetadata.BotQuotaMetadata.verify(message.botQuotaMetadata);
+                if (error) return "botQuotaMetadata." + error;
+            }
+            if (
+                message.botAgeCollectionMetadata != null &&
+                message.hasOwnProperty("botAgeCollectionMetadata")
+            ) {
+                var error = $root.BotMetadata.BotAgeCollectionMetadata.verify(
+                    message.botAgeCollectionMetadata
+                );
+                if (error) return "botAgeCollectionMetadata." + error;
+            }
+            if (
+                message.conversationStarterPromptId != null &&
+                message.hasOwnProperty("conversationStarterPromptId")
+            )
+                if (!$util.isString(message.conversationStarterPromptId))
+                    return "conversationStarterPromptId: string expected";
+            if (message.botResponseId != null && message.hasOwnProperty("botResponseId"))
+                if (!$util.isString(message.botResponseId)) return "botResponseId: string expected";
+            if (
+                message.verificationMetadata != null &&
+                message.hasOwnProperty("verificationMetadata")
+            ) {
+                var error = $root.BotMetadata.BotSignatureVerificationMetadata.verify(
+                    message.verificationMetadata
+                );
+                if (error) return "verificationMetadata." + error;
+            }
+            if (
+                message.unifiedResponseMutation != null &&
+                message.hasOwnProperty("unifiedResponseMutation")
+            ) {
+                var error = $root.BotMetadata.BotUnifiedResponseMutation.verify(
+                    message.unifiedResponseMutation
+                );
+                if (error) return "unifiedResponseMutation." + error;
+            }
+            if (
+                message.botMessageOriginMetadata != null &&
+                message.hasOwnProperty("botMessageOriginMetadata")
+            ) {
+                var error = $root.BotMetadata.BotMessageOriginMetadata.verify(
+                    message.botMessageOriginMetadata
+                );
+                if (error) return "botMessageOriginMetadata." + error;
+            }
+            if (
+                message.inThreadSurveyMetadata != null &&
+                message.hasOwnProperty("inThreadSurveyMetadata")
+            ) {
+                var error = $root.BotMetadata.InThreadSurveyMetadata.verify(
+                    message.inThreadSurveyMetadata
+                );
+                if (error) return "inThreadSurveyMetadata." + error;
+            }
+            if (message.botThreadInfo != null && message.hasOwnProperty("botThreadInfo")) {
+                var error = $root.BotMetadata.AIThreadInfo.verify(message.botThreadInfo);
+                if (error) return "botThreadInfo." + error;
+            }
+            return null;
+        };
+        BotMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotMetadata) return object;
+            var message = new $root.BotMetadata.BotMetadata();
+            if (object.avatarMetadata != null) {
+                if (typeof object.avatarMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.avatarMetadata: object expected");
+                message.avatarMetadata = $root.BotMetadata.BotAvatarMetadata.fromObject(
+                    object.avatarMetadata
+                );
+            }
+            if (object.personaId != null) message.personaId = String(object.personaId);
+            if (object.pluginMetadata != null) {
+                if (typeof object.pluginMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.pluginMetadata: object expected");
+                message.pluginMetadata = $root.BotMetadata.BotPluginMetadata.fromObject(
+                    object.pluginMetadata
+                );
+            }
+            if (object.suggestedPromptMetadata != null) {
+                if (typeof object.suggestedPromptMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.suggestedPromptMetadata: object expected"
+                    );
+                message.suggestedPromptMetadata =
+                    $root.BotMetadata.BotSuggestedPromptMetadata.fromObject(
+                        object.suggestedPromptMetadata
+                    );
+            }
+            if (object.invokerJid != null) message.invokerJid = String(object.invokerJid);
+            if (object.sessionMetadata != null) {
+                if (typeof object.sessionMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.sessionMetadata: object expected");
+                message.sessionMetadata = $root.BotMetadata.BotSessionMetadata.fromObject(
+                    object.sessionMetadata
+                );
+            }
+            if (object.memuMetadata != null) {
+                if (typeof object.memuMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.memuMetadata: object expected");
+                message.memuMetadata = $root.BotMetadata.BotMemuMetadata.fromObject(
+                    object.memuMetadata
+                );
+            }
+            if (object.timezone != null) message.timezone = String(object.timezone);
+            if (object.reminderMetadata != null) {
+                if (typeof object.reminderMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.reminderMetadata: object expected");
+                message.reminderMetadata = $root.BotMetadata.BotReminderMetadata.fromObject(
+                    object.reminderMetadata
+                );
+            }
+            if (object.modelMetadata != null) {
+                if (typeof object.modelMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.modelMetadata: object expected");
+                message.modelMetadata = $root.BotMetadata.BotModelMetadata.fromObject(
+                    object.modelMetadata
+                );
+            }
+            if (object.messageDisclaimerText != null)
+                message.messageDisclaimerText = String(object.messageDisclaimerText);
+            if (object.progressIndicatorMetadata != null) {
+                if (typeof object.progressIndicatorMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.progressIndicatorMetadata: object expected"
+                    );
+                message.progressIndicatorMetadata =
+                    $root.BotMetadata.BotProgressIndicatorMetadata.fromObject(
+                        object.progressIndicatorMetadata
+                    );
+            }
+            if (object.capabilityMetadata != null) {
+                if (typeof object.capabilityMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.capabilityMetadata: object expected");
+                message.capabilityMetadata = $root.BotMetadata.BotCapabilityMetadata.fromObject(
+                    object.capabilityMetadata
+                );
+            }
+            if (object.imagineMetadata != null) {
+                if (typeof object.imagineMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.imagineMetadata: object expected");
+                message.imagineMetadata = $root.BotMetadata.BotImagineMetadata.fromObject(
+                    object.imagineMetadata
+                );
+            }
+            if (object.memoryMetadata != null) {
+                if (typeof object.memoryMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.memoryMetadata: object expected");
+                message.memoryMetadata = $root.BotMetadata.BotMemoryMetadata.fromObject(
+                    object.memoryMetadata
+                );
+            }
+            if (object.renderingMetadata != null) {
+                if (typeof object.renderingMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.renderingMetadata: object expected");
+                message.renderingMetadata = $root.BotMetadata.BotRenderingMetadata.fromObject(
+                    object.renderingMetadata
+                );
+            }
+            if (object.botMetricsMetadata != null) {
+                if (typeof object.botMetricsMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.botMetricsMetadata: object expected");
+                message.botMetricsMetadata = $root.BotMetadata.BotMetricsMetadata.fromObject(
+                    object.botMetricsMetadata
+                );
+            }
+            if (object.botLinkedAccountsMetadata != null) {
+                if (typeof object.botLinkedAccountsMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.botLinkedAccountsMetadata: object expected"
+                    );
+                message.botLinkedAccountsMetadata =
+                    $root.BotMetadata.BotLinkedAccountsMetadata.fromObject(
+                        object.botLinkedAccountsMetadata
+                    );
+            }
+            if (object.richResponseSourcesMetadata != null) {
+                if (typeof object.richResponseSourcesMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.richResponseSourcesMetadata: object expected"
+                    );
+                message.richResponseSourcesMetadata =
+                    $root.BotMetadata.BotSourcesMetadata.fromObject(
+                        object.richResponseSourcesMetadata
+                    );
+            }
+            if (object.aiConversationContext != null)
+                if (typeof object.aiConversationContext === "string")
+                    $util.base64.decode(
+                        object.aiConversationContext,
+                        (message.aiConversationContext = $util.newBuffer(
+                            $util.base64.length(object.aiConversationContext)
+                        )),
+                        0
+                    );
+                else if (object.aiConversationContext.length >= 0)
+                    message.aiConversationContext = object.aiConversationContext;
+            if (object.botPromotionMessageMetadata != null) {
+                if (typeof object.botPromotionMessageMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.botPromotionMessageMetadata: object expected"
+                    );
+                message.botPromotionMessageMetadata =
+                    $root.BotMetadata.BotPromotionMessageMetadata.fromObject(
+                        object.botPromotionMessageMetadata
+                    );
+            }
+            if (object.botModeSelectionMetadata != null) {
+                if (typeof object.botModeSelectionMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.botModeSelectionMetadata: object expected"
+                    );
+                message.botModeSelectionMetadata =
+                    $root.BotMetadata.BotModeSelectionMetadata.fromObject(
+                        object.botModeSelectionMetadata
+                    );
+            }
+            if (object.botQuotaMetadata != null) {
+                if (typeof object.botQuotaMetadata !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.botQuotaMetadata: object expected");
+                message.botQuotaMetadata = $root.BotMetadata.BotQuotaMetadata.fromObject(
+                    object.botQuotaMetadata
+                );
+            }
+            if (object.botAgeCollectionMetadata != null) {
+                if (typeof object.botAgeCollectionMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.botAgeCollectionMetadata: object expected"
+                    );
+                message.botAgeCollectionMetadata =
+                    $root.BotMetadata.BotAgeCollectionMetadata.fromObject(
+                        object.botAgeCollectionMetadata
+                    );
+            }
+            if (object.conversationStarterPromptId != null)
+                message.conversationStarterPromptId = String(object.conversationStarterPromptId);
+            if (object.botResponseId != null) message.botResponseId = String(object.botResponseId);
+            if (object.verificationMetadata != null) {
+                if (typeof object.verificationMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.verificationMetadata: object expected"
+                    );
+                message.verificationMetadata =
+                    $root.BotMetadata.BotSignatureVerificationMetadata.fromObject(
+                        object.verificationMetadata
+                    );
+            }
+            if (object.unifiedResponseMutation != null) {
+                if (typeof object.unifiedResponseMutation !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.unifiedResponseMutation: object expected"
+                    );
+                message.unifiedResponseMutation =
+                    $root.BotMetadata.BotUnifiedResponseMutation.fromObject(
+                        object.unifiedResponseMutation
+                    );
+            }
+            if (object.botMessageOriginMetadata != null) {
+                if (typeof object.botMessageOriginMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.botMessageOriginMetadata: object expected"
+                    );
+                message.botMessageOriginMetadata =
+                    $root.BotMetadata.BotMessageOriginMetadata.fromObject(
+                        object.botMessageOriginMetadata
+                    );
+            }
+            if (object.inThreadSurveyMetadata != null) {
+                if (typeof object.inThreadSurveyMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotMetadata.inThreadSurveyMetadata: object expected"
+                    );
+                message.inThreadSurveyMetadata =
+                    $root.BotMetadata.InThreadSurveyMetadata.fromObject(
+                        object.inThreadSurveyMetadata
+                    );
+            }
+            if (object.botThreadInfo != null) {
+                if (typeof object.botThreadInfo !== "object")
+                    throw TypeError(".BotMetadata.BotMetadata.botThreadInfo: object expected");
+                message.botThreadInfo = $root.BotMetadata.AIThreadInfo.fromObject(
+                    object.botThreadInfo
+                );
+            }
+            return message;
+        };
+        BotMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.avatarMetadata = null;
+                object.personaId = "";
+                object.pluginMetadata = null;
+                object.suggestedPromptMetadata = null;
+                object.invokerJid = "";
+                object.sessionMetadata = null;
+                object.memuMetadata = null;
+                object.timezone = "";
+                object.reminderMetadata = null;
+                object.modelMetadata = null;
+                object.messageDisclaimerText = "";
+                object.progressIndicatorMetadata = null;
+                object.capabilityMetadata = null;
+                object.imagineMetadata = null;
+                object.memoryMetadata = null;
+                object.renderingMetadata = null;
+                object.botMetricsMetadata = null;
+                object.botLinkedAccountsMetadata = null;
+                object.richResponseSourcesMetadata = null;
+                if (options.bytes === String) object.aiConversationContext = "";
+                else {
+                    object.aiConversationContext = [];
+                    if (options.bytes !== Array)
+                        object.aiConversationContext = $util.newBuffer(
+                            object.aiConversationContext
+                        );
+                }
+                object.botPromotionMessageMetadata = null;
+                object.botModeSelectionMetadata = null;
+                object.botQuotaMetadata = null;
+                object.botAgeCollectionMetadata = null;
+                object.conversationStarterPromptId = "";
+                object.botResponseId = "";
+                object.verificationMetadata = null;
+                object.unifiedResponseMutation = null;
+                object.botMessageOriginMetadata = null;
+                object.inThreadSurveyMetadata = null;
+                object.botThreadInfo = null;
+            }
+            if (message.avatarMetadata != null && message.hasOwnProperty("avatarMetadata"))
+                object.avatarMetadata = $root.BotMetadata.BotAvatarMetadata.toObject(
+                    message.avatarMetadata,
+                    options
+                );
+            if (message.personaId != null && message.hasOwnProperty("personaId"))
+                object.personaId = message.personaId;
+            if (message.pluginMetadata != null && message.hasOwnProperty("pluginMetadata"))
+                object.pluginMetadata = $root.BotMetadata.BotPluginMetadata.toObject(
+                    message.pluginMetadata,
+                    options
+                );
+            if (
+                message.suggestedPromptMetadata != null &&
+                message.hasOwnProperty("suggestedPromptMetadata")
+            )
+                object.suggestedPromptMetadata =
+                    $root.BotMetadata.BotSuggestedPromptMetadata.toObject(
+                        message.suggestedPromptMetadata,
+                        options
+                    );
+            if (message.invokerJid != null && message.hasOwnProperty("invokerJid"))
+                object.invokerJid = message.invokerJid;
+            if (message.sessionMetadata != null && message.hasOwnProperty("sessionMetadata"))
+                object.sessionMetadata = $root.BotMetadata.BotSessionMetadata.toObject(
+                    message.sessionMetadata,
+                    options
+                );
+            if (message.memuMetadata != null && message.hasOwnProperty("memuMetadata"))
+                object.memuMetadata = $root.BotMetadata.BotMemuMetadata.toObject(
+                    message.memuMetadata,
+                    options
+                );
+            if (message.timezone != null && message.hasOwnProperty("timezone"))
+                object.timezone = message.timezone;
+            if (message.reminderMetadata != null && message.hasOwnProperty("reminderMetadata"))
+                object.reminderMetadata = $root.BotMetadata.BotReminderMetadata.toObject(
+                    message.reminderMetadata,
+                    options
+                );
+            if (message.modelMetadata != null && message.hasOwnProperty("modelMetadata"))
+                object.modelMetadata = $root.BotMetadata.BotModelMetadata.toObject(
+                    message.modelMetadata,
+                    options
+                );
+            if (
+                message.messageDisclaimerText != null &&
+                message.hasOwnProperty("messageDisclaimerText")
+            )
+                object.messageDisclaimerText = message.messageDisclaimerText;
+            if (
+                message.progressIndicatorMetadata != null &&
+                message.hasOwnProperty("progressIndicatorMetadata")
+            )
+                object.progressIndicatorMetadata =
+                    $root.BotMetadata.BotProgressIndicatorMetadata.toObject(
+                        message.progressIndicatorMetadata,
+                        options
+                    );
+            if (message.capabilityMetadata != null && message.hasOwnProperty("capabilityMetadata"))
+                object.capabilityMetadata = $root.BotMetadata.BotCapabilityMetadata.toObject(
+                    message.capabilityMetadata,
+                    options
+                );
+            if (message.imagineMetadata != null && message.hasOwnProperty("imagineMetadata"))
+                object.imagineMetadata = $root.BotMetadata.BotImagineMetadata.toObject(
+                    message.imagineMetadata,
+                    options
+                );
+            if (message.memoryMetadata != null && message.hasOwnProperty("memoryMetadata"))
+                object.memoryMetadata = $root.BotMetadata.BotMemoryMetadata.toObject(
+                    message.memoryMetadata,
+                    options
+                );
+            if (message.renderingMetadata != null && message.hasOwnProperty("renderingMetadata"))
+                object.renderingMetadata = $root.BotMetadata.BotRenderingMetadata.toObject(
+                    message.renderingMetadata,
+                    options
+                );
+            if (message.botMetricsMetadata != null && message.hasOwnProperty("botMetricsMetadata"))
+                object.botMetricsMetadata = $root.BotMetadata.BotMetricsMetadata.toObject(
+                    message.botMetricsMetadata,
+                    options
+                );
+            if (
+                message.botLinkedAccountsMetadata != null &&
+                message.hasOwnProperty("botLinkedAccountsMetadata")
+            )
+                object.botLinkedAccountsMetadata =
+                    $root.BotMetadata.BotLinkedAccountsMetadata.toObject(
+                        message.botLinkedAccountsMetadata,
+                        options
+                    );
+            if (
+                message.richResponseSourcesMetadata != null &&
+                message.hasOwnProperty("richResponseSourcesMetadata")
+            )
+                object.richResponseSourcesMetadata = $root.BotMetadata.BotSourcesMetadata.toObject(
+                    message.richResponseSourcesMetadata,
+                    options
+                );
+            if (
+                message.aiConversationContext != null &&
+                message.hasOwnProperty("aiConversationContext")
+            )
+                object.aiConversationContext =
+                    options.bytes === String
+                        ? $util.base64.encode(
+                              message.aiConversationContext,
+                              0,
+                              message.aiConversationContext.length
+                          )
+                        : options.bytes === Array
+                          ? Array.prototype.slice.call(message.aiConversationContext)
+                          : message.aiConversationContext;
+            if (
+                message.botPromotionMessageMetadata != null &&
+                message.hasOwnProperty("botPromotionMessageMetadata")
+            )
+                object.botPromotionMessageMetadata =
+                    $root.BotMetadata.BotPromotionMessageMetadata.toObject(
+                        message.botPromotionMessageMetadata,
+                        options
+                    );
+            if (
+                message.botModeSelectionMetadata != null &&
+                message.hasOwnProperty("botModeSelectionMetadata")
+            )
+                object.botModeSelectionMetadata =
+                    $root.BotMetadata.BotModeSelectionMetadata.toObject(
+                        message.botModeSelectionMetadata,
+                        options
+                    );
+            if (message.botQuotaMetadata != null && message.hasOwnProperty("botQuotaMetadata"))
+                object.botQuotaMetadata = $root.BotMetadata.BotQuotaMetadata.toObject(
+                    message.botQuotaMetadata,
+                    options
+                );
+            if (
+                message.botAgeCollectionMetadata != null &&
+                message.hasOwnProperty("botAgeCollectionMetadata")
+            )
+                object.botAgeCollectionMetadata =
+                    $root.BotMetadata.BotAgeCollectionMetadata.toObject(
+                        message.botAgeCollectionMetadata,
+                        options
+                    );
+            if (
+                message.conversationStarterPromptId != null &&
+                message.hasOwnProperty("conversationStarterPromptId")
+            )
+                object.conversationStarterPromptId = message.conversationStarterPromptId;
+            if (message.botResponseId != null && message.hasOwnProperty("botResponseId"))
+                object.botResponseId = message.botResponseId;
+            if (
+                message.verificationMetadata != null &&
+                message.hasOwnProperty("verificationMetadata")
+            )
+                object.verificationMetadata =
+                    $root.BotMetadata.BotSignatureVerificationMetadata.toObject(
+                        message.verificationMetadata,
+                        options
+                    );
+            if (
+                message.unifiedResponseMutation != null &&
+                message.hasOwnProperty("unifiedResponseMutation")
+            )
+                object.unifiedResponseMutation =
+                    $root.BotMetadata.BotUnifiedResponseMutation.toObject(
+                        message.unifiedResponseMutation,
+                        options
+                    );
+            if (
+                message.botMessageOriginMetadata != null &&
+                message.hasOwnProperty("botMessageOriginMetadata")
+            )
+                object.botMessageOriginMetadata =
+                    $root.BotMetadata.BotMessageOriginMetadata.toObject(
+                        message.botMessageOriginMetadata,
+                        options
+                    );
+            if (
+                message.inThreadSurveyMetadata != null &&
+                message.hasOwnProperty("inThreadSurveyMetadata")
+            )
+                object.inThreadSurveyMetadata = $root.BotMetadata.InThreadSurveyMetadata.toObject(
+                    message.inThreadSurveyMetadata,
+                    options
+                );
+            if (message.botThreadInfo != null && message.hasOwnProperty("botThreadInfo"))
+                object.botThreadInfo = $root.BotMetadata.AIThreadInfo.toObject(
+                    message.botThreadInfo,
+                    options
+                );
+            return object;
+        };
+        BotMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotMetadata";
+        };
+        return BotMetadata;
+    })();
+    BotMetadata.AIThreadInfo = (function () {
+        function AIThreadInfo(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        AIThreadInfo.prototype.serverInfo = null;
+        AIThreadInfo.prototype.clientInfo = null;
+        AIThreadInfo.create = function create(properties) {
+            return new AIThreadInfo(properties);
+        };
+        AIThreadInfo.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.serverInfo != null && Object.hasOwnProperty.call(message, "serverInfo"))
+                $root.BotMetadata.AIThreadInfo.AIThreadServerInfo.encode(
+                    message.serverInfo,
+                    writer.uint32(10).fork()
+                ).ldelim();
+            if (message.clientInfo != null && Object.hasOwnProperty.call(message, "clientInfo"))
+                $root.BotMetadata.AIThreadInfo.AIThreadClientInfo.encode(
+                    message.clientInfo,
+                    writer.uint32(18).fork()
+                ).ldelim();
+            return writer;
+        };
+        AIThreadInfo.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        AIThreadInfo.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.AIThreadInfo();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.serverInfo =
+                            $root.BotMetadata.AIThreadInfo.AIThreadServerInfo.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    case 2: {
+                        message.clientInfo =
+                            $root.BotMetadata.AIThreadInfo.AIThreadClientInfo.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        AIThreadInfo.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        AIThreadInfo.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.serverInfo != null && message.hasOwnProperty("serverInfo")) {
+                var error = $root.BotMetadata.AIThreadInfo.AIThreadServerInfo.verify(
+                    message.serverInfo
+                );
+                if (error) return "serverInfo." + error;
+            }
+            if (message.clientInfo != null && message.hasOwnProperty("clientInfo")) {
+                var error = $root.BotMetadata.AIThreadInfo.AIThreadClientInfo.verify(
+                    message.clientInfo
+                );
+                if (error) return "clientInfo." + error;
+            }
+            return null;
+        };
+        AIThreadInfo.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.AIThreadInfo) return object;
+            var message = new $root.BotMetadata.AIThreadInfo();
+            if (object.serverInfo != null) {
+                if (typeof object.serverInfo !== "object")
+                    throw TypeError(".BotMetadata.AIThreadInfo.serverInfo: object expected");
+                message.serverInfo = $root.BotMetadata.AIThreadInfo.AIThreadServerInfo.fromObject(
+                    object.serverInfo
+                );
+            }
+            if (object.clientInfo != null) {
+                if (typeof object.clientInfo !== "object")
+                    throw TypeError(".BotMetadata.AIThreadInfo.clientInfo: object expected");
+                message.clientInfo = $root.BotMetadata.AIThreadInfo.AIThreadClientInfo.fromObject(
+                    object.clientInfo
+                );
+            }
+            return message;
+        };
+        AIThreadInfo.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.serverInfo = null;
+                object.clientInfo = null;
+            }
+            if (message.serverInfo != null && message.hasOwnProperty("serverInfo"))
+                object.serverInfo = $root.BotMetadata.AIThreadInfo.AIThreadServerInfo.toObject(
+                    message.serverInfo,
+                    options
+                );
+            if (message.clientInfo != null && message.hasOwnProperty("clientInfo"))
+                object.clientInfo = $root.BotMetadata.AIThreadInfo.AIThreadClientInfo.toObject(
+                    message.clientInfo,
+                    options
+                );
+            return object;
+        };
+        AIThreadInfo.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        AIThreadInfo.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.AIThreadInfo";
+        };
+        AIThreadInfo.AIThreadClientInfo = (function () {
+            function AIThreadClientInfo(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            AIThreadClientInfo.prototype.type = 0;
+            AIThreadClientInfo.create = function create(properties) {
+                return new AIThreadClientInfo(properties);
+            };
+            AIThreadClientInfo.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                    writer.uint32(8).int32(message.type);
+                return writer;
+            };
+            AIThreadClientInfo.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            AIThreadClientInfo.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message = new $root.BotMetadata.AIThreadInfo.AIThreadClientInfo();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.type = reader.int32();
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            AIThreadClientInfo.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            AIThreadClientInfo.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.type != null && message.hasOwnProperty("type"))
+                    switch (message.type) {
+                        default:
+                            return "type: enum value expected";
+                        case 0:
+                        case 1:
+                        case 2:
+                            break;
+                    }
+                return null;
+            };
+            AIThreadClientInfo.fromObject = function fromObject(object) {
+                if (object instanceof $root.BotMetadata.AIThreadInfo.AIThreadClientInfo)
+                    return object;
+                var message = new $root.BotMetadata.AIThreadInfo.AIThreadClientInfo();
+                switch (object.type) {
+                    default:
+                        if (typeof object.type === "number") {
+                            message.type = object.type;
+                            break;
+                        }
+                        break;
+                    case "UNKNOWN":
+                    case 0:
+                        message.type = 0;
+                        break;
+                    case "DEFAULT":
+                    case 1:
+                        message.type = 1;
+                        break;
+                    case "INCOGNITO":
+                    case 2:
+                        message.type = 2;
+                        break;
+                }
+                return message;
+            };
+            AIThreadClientInfo.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.defaults) object.type = options.enums === String ? "UNKNOWN" : 0;
+                if (message.type != null && message.hasOwnProperty("type"))
+                    object.type =
+                        options.enums === String
+                            ? $root.BotMetadata.AIThreadInfo.AIThreadClientInfo.AIThreadType[
+                                  message.type
+                              ] === undefined
+                                ? message.type
+                                : $root.BotMetadata.AIThreadInfo.AIThreadClientInfo.AIThreadType[
+                                      message.type
+                                  ]
+                            : message.type;
+                return object;
+            };
+            AIThreadClientInfo.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            AIThreadClientInfo.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/BotMetadata.AIThreadInfo.AIThreadClientInfo";
+            };
+            AIThreadClientInfo.AIThreadType = (function () {
+                var valuesById = {},
+                    values = Object.create(valuesById);
+                values[(valuesById[0] = "UNKNOWN")] = 0;
+                values[(valuesById[1] = "DEFAULT")] = 1;
+                values[(valuesById[2] = "INCOGNITO")] = 2;
+                return values;
+            })();
+            return AIThreadClientInfo;
+        })();
+        AIThreadInfo.AIThreadServerInfo = (function () {
+            function AIThreadServerInfo(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            AIThreadServerInfo.prototype.title = "";
+            AIThreadServerInfo.create = function create(properties) {
+                return new AIThreadServerInfo(properties);
+            };
+            AIThreadServerInfo.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (message.title != null && Object.hasOwnProperty.call(message, "title"))
+                    writer.uint32(10).string(message.title);
+                return writer;
+            };
+            AIThreadServerInfo.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            AIThreadServerInfo.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message = new $root.BotMetadata.AIThreadInfo.AIThreadServerInfo();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.title = reader.string();
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            AIThreadServerInfo.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            AIThreadServerInfo.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.title != null && message.hasOwnProperty("title"))
+                    if (!$util.isString(message.title)) return "title: string expected";
+                return null;
+            };
+            AIThreadServerInfo.fromObject = function fromObject(object) {
+                if (object instanceof $root.BotMetadata.AIThreadInfo.AIThreadServerInfo)
+                    return object;
+                var message = new $root.BotMetadata.AIThreadInfo.AIThreadServerInfo();
+                if (object.title != null) message.title = String(object.title);
+                return message;
+            };
+            AIThreadServerInfo.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.defaults) object.title = "";
+                if (message.title != null && message.hasOwnProperty("title"))
+                    object.title = message.title;
+                return object;
+            };
+            AIThreadServerInfo.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            AIThreadServerInfo.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/BotMetadata.AIThreadInfo.AIThreadServerInfo";
+            };
+            return AIThreadServerInfo;
+        })();
+        return AIThreadInfo;
+    })();
+    BotMetadata.BotUnifiedResponseMutation = (function () {
+        function BotUnifiedResponseMutation(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotUnifiedResponseMutation.prototype.sbsMetadata = null;
+        BotUnifiedResponseMutation.create = function create(properties) {
+            return new BotUnifiedResponseMutation(properties);
+        };
+        BotUnifiedResponseMutation.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.sbsMetadata != null && Object.hasOwnProperty.call(message, "sbsMetadata"))
+                $root.BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata.encode(
+                    message.sbsMetadata,
+                    writer.uint32(10).fork()
+                ).ldelim();
+            return writer;
+        };
+        BotUnifiedResponseMutation.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotUnifiedResponseMutation.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotUnifiedResponseMutation();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.sbsMetadata =
+                            $root.BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotUnifiedResponseMutation.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotUnifiedResponseMutation.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.sbsMetadata != null && message.hasOwnProperty("sbsMetadata")) {
+                var error = $root.BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata.verify(
+                    message.sbsMetadata
+                );
+                if (error) return "sbsMetadata." + error;
+            }
+            return null;
+        };
+        BotUnifiedResponseMutation.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotUnifiedResponseMutation) return object;
+            var message = new $root.BotMetadata.BotUnifiedResponseMutation();
+            if (object.sbsMetadata != null) {
+                if (typeof object.sbsMetadata !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotUnifiedResponseMutation.sbsMetadata: object expected"
+                    );
+                message.sbsMetadata =
+                    $root.BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata.fromObject(
+                        object.sbsMetadata
+                    );
+            }
+            return message;
+        };
+        BotUnifiedResponseMutation.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) object.sbsMetadata = null;
+            if (message.sbsMetadata != null && message.hasOwnProperty("sbsMetadata"))
+                object.sbsMetadata =
+                    $root.BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata.toObject(
+                        message.sbsMetadata,
+                        options
+                    );
+            return object;
+        };
+        BotUnifiedResponseMutation.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotUnifiedResponseMutation.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotUnifiedResponseMutation";
+        };
+        BotUnifiedResponseMutation.SideBySideMetadata = (function () {
+            function SideBySideMetadata(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            SideBySideMetadata.prototype.primaryResponseId = "";
+            SideBySideMetadata.create = function create(properties) {
+                return new SideBySideMetadata(properties);
+            };
+            SideBySideMetadata.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (
+                    message.primaryResponseId != null &&
+                    Object.hasOwnProperty.call(message, "primaryResponseId")
+                )
+                    writer.uint32(10).string(message.primaryResponseId);
+                return writer;
+            };
+            SideBySideMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            SideBySideMetadata.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message = new $root.BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.primaryResponseId = reader.string();
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            SideBySideMetadata.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            SideBySideMetadata.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (
+                    message.primaryResponseId != null &&
+                    message.hasOwnProperty("primaryResponseId")
+                )
+                    if (!$util.isString(message.primaryResponseId))
+                        return "primaryResponseId: string expected";
+                return null;
+            };
+            SideBySideMetadata.fromObject = function fromObject(object) {
+                if (
+                    object instanceof
+                    $root.BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata
+                )
+                    return object;
+                var message = new $root.BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata();
+                if (object.primaryResponseId != null)
+                    message.primaryResponseId = String(object.primaryResponseId);
+                return message;
+            };
+            SideBySideMetadata.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.defaults) object.primaryResponseId = "";
+                if (
+                    message.primaryResponseId != null &&
+                    message.hasOwnProperty("primaryResponseId")
+                )
+                    object.primaryResponseId = message.primaryResponseId;
+                return object;
+            };
+            SideBySideMetadata.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            SideBySideMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/BotMetadata.BotUnifiedResponseMutation.SideBySideMetadata";
+            };
+            return SideBySideMetadata;
+        })();
+        return BotUnifiedResponseMutation;
+    })();
+    BotMetadata.BotMessageOrigin = (function () {
+        function BotMessageOrigin(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotMessageOrigin.prototype.type = 0;
+        BotMessageOrigin.create = function create(properties) {
+            return new BotMessageOrigin(properties);
+        };
+        BotMessageOrigin.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(8).int32(message.type);
+            return writer;
+        };
+        BotMessageOrigin.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotMessageOrigin.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotMessageOrigin();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.type = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotMessageOrigin.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotMessageOrigin.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                    default:
+                        return "type: enum value expected";
+                    case 0:
+                        break;
+                }
+            return null;
+        };
+        BotMessageOrigin.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotMessageOrigin) return object;
+            var message = new $root.BotMetadata.BotMessageOrigin();
+            switch (object.type) {
+                default:
+                    if (typeof object.type === "number") {
+                        message.type = object.type;
+                        break;
+                    }
+                    break;
+                case "BOT_MESSAGE_ORIGIN_TYPE_AI_INITIATED":
+                case 0:
+                    message.type = 0;
+                    break;
+            }
+            return message;
+        };
+        BotMessageOrigin.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults)
+                object.type = options.enums === String ? "BOT_MESSAGE_ORIGIN_TYPE_AI_INITIATED" : 0;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type =
+                    options.enums === String
+                        ? $root.BotMetadata.BotMessageOrigin.BotMessageOriginType[message.type] ===
+                          undefined
+                            ? message.type
+                            : $root.BotMetadata.BotMessageOrigin.BotMessageOriginType[message.type]
+                        : message.type;
+            return object;
+        };
+        BotMessageOrigin.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotMessageOrigin.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotMessageOrigin";
+        };
+        BotMessageOrigin.BotMessageOriginType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "BOT_MESSAGE_ORIGIN_TYPE_AI_INITIATED")] = 0;
+            return values;
+        })();
+        return BotMessageOrigin;
+    })();
+    BotMetadata.BotMessageOriginMetadata = (function () {
+        function BotMessageOriginMetadata(properties) {
+            this.origins = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotMessageOriginMetadata.prototype.origins = $util.emptyArray;
+        BotMessageOriginMetadata.create = function create(properties) {
+            return new BotMessageOriginMetadata(properties);
+        };
+        BotMessageOriginMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.origins != null && message.origins.length)
+                for (var i = 0; i < message.origins.length; ++i)
+                    $root.BotMetadata.BotMessageOrigin.encode(
+                        message.origins[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            return writer;
+        };
+        BotMessageOriginMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotMessageOriginMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotMessageOriginMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.origins && message.origins.length)) message.origins = [];
+                        message.origins.push(
+                            $root.BotMetadata.BotMessageOrigin.decode(reader, reader.uint32())
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotMessageOriginMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotMessageOriginMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.origins != null && message.hasOwnProperty("origins")) {
+                if (!Array.isArray(message.origins)) return "origins: array expected";
+                for (var i = 0; i < message.origins.length; ++i) {
+                    var error = $root.BotMetadata.BotMessageOrigin.verify(message.origins[i]);
+                    if (error) return "origins." + error;
+                }
+            }
+            return null;
+        };
+        BotMessageOriginMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotMessageOriginMetadata) return object;
+            var message = new $root.BotMetadata.BotMessageOriginMetadata();
+            if (object.origins) {
+                if (!Array.isArray(object.origins))
+                    throw TypeError(
+                        ".BotMetadata.BotMessageOriginMetadata.origins: array expected"
+                    );
+                message.origins = [];
+                for (var i = 0; i < object.origins.length; ++i) {
+                    if (typeof object.origins[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotMessageOriginMetadata.origins: object expected"
+                        );
+                    message.origins[i] = $root.BotMetadata.BotMessageOrigin.fromObject(
+                        object.origins[i]
+                    );
+                }
+            }
+            return message;
+        };
+        BotMessageOriginMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.origins = [];
+            if (message.origins && message.origins.length) {
+                object.origins = [];
+                for (var j = 0; j < message.origins.length; ++j)
+                    object.origins[j] = $root.BotMetadata.BotMessageOrigin.toObject(
+                        message.origins[j],
+                        options
+                    );
+            }
+            return object;
+        };
+        BotMessageOriginMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotMessageOriginMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotMessageOriginMetadata";
+        };
+        return BotMessageOriginMetadata;
+    })();
+    BotMetadata.InThreadSurveyMetadata = (function () {
+        function InThreadSurveyMetadata(properties) {
+            this.questions = [];
+            this.privacyStatementParts = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        InThreadSurveyMetadata.prototype.tessaSessionId = "";
+        InThreadSurveyMetadata.prototype.simonSessionId = "";
+        InThreadSurveyMetadata.prototype.simonSurveyId = "";
+        InThreadSurveyMetadata.prototype.tessaRootId = "";
+        InThreadSurveyMetadata.prototype.requestId = "";
+        InThreadSurveyMetadata.prototype.tessaEvent = "";
+        InThreadSurveyMetadata.prototype.invitationHeaderText = "";
+        InThreadSurveyMetadata.prototype.invitationBodyText = "";
+        InThreadSurveyMetadata.prototype.invitationCtaText = "";
+        InThreadSurveyMetadata.prototype.invitationCtaUrl = "";
+        InThreadSurveyMetadata.prototype.surveyTitle = "";
+        InThreadSurveyMetadata.prototype.questions = $util.emptyArray;
+        InThreadSurveyMetadata.prototype.surveyContinueButtonText = "";
+        InThreadSurveyMetadata.prototype.surveySubmitButtonText = "";
+        InThreadSurveyMetadata.prototype.privacyStatementFull = "";
+        InThreadSurveyMetadata.prototype.privacyStatementParts = $util.emptyArray;
+        InThreadSurveyMetadata.prototype.feedbackToastText = "";
+        InThreadSurveyMetadata.create = function create(properties) {
+            return new InThreadSurveyMetadata(properties);
+        };
+        InThreadSurveyMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (
+                message.tessaSessionId != null &&
+                Object.hasOwnProperty.call(message, "tessaSessionId")
+            )
+                writer.uint32(10).string(message.tessaSessionId);
+            if (
+                message.simonSessionId != null &&
+                Object.hasOwnProperty.call(message, "simonSessionId")
+            )
+                writer.uint32(18).string(message.simonSessionId);
+            if (
+                message.simonSurveyId != null &&
+                Object.hasOwnProperty.call(message, "simonSurveyId")
+            )
+                writer.uint32(26).string(message.simonSurveyId);
+            if (message.tessaRootId != null && Object.hasOwnProperty.call(message, "tessaRootId"))
+                writer.uint32(34).string(message.tessaRootId);
+            if (message.requestId != null && Object.hasOwnProperty.call(message, "requestId"))
+                writer.uint32(42).string(message.requestId);
+            if (message.tessaEvent != null && Object.hasOwnProperty.call(message, "tessaEvent"))
+                writer.uint32(50).string(message.tessaEvent);
+            if (
+                message.invitationHeaderText != null &&
+                Object.hasOwnProperty.call(message, "invitationHeaderText")
+            )
+                writer.uint32(58).string(message.invitationHeaderText);
+            if (
+                message.invitationBodyText != null &&
+                Object.hasOwnProperty.call(message, "invitationBodyText")
+            )
+                writer.uint32(66).string(message.invitationBodyText);
+            if (
+                message.invitationCtaText != null &&
+                Object.hasOwnProperty.call(message, "invitationCtaText")
+            )
+                writer.uint32(74).string(message.invitationCtaText);
+            if (
+                message.invitationCtaUrl != null &&
+                Object.hasOwnProperty.call(message, "invitationCtaUrl")
+            )
+                writer.uint32(82).string(message.invitationCtaUrl);
+            if (message.surveyTitle != null && Object.hasOwnProperty.call(message, "surveyTitle"))
+                writer.uint32(90).string(message.surveyTitle);
+            if (message.questions != null && message.questions.length)
+                for (var i = 0; i < message.questions.length; ++i)
+                    $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion.encode(
+                        message.questions[i],
+                        writer.uint32(98).fork()
+                    ).ldelim();
+            if (
+                message.surveyContinueButtonText != null &&
+                Object.hasOwnProperty.call(message, "surveyContinueButtonText")
+            )
+                writer.uint32(106).string(message.surveyContinueButtonText);
+            if (
+                message.surveySubmitButtonText != null &&
+                Object.hasOwnProperty.call(message, "surveySubmitButtonText")
+            )
+                writer.uint32(114).string(message.surveySubmitButtonText);
+            if (
+                message.privacyStatementFull != null &&
+                Object.hasOwnProperty.call(message, "privacyStatementFull")
+            )
+                writer.uint32(122).string(message.privacyStatementFull);
+            if (message.privacyStatementParts != null && message.privacyStatementParts.length)
+                for (var i = 0; i < message.privacyStatementParts.length; ++i)
+                    $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart.encode(
+                        message.privacyStatementParts[i],
+                        writer.uint32(130).fork()
+                    ).ldelim();
+            if (
+                message.feedbackToastText != null &&
+                Object.hasOwnProperty.call(message, "feedbackToastText")
+            )
+                writer.uint32(138).string(message.feedbackToastText);
+            return writer;
+        };
+        InThreadSurveyMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        InThreadSurveyMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.InThreadSurveyMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.tessaSessionId = reader.string();
+                        break;
+                    }
+                    case 2: {
+                        message.simonSessionId = reader.string();
+                        break;
+                    }
+                    case 3: {
+                        message.simonSurveyId = reader.string();
+                        break;
+                    }
+                    case 4: {
+                        message.tessaRootId = reader.string();
+                        break;
+                    }
+                    case 5: {
+                        message.requestId = reader.string();
+                        break;
+                    }
+                    case 6: {
+                        message.tessaEvent = reader.string();
+                        break;
+                    }
+                    case 7: {
+                        message.invitationHeaderText = reader.string();
+                        break;
+                    }
+                    case 8: {
+                        message.invitationBodyText = reader.string();
+                        break;
+                    }
+                    case 9: {
+                        message.invitationCtaText = reader.string();
+                        break;
+                    }
+                    case 10: {
+                        message.invitationCtaUrl = reader.string();
+                        break;
+                    }
+                    case 11: {
+                        message.surveyTitle = reader.string();
+                        break;
+                    }
+                    case 12: {
+                        if (!(message.questions && message.questions.length))
+                            message.questions = [];
+                        message.questions.push(
+                            $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion.decode(
+                                reader,
+                                reader.uint32()
+                            )
+                        );
+                        break;
+                    }
+                    case 13: {
+                        message.surveyContinueButtonText = reader.string();
+                        break;
+                    }
+                    case 14: {
+                        message.surveySubmitButtonText = reader.string();
+                        break;
+                    }
+                    case 15: {
+                        message.privacyStatementFull = reader.string();
+                        break;
+                    }
+                    case 16: {
+                        if (
+                            !(message.privacyStatementParts && message.privacyStatementParts.length)
+                        )
+                            message.privacyStatementParts = [];
+                        message.privacyStatementParts.push(
+                            $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart.decode(
+                                reader,
+                                reader.uint32()
+                            )
+                        );
+                        break;
+                    }
+                    case 17: {
+                        message.feedbackToastText = reader.string();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        InThreadSurveyMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        InThreadSurveyMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.tessaSessionId != null && message.hasOwnProperty("tessaSessionId"))
+                if (!$util.isString(message.tessaSessionId))
+                    return "tessaSessionId: string expected";
+            if (message.simonSessionId != null && message.hasOwnProperty("simonSessionId"))
+                if (!$util.isString(message.simonSessionId))
+                    return "simonSessionId: string expected";
+            if (message.simonSurveyId != null && message.hasOwnProperty("simonSurveyId"))
+                if (!$util.isString(message.simonSurveyId)) return "simonSurveyId: string expected";
+            if (message.tessaRootId != null && message.hasOwnProperty("tessaRootId"))
+                if (!$util.isString(message.tessaRootId)) return "tessaRootId: string expected";
+            if (message.requestId != null && message.hasOwnProperty("requestId"))
+                if (!$util.isString(message.requestId)) return "requestId: string expected";
+            if (message.tessaEvent != null && message.hasOwnProperty("tessaEvent"))
+                if (!$util.isString(message.tessaEvent)) return "tessaEvent: string expected";
+            if (
+                message.invitationHeaderText != null &&
+                message.hasOwnProperty("invitationHeaderText")
+            )
+                if (!$util.isString(message.invitationHeaderText))
+                    return "invitationHeaderText: string expected";
+            if (message.invitationBodyText != null && message.hasOwnProperty("invitationBodyText"))
+                if (!$util.isString(message.invitationBodyText))
+                    return "invitationBodyText: string expected";
+            if (message.invitationCtaText != null && message.hasOwnProperty("invitationCtaText"))
+                if (!$util.isString(message.invitationCtaText))
+                    return "invitationCtaText: string expected";
+            if (message.invitationCtaUrl != null && message.hasOwnProperty("invitationCtaUrl"))
+                if (!$util.isString(message.invitationCtaUrl))
+                    return "invitationCtaUrl: string expected";
+            if (message.surveyTitle != null && message.hasOwnProperty("surveyTitle"))
+                if (!$util.isString(message.surveyTitle)) return "surveyTitle: string expected";
+            if (message.questions != null && message.hasOwnProperty("questions")) {
+                if (!Array.isArray(message.questions)) return "questions: array expected";
+                for (var i = 0; i < message.questions.length; ++i) {
+                    var error =
+                        $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion.verify(
+                            message.questions[i]
+                        );
+                    if (error) return "questions." + error;
+                }
+            }
+            if (
+                message.surveyContinueButtonText != null &&
+                message.hasOwnProperty("surveyContinueButtonText")
+            )
+                if (!$util.isString(message.surveyContinueButtonText))
+                    return "surveyContinueButtonText: string expected";
+            if (
+                message.surveySubmitButtonText != null &&
+                message.hasOwnProperty("surveySubmitButtonText")
+            )
+                if (!$util.isString(message.surveySubmitButtonText))
+                    return "surveySubmitButtonText: string expected";
+            if (
+                message.privacyStatementFull != null &&
+                message.hasOwnProperty("privacyStatementFull")
+            )
+                if (!$util.isString(message.privacyStatementFull))
+                    return "privacyStatementFull: string expected";
+            if (
+                message.privacyStatementParts != null &&
+                message.hasOwnProperty("privacyStatementParts")
+            ) {
+                if (!Array.isArray(message.privacyStatementParts))
+                    return "privacyStatementParts: array expected";
+                for (var i = 0; i < message.privacyStatementParts.length; ++i) {
+                    var error =
+                        $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart.verify(
+                            message.privacyStatementParts[i]
+                        );
+                    if (error) return "privacyStatementParts." + error;
+                }
+            }
+            if (message.feedbackToastText != null && message.hasOwnProperty("feedbackToastText"))
+                if (!$util.isString(message.feedbackToastText))
+                    return "feedbackToastText: string expected";
+            return null;
+        };
+        InThreadSurveyMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.InThreadSurveyMetadata) return object;
+            var message = new $root.BotMetadata.InThreadSurveyMetadata();
+            if (object.tessaSessionId != null)
+                message.tessaSessionId = String(object.tessaSessionId);
+            if (object.simonSessionId != null)
+                message.simonSessionId = String(object.simonSessionId);
+            if (object.simonSurveyId != null) message.simonSurveyId = String(object.simonSurveyId);
+            if (object.tessaRootId != null) message.tessaRootId = String(object.tessaRootId);
+            if (object.requestId != null) message.requestId = String(object.requestId);
+            if (object.tessaEvent != null) message.tessaEvent = String(object.tessaEvent);
+            if (object.invitationHeaderText != null)
+                message.invitationHeaderText = String(object.invitationHeaderText);
+            if (object.invitationBodyText != null)
+                message.invitationBodyText = String(object.invitationBodyText);
+            if (object.invitationCtaText != null)
+                message.invitationCtaText = String(object.invitationCtaText);
+            if (object.invitationCtaUrl != null)
+                message.invitationCtaUrl = String(object.invitationCtaUrl);
+            if (object.surveyTitle != null) message.surveyTitle = String(object.surveyTitle);
+            if (object.questions) {
+                if (!Array.isArray(object.questions))
+                    throw TypeError(
+                        ".BotMetadata.InThreadSurveyMetadata.questions: array expected"
+                    );
+                message.questions = [];
+                for (var i = 0; i < object.questions.length; ++i) {
+                    if (typeof object.questions[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.InThreadSurveyMetadata.questions: object expected"
+                        );
+                    message.questions[i] =
+                        $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion.fromObject(
+                            object.questions[i]
+                        );
+                }
+            }
+            if (object.surveyContinueButtonText != null)
+                message.surveyContinueButtonText = String(object.surveyContinueButtonText);
+            if (object.surveySubmitButtonText != null)
+                message.surveySubmitButtonText = String(object.surveySubmitButtonText);
+            if (object.privacyStatementFull != null)
+                message.privacyStatementFull = String(object.privacyStatementFull);
+            if (object.privacyStatementParts) {
+                if (!Array.isArray(object.privacyStatementParts))
+                    throw TypeError(
+                        ".BotMetadata.InThreadSurveyMetadata.privacyStatementParts: array expected"
+                    );
+                message.privacyStatementParts = [];
+                for (var i = 0; i < object.privacyStatementParts.length; ++i) {
+                    if (typeof object.privacyStatementParts[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.InThreadSurveyMetadata.privacyStatementParts: object expected"
+                        );
+                    message.privacyStatementParts[i] =
+                        $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart.fromObject(
+                            object.privacyStatementParts[i]
+                        );
+                }
+            }
+            if (object.feedbackToastText != null)
+                message.feedbackToastText = String(object.feedbackToastText);
+            return message;
+        };
+        InThreadSurveyMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) {
+                object.questions = [];
+                object.privacyStatementParts = [];
+            }
+            if (options.defaults) {
+                object.tessaSessionId = "";
+                object.simonSessionId = "";
+                object.simonSurveyId = "";
+                object.tessaRootId = "";
+                object.requestId = "";
+                object.tessaEvent = "";
+                object.invitationHeaderText = "";
+                object.invitationBodyText = "";
+                object.invitationCtaText = "";
+                object.invitationCtaUrl = "";
+                object.surveyTitle = "";
+                object.surveyContinueButtonText = "";
+                object.surveySubmitButtonText = "";
+                object.privacyStatementFull = "";
+                object.feedbackToastText = "";
+            }
+            if (message.tessaSessionId != null && message.hasOwnProperty("tessaSessionId"))
+                object.tessaSessionId = message.tessaSessionId;
+            if (message.simonSessionId != null && message.hasOwnProperty("simonSessionId"))
+                object.simonSessionId = message.simonSessionId;
+            if (message.simonSurveyId != null && message.hasOwnProperty("simonSurveyId"))
+                object.simonSurveyId = message.simonSurveyId;
+            if (message.tessaRootId != null && message.hasOwnProperty("tessaRootId"))
+                object.tessaRootId = message.tessaRootId;
+            if (message.requestId != null && message.hasOwnProperty("requestId"))
+                object.requestId = message.requestId;
+            if (message.tessaEvent != null && message.hasOwnProperty("tessaEvent"))
+                object.tessaEvent = message.tessaEvent;
+            if (
+                message.invitationHeaderText != null &&
+                message.hasOwnProperty("invitationHeaderText")
+            )
+                object.invitationHeaderText = message.invitationHeaderText;
+            if (message.invitationBodyText != null && message.hasOwnProperty("invitationBodyText"))
+                object.invitationBodyText = message.invitationBodyText;
+            if (message.invitationCtaText != null && message.hasOwnProperty("invitationCtaText"))
+                object.invitationCtaText = message.invitationCtaText;
+            if (message.invitationCtaUrl != null && message.hasOwnProperty("invitationCtaUrl"))
+                object.invitationCtaUrl = message.invitationCtaUrl;
+            if (message.surveyTitle != null && message.hasOwnProperty("surveyTitle"))
+                object.surveyTitle = message.surveyTitle;
+            if (message.questions && message.questions.length) {
+                object.questions = [];
+                for (var j = 0; j < message.questions.length; ++j)
+                    object.questions[j] =
+                        $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion.toObject(
+                            message.questions[j],
+                            options
+                        );
+            }
+            if (
+                message.surveyContinueButtonText != null &&
+                message.hasOwnProperty("surveyContinueButtonText")
+            )
+                object.surveyContinueButtonText = message.surveyContinueButtonText;
+            if (
+                message.surveySubmitButtonText != null &&
+                message.hasOwnProperty("surveySubmitButtonText")
+            )
+                object.surveySubmitButtonText = message.surveySubmitButtonText;
+            if (
+                message.privacyStatementFull != null &&
+                message.hasOwnProperty("privacyStatementFull")
+            )
+                object.privacyStatementFull = message.privacyStatementFull;
+            if (message.privacyStatementParts && message.privacyStatementParts.length) {
+                object.privacyStatementParts = [];
+                for (var j = 0; j < message.privacyStatementParts.length; ++j)
+                    object.privacyStatementParts[j] =
+                        $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart.toObject(
+                            message.privacyStatementParts[j],
+                            options
+                        );
+            }
+            if (message.feedbackToastText != null && message.hasOwnProperty("feedbackToastText"))
+                object.feedbackToastText = message.feedbackToastText;
+            return object;
+        };
+        InThreadSurveyMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        InThreadSurveyMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.InThreadSurveyMetadata";
+        };
+        InThreadSurveyMetadata.InThreadSurveyOption = (function () {
+            function InThreadSurveyOption(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            InThreadSurveyOption.prototype.stringValue = "";
+            InThreadSurveyOption.prototype.numericValue = 0;
+            InThreadSurveyOption.prototype.textTranslated = "";
+            InThreadSurveyOption.create = function create(properties) {
+                return new InThreadSurveyOption(properties);
+            };
+            InThreadSurveyOption.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (
+                    message.stringValue != null &&
+                    Object.hasOwnProperty.call(message, "stringValue")
+                )
+                    writer.uint32(10).string(message.stringValue);
+                if (
+                    message.numericValue != null &&
+                    Object.hasOwnProperty.call(message, "numericValue")
+                )
+                    writer.uint32(16).uint32(message.numericValue);
+                if (
+                    message.textTranslated != null &&
+                    Object.hasOwnProperty.call(message, "textTranslated")
+                )
+                    writer.uint32(26).string(message.textTranslated);
+                return writer;
+            };
+            InThreadSurveyOption.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            InThreadSurveyOption.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message = new $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.stringValue = reader.string();
+                            break;
+                        }
+                        case 2: {
+                            message.numericValue = reader.uint32();
+                            break;
+                        }
+                        case 3: {
+                            message.textTranslated = reader.string();
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            InThreadSurveyOption.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            InThreadSurveyOption.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.stringValue != null && message.hasOwnProperty("stringValue"))
+                    if (!$util.isString(message.stringValue)) return "stringValue: string expected";
+                if (message.numericValue != null && message.hasOwnProperty("numericValue"))
+                    if (!$util.isInteger(message.numericValue))
+                        return "numericValue: integer expected";
+                if (message.textTranslated != null && message.hasOwnProperty("textTranslated"))
+                    if (!$util.isString(message.textTranslated))
+                        return "textTranslated: string expected";
+                return null;
+            };
+            InThreadSurveyOption.fromObject = function fromObject(object) {
+                if (object instanceof $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption)
+                    return object;
+                var message = new $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption();
+                if (object.stringValue != null) message.stringValue = String(object.stringValue);
+                if (object.numericValue != null) message.numericValue = object.numericValue >>> 0;
+                if (object.textTranslated != null)
+                    message.textTranslated = String(object.textTranslated);
+                return message;
+            };
+            InThreadSurveyOption.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.stringValue = "";
+                    object.numericValue = 0;
+                    object.textTranslated = "";
+                }
+                if (message.stringValue != null && message.hasOwnProperty("stringValue"))
+                    object.stringValue = message.stringValue;
+                if (message.numericValue != null && message.hasOwnProperty("numericValue"))
+                    object.numericValue = message.numericValue;
+                if (message.textTranslated != null && message.hasOwnProperty("textTranslated"))
+                    object.textTranslated = message.textTranslated;
+                return object;
+            };
+            InThreadSurveyOption.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            InThreadSurveyOption.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption";
+            };
+            return InThreadSurveyOption;
+        })();
+        InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart = (function () {
+            function InThreadSurveyPrivacyStatementPart(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            InThreadSurveyPrivacyStatementPart.prototype.text = "";
+            InThreadSurveyPrivacyStatementPart.prototype.url = "";
+            InThreadSurveyPrivacyStatementPart.create = function create(properties) {
+                return new InThreadSurveyPrivacyStatementPart(properties);
+            };
+            InThreadSurveyPrivacyStatementPart.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (message.text != null && Object.hasOwnProperty.call(message, "text"))
+                    writer.uint32(10).string(message.text);
+                if (message.url != null && Object.hasOwnProperty.call(message, "url"))
+                    writer.uint32(18).string(message.url);
+                return writer;
+            };
+            InThreadSurveyPrivacyStatementPart.encodeDelimited = function encodeDelimited(
+                message,
+                writer
+            ) {
+                return this.encode(message, writer).ldelim();
+            };
+            InThreadSurveyPrivacyStatementPart.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message =
+                        new $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.text = reader.string();
+                            break;
+                        }
+                        case 2: {
+                            message.url = reader.string();
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            InThreadSurveyPrivacyStatementPart.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            InThreadSurveyPrivacyStatementPart.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.text != null && message.hasOwnProperty("text"))
+                    if (!$util.isString(message.text)) return "text: string expected";
+                if (message.url != null && message.hasOwnProperty("url"))
+                    if (!$util.isString(message.url)) return "url: string expected";
+                return null;
+            };
+            InThreadSurveyPrivacyStatementPart.fromObject = function fromObject(object) {
+                if (
+                    object instanceof
+                    $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart
+                )
+                    return object;
+                var message =
+                    new $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart();
+                if (object.text != null) message.text = String(object.text);
+                if (object.url != null) message.url = String(object.url);
+                return message;
+            };
+            InThreadSurveyPrivacyStatementPart.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.text = "";
+                    object.url = "";
+                }
+                if (message.text != null && message.hasOwnProperty("text"))
+                    object.text = message.text;
+                if (message.url != null && message.hasOwnProperty("url")) object.url = message.url;
+                return object;
+            };
+            InThreadSurveyPrivacyStatementPart.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            InThreadSurveyPrivacyStatementPart.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return (
+                    typeUrlPrefix +
+                    "/BotMetadata.InThreadSurveyMetadata.InThreadSurveyPrivacyStatementPart"
+                );
+            };
+            return InThreadSurveyPrivacyStatementPart;
+        })();
+        InThreadSurveyMetadata.InThreadSurveyQuestion = (function () {
+            function InThreadSurveyQuestion(properties) {
+                this.questionOptions = [];
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            InThreadSurveyQuestion.prototype.questionText = "";
+            InThreadSurveyQuestion.prototype.questionId = "";
+            InThreadSurveyQuestion.prototype.questionOptions = $util.emptyArray;
+            InThreadSurveyQuestion.create = function create(properties) {
+                return new InThreadSurveyQuestion(properties);
+            };
+            InThreadSurveyQuestion.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (
+                    message.questionText != null &&
+                    Object.hasOwnProperty.call(message, "questionText")
+                )
+                    writer.uint32(10).string(message.questionText);
+                if (message.questionId != null && Object.hasOwnProperty.call(message, "questionId"))
+                    writer.uint32(18).string(message.questionId);
+                if (message.questionOptions != null && message.questionOptions.length)
+                    for (var i = 0; i < message.questionOptions.length; ++i)
+                        $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption.encode(
+                            message.questionOptions[i],
+                            writer.uint32(26).fork()
+                        ).ldelim();
+                return writer;
+            };
+            InThreadSurveyQuestion.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            InThreadSurveyQuestion.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message = new $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.questionText = reader.string();
+                            break;
+                        }
+                        case 2: {
+                            message.questionId = reader.string();
+                            break;
+                        }
+                        case 3: {
+                            if (!(message.questionOptions && message.questionOptions.length))
+                                message.questionOptions = [];
+                            message.questionOptions.push(
+                                $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption.decode(
+                                    reader,
+                                    reader.uint32()
+                                )
+                            );
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            InThreadSurveyQuestion.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            InThreadSurveyQuestion.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.questionText != null && message.hasOwnProperty("questionText"))
+                    if (!$util.isString(message.questionText))
+                        return "questionText: string expected";
+                if (message.questionId != null && message.hasOwnProperty("questionId"))
+                    if (!$util.isString(message.questionId)) return "questionId: string expected";
+                if (message.questionOptions != null && message.hasOwnProperty("questionOptions")) {
+                    if (!Array.isArray(message.questionOptions))
+                        return "questionOptions: array expected";
+                    for (var i = 0; i < message.questionOptions.length; ++i) {
+                        var error =
+                            $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption.verify(
+                                message.questionOptions[i]
+                            );
+                        if (error) return "questionOptions." + error;
+                    }
+                }
+                return null;
+            };
+            InThreadSurveyQuestion.fromObject = function fromObject(object) {
+                if (
+                    object instanceof
+                    $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion
+                )
+                    return object;
+                var message = new $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion();
+                if (object.questionText != null) message.questionText = String(object.questionText);
+                if (object.questionId != null) message.questionId = String(object.questionId);
+                if (object.questionOptions) {
+                    if (!Array.isArray(object.questionOptions))
+                        throw TypeError(
+                            ".BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion.questionOptions: array expected"
+                        );
+                    message.questionOptions = [];
+                    for (var i = 0; i < object.questionOptions.length; ++i) {
+                        if (typeof object.questionOptions[i] !== "object")
+                            throw TypeError(
+                                ".BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion.questionOptions: object expected"
+                            );
+                        message.questionOptions[i] =
+                            $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption.fromObject(
+                                object.questionOptions[i]
+                            );
+                    }
+                }
+                return message;
+            };
+            InThreadSurveyQuestion.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.arrays || options.defaults) object.questionOptions = [];
+                if (options.defaults) {
+                    object.questionText = "";
+                    object.questionId = "";
+                }
+                if (message.questionText != null && message.hasOwnProperty("questionText"))
+                    object.questionText = message.questionText;
+                if (message.questionId != null && message.hasOwnProperty("questionId"))
+                    object.questionId = message.questionId;
+                if (message.questionOptions && message.questionOptions.length) {
+                    object.questionOptions = [];
+                    for (var j = 0; j < message.questionOptions.length; ++j)
+                        object.questionOptions[j] =
+                            $root.BotMetadata.InThreadSurveyMetadata.InThreadSurveyOption.toObject(
+                                message.questionOptions[j],
+                                options
+                            );
+                }
+                return object;
+            };
+            InThreadSurveyQuestion.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            InThreadSurveyQuestion.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/BotMetadata.InThreadSurveyMetadata.InThreadSurveyQuestion";
+            };
+            return InThreadSurveyQuestion;
+        })();
+        return InThreadSurveyMetadata;
+    })();
+    BotMetadata.BotSourcesMetadata = (function () {
+        function BotSourcesMetadata(properties) {
+            this.sources = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotSourcesMetadata.prototype.sources = $util.emptyArray;
+        BotSourcesMetadata.create = function create(properties) {
+            return new BotSourcesMetadata(properties);
+        };
+        BotSourcesMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.sources != null && message.sources.length)
+                for (var i = 0; i < message.sources.length; ++i)
+                    $root.BotMetadata.BotSourcesMetadata.BotSourceItem.encode(
+                        message.sources[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            return writer;
+        };
+        BotSourcesMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotSourcesMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotSourcesMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.sources && message.sources.length)) message.sources = [];
+                        message.sources.push(
+                            $root.BotMetadata.BotSourcesMetadata.BotSourceItem.decode(
+                                reader,
+                                reader.uint32()
+                            )
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotSourcesMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotSourcesMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.sources != null && message.hasOwnProperty("sources")) {
+                if (!Array.isArray(message.sources)) return "sources: array expected";
+                for (var i = 0; i < message.sources.length; ++i) {
+                    var error = $root.BotMetadata.BotSourcesMetadata.BotSourceItem.verify(
+                        message.sources[i]
+                    );
+                    if (error) return "sources." + error;
+                }
+            }
+            return null;
+        };
+        BotSourcesMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotSourcesMetadata) return object;
+            var message = new $root.BotMetadata.BotSourcesMetadata();
+            if (object.sources) {
+                if (!Array.isArray(object.sources))
+                    throw TypeError(".BotMetadata.BotSourcesMetadata.sources: array expected");
+                message.sources = [];
+                for (var i = 0; i < object.sources.length; ++i) {
+                    if (typeof object.sources[i] !== "object")
+                        throw TypeError(".BotMetadata.BotSourcesMetadata.sources: object expected");
+                    message.sources[i] =
+                        $root.BotMetadata.BotSourcesMetadata.BotSourceItem.fromObject(
+                            object.sources[i]
+                        );
+                }
+            }
+            return message;
+        };
+        BotSourcesMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.sources = [];
+            if (message.sources && message.sources.length) {
+                object.sources = [];
+                for (var j = 0; j < message.sources.length; ++j)
+                    object.sources[j] = $root.BotMetadata.BotSourcesMetadata.BotSourceItem.toObject(
+                        message.sources[j],
+                        options
+                    );
+            }
+            return object;
+        };
+        BotSourcesMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotSourcesMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotSourcesMetadata";
+        };
+        BotSourcesMetadata.BotSourceItem = (function () {
+            function BotSourceItem(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            BotSourceItem.prototype.provider = 0;
+            BotSourceItem.prototype.thumbnailCdnUrl = "";
+            BotSourceItem.prototype.sourceProviderUrl = "";
+            BotSourceItem.prototype.sourceQuery = "";
+            BotSourceItem.prototype.faviconCdnUrl = "";
+            BotSourceItem.prototype.citationNumber = 0;
+            BotSourceItem.prototype.sourceTitle = "";
+            BotSourceItem.create = function create(properties) {
+                return new BotSourceItem(properties);
+            };
+            BotSourceItem.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (message.provider != null && Object.hasOwnProperty.call(message, "provider"))
+                    writer.uint32(8).int32(message.provider);
+                if (
+                    message.thumbnailCdnUrl != null &&
+                    Object.hasOwnProperty.call(message, "thumbnailCdnUrl")
+                )
+                    writer.uint32(18).string(message.thumbnailCdnUrl);
+                if (
+                    message.sourceProviderUrl != null &&
+                    Object.hasOwnProperty.call(message, "sourceProviderUrl")
+                )
+                    writer.uint32(26).string(message.sourceProviderUrl);
+                if (
+                    message.sourceQuery != null &&
+                    Object.hasOwnProperty.call(message, "sourceQuery")
+                )
+                    writer.uint32(34).string(message.sourceQuery);
+                if (
+                    message.faviconCdnUrl != null &&
+                    Object.hasOwnProperty.call(message, "faviconCdnUrl")
+                )
+                    writer.uint32(42).string(message.faviconCdnUrl);
+                if (
+                    message.citationNumber != null &&
+                    Object.hasOwnProperty.call(message, "citationNumber")
+                )
+                    writer.uint32(48).uint32(message.citationNumber);
+                if (
+                    message.sourceTitle != null &&
+                    Object.hasOwnProperty.call(message, "sourceTitle")
+                )
+                    writer.uint32(58).string(message.sourceTitle);
+                return writer;
+            };
+            BotSourceItem.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            BotSourceItem.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message = new $root.BotMetadata.BotSourcesMetadata.BotSourceItem();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.provider = reader.int32();
+                            break;
+                        }
+                        case 2: {
+                            message.thumbnailCdnUrl = reader.string();
+                            break;
+                        }
+                        case 3: {
+                            message.sourceProviderUrl = reader.string();
+                            break;
+                        }
+                        case 4: {
+                            message.sourceQuery = reader.string();
+                            break;
+                        }
+                        case 5: {
+                            message.faviconCdnUrl = reader.string();
+                            break;
+                        }
+                        case 6: {
+                            message.citationNumber = reader.uint32();
+                            break;
+                        }
+                        case 7: {
+                            message.sourceTitle = reader.string();
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            BotSourceItem.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            BotSourceItem.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.provider != null && message.hasOwnProperty("provider"))
+                    switch (message.provider) {
+                        default:
+                            return "provider: enum value expected";
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                            break;
+                    }
+                if (message.thumbnailCdnUrl != null && message.hasOwnProperty("thumbnailCdnUrl"))
+                    if (!$util.isString(message.thumbnailCdnUrl))
+                        return "thumbnailCdnUrl: string expected";
+                if (
+                    message.sourceProviderUrl != null &&
+                    message.hasOwnProperty("sourceProviderUrl")
+                )
+                    if (!$util.isString(message.sourceProviderUrl))
+                        return "sourceProviderUrl: string expected";
+                if (message.sourceQuery != null && message.hasOwnProperty("sourceQuery"))
+                    if (!$util.isString(message.sourceQuery)) return "sourceQuery: string expected";
+                if (message.faviconCdnUrl != null && message.hasOwnProperty("faviconCdnUrl"))
+                    if (!$util.isString(message.faviconCdnUrl))
+                        return "faviconCdnUrl: string expected";
+                if (message.citationNumber != null && message.hasOwnProperty("citationNumber"))
+                    if (!$util.isInteger(message.citationNumber))
+                        return "citationNumber: integer expected";
+                if (message.sourceTitle != null && message.hasOwnProperty("sourceTitle"))
+                    if (!$util.isString(message.sourceTitle)) return "sourceTitle: string expected";
+                return null;
+            };
+            BotSourceItem.fromObject = function fromObject(object) {
+                if (object instanceof $root.BotMetadata.BotSourcesMetadata.BotSourceItem)
+                    return object;
+                var message = new $root.BotMetadata.BotSourcesMetadata.BotSourceItem();
+                switch (object.provider) {
+                    default:
+                        if (typeof object.provider === "number") {
+                            message.provider = object.provider;
+                            break;
+                        }
+                        break;
+                    case "UNKNOWN":
+                    case 0:
+                        message.provider = 0;
+                        break;
+                    case "BING":
+                    case 1:
+                        message.provider = 1;
+                        break;
+                    case "GOOGLE":
+                    case 2:
+                        message.provider = 2;
+                        break;
+                    case "SUPPORT":
+                    case 3:
+                        message.provider = 3;
+                        break;
+                    case "OTHER":
+                    case 4:
+                        message.provider = 4;
+                        break;
+                }
+                if (object.thumbnailCdnUrl != null)
+                    message.thumbnailCdnUrl = String(object.thumbnailCdnUrl);
+                if (object.sourceProviderUrl != null)
+                    message.sourceProviderUrl = String(object.sourceProviderUrl);
+                if (object.sourceQuery != null) message.sourceQuery = String(object.sourceQuery);
+                if (object.faviconCdnUrl != null)
+                    message.faviconCdnUrl = String(object.faviconCdnUrl);
+                if (object.citationNumber != null)
+                    message.citationNumber = object.citationNumber >>> 0;
+                if (object.sourceTitle != null) message.sourceTitle = String(object.sourceTitle);
+                return message;
+            };
+            BotSourceItem.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.provider = options.enums === String ? "UNKNOWN" : 0;
+                    object.thumbnailCdnUrl = "";
+                    object.sourceProviderUrl = "";
+                    object.sourceQuery = "";
+                    object.faviconCdnUrl = "";
+                    object.citationNumber = 0;
+                    object.sourceTitle = "";
+                }
+                if (message.provider != null && message.hasOwnProperty("provider"))
+                    object.provider =
+                        options.enums === String
+                            ? $root.BotMetadata.BotSourcesMetadata.BotSourceItem.SourceProvider[
+                                  message.provider
+                              ] === undefined
+                                ? message.provider
+                                : $root.BotMetadata.BotSourcesMetadata.BotSourceItem.SourceProvider[
+                                      message.provider
+                                  ]
+                            : message.provider;
+                if (message.thumbnailCdnUrl != null && message.hasOwnProperty("thumbnailCdnUrl"))
+                    object.thumbnailCdnUrl = message.thumbnailCdnUrl;
+                if (
+                    message.sourceProviderUrl != null &&
+                    message.hasOwnProperty("sourceProviderUrl")
+                )
+                    object.sourceProviderUrl = message.sourceProviderUrl;
+                if (message.sourceQuery != null && message.hasOwnProperty("sourceQuery"))
+                    object.sourceQuery = message.sourceQuery;
+                if (message.faviconCdnUrl != null && message.hasOwnProperty("faviconCdnUrl"))
+                    object.faviconCdnUrl = message.faviconCdnUrl;
+                if (message.citationNumber != null && message.hasOwnProperty("citationNumber"))
+                    object.citationNumber = message.citationNumber;
+                if (message.sourceTitle != null && message.hasOwnProperty("sourceTitle"))
+                    object.sourceTitle = message.sourceTitle;
+                return object;
+            };
+            BotSourceItem.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            BotSourceItem.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/BotMetadata.BotSourcesMetadata.BotSourceItem";
+            };
+            BotSourceItem.SourceProvider = (function () {
+                var valuesById = {},
+                    values = Object.create(valuesById);
+                values[(valuesById[0] = "UNKNOWN")] = 0;
+                values[(valuesById[1] = "BING")] = 1;
+                values[(valuesById[2] = "GOOGLE")] = 2;
+                values[(valuesById[3] = "SUPPORT")] = 3;
+                values[(valuesById[4] = "OTHER")] = 4;
+                return values;
+            })();
+            return BotSourceItem;
+        })();
+        return BotSourcesMetadata;
+    })();
+    BotMetadata.BotAgeCollectionMetadata = (function () {
+        function BotAgeCollectionMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotAgeCollectionMetadata.prototype.ageCollectionEligible = false;
+        BotAgeCollectionMetadata.prototype.shouldTriggerAgeCollectionOnClient = false;
+        BotAgeCollectionMetadata.create = function create(properties) {
+            return new BotAgeCollectionMetadata(properties);
+        };
+        BotAgeCollectionMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (
+                message.ageCollectionEligible != null &&
+                Object.hasOwnProperty.call(message, "ageCollectionEligible")
+            )
+                writer.uint32(8).bool(message.ageCollectionEligible);
+            if (
+                message.shouldTriggerAgeCollectionOnClient != null &&
+                Object.hasOwnProperty.call(message, "shouldTriggerAgeCollectionOnClient")
+            )
+                writer.uint32(16).bool(message.shouldTriggerAgeCollectionOnClient);
+            return writer;
+        };
+        BotAgeCollectionMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotAgeCollectionMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotAgeCollectionMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.ageCollectionEligible = reader.bool();
+                        break;
+                    }
+                    case 2: {
+                        message.shouldTriggerAgeCollectionOnClient = reader.bool();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotAgeCollectionMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotAgeCollectionMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (
+                message.ageCollectionEligible != null &&
+                message.hasOwnProperty("ageCollectionEligible")
+            )
+                if (typeof message.ageCollectionEligible !== "boolean")
+                    return "ageCollectionEligible: boolean expected";
+            if (
+                message.shouldTriggerAgeCollectionOnClient != null &&
+                message.hasOwnProperty("shouldTriggerAgeCollectionOnClient")
+            )
+                if (typeof message.shouldTriggerAgeCollectionOnClient !== "boolean")
+                    return "shouldTriggerAgeCollectionOnClient: boolean expected";
+            return null;
+        };
+        BotAgeCollectionMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotAgeCollectionMetadata) return object;
+            var message = new $root.BotMetadata.BotAgeCollectionMetadata();
+            if (object.ageCollectionEligible != null)
+                message.ageCollectionEligible = Boolean(object.ageCollectionEligible);
+            if (object.shouldTriggerAgeCollectionOnClient != null)
+                message.shouldTriggerAgeCollectionOnClient = Boolean(
+                    object.shouldTriggerAgeCollectionOnClient
+                );
+            return message;
+        };
+        BotAgeCollectionMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.ageCollectionEligible = false;
+                object.shouldTriggerAgeCollectionOnClient = false;
+            }
+            if (
+                message.ageCollectionEligible != null &&
+                message.hasOwnProperty("ageCollectionEligible")
+            )
+                object.ageCollectionEligible = message.ageCollectionEligible;
+            if (
+                message.shouldTriggerAgeCollectionOnClient != null &&
+                message.hasOwnProperty("shouldTriggerAgeCollectionOnClient")
+            )
+                object.shouldTriggerAgeCollectionOnClient =
+                    message.shouldTriggerAgeCollectionOnClient;
+            return object;
+        };
+        BotAgeCollectionMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotAgeCollectionMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotAgeCollectionMetadata";
+        };
+        return BotAgeCollectionMetadata;
+    })();
+    BotMetadata.BotImagineMetadata = (function () {
+        function BotImagineMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotImagineMetadata.prototype.imagineType = 0;
+        BotImagineMetadata.create = function create(properties) {
+            return new BotImagineMetadata(properties);
+        };
+        BotImagineMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.imagineType != null && Object.hasOwnProperty.call(message, "imagineType"))
+                writer.uint32(8).int32(message.imagineType);
+            return writer;
+        };
+        BotImagineMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotImagineMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotImagineMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.imagineType = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotImagineMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotImagineMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.imagineType != null && message.hasOwnProperty("imagineType"))
+                switch (message.imagineType) {
+                    default:
+                        return "imagineType: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        break;
+                }
+            return null;
+        };
+        BotImagineMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotImagineMetadata) return object;
+            var message = new $root.BotMetadata.BotImagineMetadata();
+            switch (object.imagineType) {
+                default:
+                    if (typeof object.imagineType === "number") {
+                        message.imagineType = object.imagineType;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN":
+                case 0:
+                    message.imagineType = 0;
+                    break;
+                case "IMAGINE":
+                case 1:
+                    message.imagineType = 1;
+                    break;
+                case "MEMU":
+                case 2:
+                    message.imagineType = 2;
+                    break;
+                case "FLASH":
+                case 3:
+                    message.imagineType = 3;
+                    break;
+                case "EDIT":
+                case 4:
+                    message.imagineType = 4;
+                    break;
+            }
+            return message;
+        };
+        BotImagineMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) object.imagineType = options.enums === String ? "UNKNOWN" : 0;
+            if (message.imagineType != null && message.hasOwnProperty("imagineType"))
+                object.imagineType =
+                    options.enums === String
+                        ? $root.BotMetadata.BotImagineMetadata.ImagineType[message.imagineType] ===
+                          undefined
+                            ? message.imagineType
+                            : $root.BotMetadata.BotImagineMetadata.ImagineType[message.imagineType]
+                        : message.imagineType;
+            return object;
+        };
+        BotImagineMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotImagineMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotImagineMetadata";
+        };
+        BotImagineMetadata.ImagineType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN")] = 0;
+            values[(valuesById[1] = "IMAGINE")] = 1;
+            values[(valuesById[2] = "MEMU")] = 2;
+            values[(valuesById[3] = "FLASH")] = 3;
+            values[(valuesById[4] = "EDIT")] = 4;
+            return values;
+        })();
+        return BotImagineMetadata;
+    })();
+    BotMetadata.BotQuotaMetadata = (function () {
+        function BotQuotaMetadata(properties) {
+            this.botFeatureQuotaMetadata = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotQuotaMetadata.prototype.botFeatureQuotaMetadata = $util.emptyArray;
+        BotQuotaMetadata.create = function create(properties) {
+            return new BotQuotaMetadata(properties);
+        };
+        BotQuotaMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.botFeatureQuotaMetadata != null && message.botFeatureQuotaMetadata.length)
+                for (var i = 0; i < message.botFeatureQuotaMetadata.length; ++i)
+                    $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata.encode(
+                        message.botFeatureQuotaMetadata[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            return writer;
+        };
+        BotQuotaMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotQuotaMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotQuotaMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (
+                            !(
+                                message.botFeatureQuotaMetadata &&
+                                message.botFeatureQuotaMetadata.length
+                            )
+                        )
+                            message.botFeatureQuotaMetadata = [];
+                        message.botFeatureQuotaMetadata.push(
+                            $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            )
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotQuotaMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotQuotaMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (
+                message.botFeatureQuotaMetadata != null &&
+                message.hasOwnProperty("botFeatureQuotaMetadata")
+            ) {
+                if (!Array.isArray(message.botFeatureQuotaMetadata))
+                    return "botFeatureQuotaMetadata: array expected";
+                for (var i = 0; i < message.botFeatureQuotaMetadata.length; ++i) {
+                    var error = $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata.verify(
+                        message.botFeatureQuotaMetadata[i]
+                    );
+                    if (error) return "botFeatureQuotaMetadata." + error;
+                }
+            }
+            return null;
+        };
+        BotQuotaMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotQuotaMetadata) return object;
+            var message = new $root.BotMetadata.BotQuotaMetadata();
+            if (object.botFeatureQuotaMetadata) {
+                if (!Array.isArray(object.botFeatureQuotaMetadata))
+                    throw TypeError(
+                        ".BotMetadata.BotQuotaMetadata.botFeatureQuotaMetadata: array expected"
+                    );
+                message.botFeatureQuotaMetadata = [];
+                for (var i = 0; i < object.botFeatureQuotaMetadata.length; ++i) {
+                    if (typeof object.botFeatureQuotaMetadata[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotQuotaMetadata.botFeatureQuotaMetadata: object expected"
+                        );
+                    message.botFeatureQuotaMetadata[i] =
+                        $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata.fromObject(
+                            object.botFeatureQuotaMetadata[i]
+                        );
+                }
+            }
+            return message;
+        };
+        BotQuotaMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.botFeatureQuotaMetadata = [];
+            if (message.botFeatureQuotaMetadata && message.botFeatureQuotaMetadata.length) {
+                object.botFeatureQuotaMetadata = [];
+                for (var j = 0; j < message.botFeatureQuotaMetadata.length; ++j)
+                    object.botFeatureQuotaMetadata[j] =
+                        $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata.toObject(
+                            message.botFeatureQuotaMetadata[j],
+                            options
+                        );
+            }
+            return object;
+        };
+        BotQuotaMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotQuotaMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotQuotaMetadata";
+        };
+        BotQuotaMetadata.BotFeatureQuotaMetadata = (function () {
+            function BotFeatureQuotaMetadata(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            BotFeatureQuotaMetadata.prototype.featureType = 0;
+            BotFeatureQuotaMetadata.prototype.remainingQuota = 0;
+            BotFeatureQuotaMetadata.prototype.expirationTimestamp = $util.Long
+                ? $util.Long.fromBits(0, 0, true)
+                : 0;
+            BotFeatureQuotaMetadata.create = function create(properties) {
+                return new BotFeatureQuotaMetadata(properties);
+            };
+            BotFeatureQuotaMetadata.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (
+                    message.featureType != null &&
+                    Object.hasOwnProperty.call(message, "featureType")
+                )
+                    writer.uint32(8).int32(message.featureType);
+                if (
+                    message.remainingQuota != null &&
+                    Object.hasOwnProperty.call(message, "remainingQuota")
+                )
+                    writer.uint32(16).uint32(message.remainingQuota);
+                if (
+                    message.expirationTimestamp != null &&
+                    Object.hasOwnProperty.call(message, "expirationTimestamp")
+                )
+                    writer.uint32(24).uint64(message.expirationTimestamp);
+                return writer;
+            };
+            BotFeatureQuotaMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            BotFeatureQuotaMetadata.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message = new $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.featureType = reader.int32();
+                            break;
+                        }
+                        case 2: {
+                            message.remainingQuota = reader.uint32();
+                            break;
+                        }
+                        case 3: {
+                            message.expirationTimestamp = reader.uint64();
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            BotFeatureQuotaMetadata.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            BotFeatureQuotaMetadata.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.featureType != null && message.hasOwnProperty("featureType"))
+                    switch (message.featureType) {
+                        default:
+                            return "featureType: enum value expected";
+                        case 0:
+                        case 1:
+                            break;
+                    }
+                if (message.remainingQuota != null && message.hasOwnProperty("remainingQuota"))
+                    if (!$util.isInteger(message.remainingQuota))
+                        return "remainingQuota: integer expected";
+                if (
+                    message.expirationTimestamp != null &&
+                    message.hasOwnProperty("expirationTimestamp")
+                )
+                    if (
+                        !$util.isInteger(message.expirationTimestamp) &&
+                        !(
+                            message.expirationTimestamp &&
+                            $util.isInteger(message.expirationTimestamp.low) &&
+                            $util.isInteger(message.expirationTimestamp.high)
+                        )
+                    )
+                        return "expirationTimestamp: integer|Long expected";
+                return null;
+            };
+            BotFeatureQuotaMetadata.fromObject = function fromObject(object) {
+                if (object instanceof $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata)
+                    return object;
+                var message = new $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata();
+                switch (object.featureType) {
+                    default:
+                        if (typeof object.featureType === "number") {
+                            message.featureType = object.featureType;
+                            break;
+                        }
+                        break;
+                    case "UNKNOWN_FEATURE":
+                    case 0:
+                        message.featureType = 0;
+                        break;
+                    case "REASONING_FEATURE":
+                    case 1:
+                        message.featureType = 1;
+                        break;
+                }
+                if (object.remainingQuota != null)
+                    message.remainingQuota = object.remainingQuota >>> 0;
+                if (object.expirationTimestamp != null)
+                    if ($util.Long)
+                        (message.expirationTimestamp = $util.Long.fromValue(
+                            object.expirationTimestamp
+                        )).unsigned = true;
+                    else if (typeof object.expirationTimestamp === "string")
+                        message.expirationTimestamp = parseInt(object.expirationTimestamp, 10);
+                    else if (typeof object.expirationTimestamp === "number")
+                        message.expirationTimestamp = object.expirationTimestamp;
+                    else if (typeof object.expirationTimestamp === "object")
+                        message.expirationTimestamp = new $util.LongBits(
+                            object.expirationTimestamp.low >>> 0,
+                            object.expirationTimestamp.high >>> 0
+                        ).toNumber(true);
+                return message;
+            };
+            BotFeatureQuotaMetadata.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.featureType = options.enums === String ? "UNKNOWN_FEATURE" : 0;
+                    object.remainingQuota = 0;
+                    if ($util.Long) {
+                        var long = new $util.Long(0, 0, true);
+                        object.expirationTimestamp =
+                            options.longs === String
+                                ? long.toString()
+                                : options.longs === Number
+                                  ? long.toNumber()
+                                  : long;
+                    } else object.expirationTimestamp = options.longs === String ? "0" : 0;
+                }
+                if (message.featureType != null && message.hasOwnProperty("featureType"))
+                    object.featureType =
+                        options.enums === String
+                            ? $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata
+                                  .BotFeatureType[message.featureType] === undefined
+                                ? message.featureType
+                                : $root.BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata
+                                      .BotFeatureType[message.featureType]
+                            : message.featureType;
+                if (message.remainingQuota != null && message.hasOwnProperty("remainingQuota"))
+                    object.remainingQuota = message.remainingQuota;
+                if (
+                    message.expirationTimestamp != null &&
+                    message.hasOwnProperty("expirationTimestamp")
+                )
+                    if (typeof message.expirationTimestamp === "number")
+                        object.expirationTimestamp =
+                            options.longs === String
+                                ? String(message.expirationTimestamp)
+                                : message.expirationTimestamp;
+                    else
+                        object.expirationTimestamp =
+                            options.longs === String
+                                ? $util.Long.prototype.toString.call(message.expirationTimestamp)
+                                : options.longs === Number
+                                  ? new $util.LongBits(
+                                        message.expirationTimestamp.low >>> 0,
+                                        message.expirationTimestamp.high >>> 0
+                                    ).toNumber(true)
+                                  : message.expirationTimestamp;
+                return object;
+            };
+            BotFeatureQuotaMetadata.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            BotFeatureQuotaMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/BotMetadata.BotQuotaMetadata.BotFeatureQuotaMetadata";
+            };
+            BotFeatureQuotaMetadata.BotFeatureType = (function () {
+                var valuesById = {},
+                    values = Object.create(valuesById);
+                values[(valuesById[0] = "UNKNOWN_FEATURE")] = 0;
+                values[(valuesById[1] = "REASONING_FEATURE")] = 1;
+                return values;
+            })();
+            return BotFeatureQuotaMetadata;
+        })();
+        return BotQuotaMetadata;
+    })();
+    BotMetadata.BotModeSelectionMetadata = (function () {
+        function BotModeSelectionMetadata(properties) {
+            this.mode = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotModeSelectionMetadata.prototype.mode = $util.emptyArray;
+        BotModeSelectionMetadata.create = function create(properties) {
+            return new BotModeSelectionMetadata(properties);
+        };
+        BotModeSelectionMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.mode != null && message.mode.length)
+                for (var i = 0; i < message.mode.length; ++i)
+                    writer.uint32(8).int32(message.mode[i]);
+            return writer;
+        };
+        BotModeSelectionMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotModeSelectionMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotModeSelectionMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.mode && message.mode.length)) message.mode = [];
+                        if ((tag & 7) === 2) {
+                            var end2 = reader.uint32() + reader.pos;
+                            while (reader.pos < end2) message.mode.push(reader.int32());
+                        } else message.mode.push(reader.int32());
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotModeSelectionMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotModeSelectionMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.mode != null && message.hasOwnProperty("mode")) {
+                if (!Array.isArray(message.mode)) return "mode: array expected";
+                for (var i = 0; i < message.mode.length; ++i)
+                    switch (message.mode[i]) {
+                        default:
+                            return "mode: enum value[] expected";
+                        case 0:
+                        case 1:
+                            break;
+                    }
+            }
+            return null;
+        };
+        BotModeSelectionMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotModeSelectionMetadata) return object;
+            var message = new $root.BotMetadata.BotModeSelectionMetadata();
+            if (object.mode) {
+                if (!Array.isArray(object.mode))
+                    throw TypeError(".BotMetadata.BotModeSelectionMetadata.mode: array expected");
+                message.mode = [];
+                for (var i = 0; i < object.mode.length; ++i)
+                    switch (object.mode[i]) {
+                        default:
+                            if (typeof object.mode[i] === "number") {
+                                message.mode[i] = object.mode[i];
+                                break;
+                            }
+                        case "UNKNOWN_MODE":
+                        case 0:
+                            message.mode[i] = 0;
+                            break;
+                        case "REASONING_MODE":
+                        case 1:
+                            message.mode[i] = 1;
+                            break;
+                    }
+            }
+            return message;
+        };
+        BotModeSelectionMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.mode = [];
+            if (message.mode && message.mode.length) {
+                object.mode = [];
+                for (var j = 0; j < message.mode.length; ++j)
+                    object.mode[j] =
+                        options.enums === String
+                            ? $root.BotMetadata.BotModeSelectionMetadata.BotUserSelectionMode[
+                                  message.mode[j]
+                              ] === undefined
+                                ? message.mode[j]
+                                : $root.BotMetadata.BotModeSelectionMetadata.BotUserSelectionMode[
+                                      message.mode[j]
+                                  ]
+                            : message.mode[j];
+            }
+            return object;
+        };
+        BotModeSelectionMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotModeSelectionMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotModeSelectionMetadata";
+        };
+        BotModeSelectionMetadata.BotUserSelectionMode = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN_MODE")] = 0;
+            values[(valuesById[1] = "REASONING_MODE")] = 1;
+            return values;
+        })();
+        return BotModeSelectionMetadata;
+    })();
+    BotMetadata.BotCapabilityMetadata = (function () {
+        function BotCapabilityMetadata(properties) {
+            this.capabilities = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotCapabilityMetadata.prototype.capabilities = $util.emptyArray;
+        BotCapabilityMetadata.create = function create(properties) {
+            return new BotCapabilityMetadata(properties);
+        };
+        BotCapabilityMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.capabilities != null && message.capabilities.length)
+                for (var i = 0; i < message.capabilities.length; ++i)
+                    writer.uint32(8).int32(message.capabilities[i]);
+            return writer;
+        };
+        BotCapabilityMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotCapabilityMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotCapabilityMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.capabilities && message.capabilities.length))
+                            message.capabilities = [];
+                        if ((tag & 7) === 2) {
+                            var end2 = reader.uint32() + reader.pos;
+                            while (reader.pos < end2) message.capabilities.push(reader.int32());
+                        } else message.capabilities.push(reader.int32());
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotCapabilityMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotCapabilityMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.capabilities != null && message.hasOwnProperty("capabilities")) {
+                if (!Array.isArray(message.capabilities)) return "capabilities: array expected";
+                for (var i = 0; i < message.capabilities.length; ++i)
+                    switch (message.capabilities[i]) {
+                        default:
+                            return "capabilities: enum value[] expected";
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+                        case 9:
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+                        case 15:
+                        case 16:
+                        case 17:
+                        case 18:
+                        case 19:
+                        case 20:
+                        case 21:
+                        case 22:
+                        case 23:
+                        case 24:
+                        case 25:
+                        case 26:
+                        case 27:
+                        case 28:
+                        case 29:
+                        case 30:
+                        case 31:
+                        case 32:
+                        case 33:
+                        case 34:
+                        case 35:
+                        case 36:
+                        case 37:
+                        case 38:
+                        case 39:
+                        case 40:
+                        case 41:
+                        case 42:
+                            break;
+                    }
+            }
+            return null;
+        };
+        BotCapabilityMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotCapabilityMetadata) return object;
+            var message = new $root.BotMetadata.BotCapabilityMetadata();
+            if (object.capabilities) {
+                if (!Array.isArray(object.capabilities))
+                    throw TypeError(
+                        ".BotMetadata.BotCapabilityMetadata.capabilities: array expected"
+                    );
+                message.capabilities = [];
+                for (var i = 0; i < object.capabilities.length; ++i)
+                    switch (object.capabilities[i]) {
+                        default:
+                            if (typeof object.capabilities[i] === "number") {
+                                message.capabilities[i] = object.capabilities[i];
+                                break;
+                            }
+                        case "UNKNOWN":
+                        case 0:
+                            message.capabilities[i] = 0;
+                            break;
+                        case "PROGRESS_INDICATOR":
+                        case 1:
+                            message.capabilities[i] = 1;
+                            break;
+                        case "RICH_RESPONSE_HEADING":
+                        case 2:
+                            message.capabilities[i] = 2;
+                            break;
+                        case "RICH_RESPONSE_NESTED_LIST":
+                        case 3:
+                            message.capabilities[i] = 3;
+                            break;
+                        case "AI_MEMORY":
+                        case 4:
+                            message.capabilities[i] = 4;
+                            break;
+                        case "RICH_RESPONSE_THREAD_SURFING":
+                        case 5:
+                            message.capabilities[i] = 5;
+                            break;
+                        case "RICH_RESPONSE_TABLE":
+                        case 6:
+                            message.capabilities[i] = 6;
+                            break;
+                        case "RICH_RESPONSE_CODE":
+                        case 7:
+                            message.capabilities[i] = 7;
+                            break;
+                        case "RICH_RESPONSE_STRUCTURED_RESPONSE":
+                        case 8:
+                            message.capabilities[i] = 8;
+                            break;
+                        case "RICH_RESPONSE_INLINE_IMAGE":
+                        case 9:
+                            message.capabilities[i] = 9;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_CONTROL":
+                        case 10:
+                            message.capabilities[i] = 10;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_1":
+                        case 11:
+                            message.capabilities[i] = 11;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_2":
+                        case 12:
+                            message.capabilities[i] = 12;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_3":
+                        case 13:
+                            message.capabilities[i] = 13;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_4":
+                        case 14:
+                            message.capabilities[i] = 14;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_5":
+                        case 15:
+                            message.capabilities[i] = 15;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_6":
+                        case 16:
+                            message.capabilities[i] = 16;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_7":
+                        case 17:
+                            message.capabilities[i] = 17;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_8":
+                        case 18:
+                            message.capabilities[i] = 18;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_9":
+                        case 19:
+                            message.capabilities[i] = 19;
+                            break;
+                        case "WA_IG_1P_PLUGIN_RANKING_UPDATE_10":
+                        case 20:
+                            message.capabilities[i] = 20;
+                            break;
+                        case "RICH_RESPONSE_SUB_HEADING":
+                        case 21:
+                            message.capabilities[i] = 21;
+                            break;
+                        case "RICH_RESPONSE_GRID_IMAGE":
+                        case 22:
+                            message.capabilities[i] = 22;
+                            break;
+                        case "AI_STUDIO_UGC_MEMORY":
+                        case 23:
+                            message.capabilities[i] = 23;
+                            break;
+                        case "RICH_RESPONSE_LATEX":
+                        case 24:
+                            message.capabilities[i] = 24;
+                            break;
+                        case "RICH_RESPONSE_MAPS":
+                        case 25:
+                            message.capabilities[i] = 25;
+                            break;
+                        case "RICH_RESPONSE_INLINE_REELS":
+                        case 26:
+                            message.capabilities[i] = 26;
+                            break;
+                        case "AGENTIC_PLANNING":
+                        case 27:
+                            message.capabilities[i] = 27;
+                            break;
+                        case "ACCOUNT_LINKING":
+                        case 28:
+                            message.capabilities[i] = 28;
+                            break;
+                        case "STREAMING_DISAGGREGATION":
+                        case 29:
+                            message.capabilities[i] = 29;
+                            break;
+                        case "RICH_RESPONSE_GRID_IMAGE_3P":
+                        case 30:
+                            message.capabilities[i] = 30;
+                            break;
+                        case "RICH_RESPONSE_LATEX_INLINE":
+                        case 31:
+                            message.capabilities[i] = 31;
+                            break;
+                        case "QUERY_PLAN":
+                        case 32:
+                            message.capabilities[i] = 32;
+                            break;
+                        case "PROACTIVE_MESSAGE":
+                        case 33:
+                            message.capabilities[i] = 33;
+                            break;
+                        case "RICH_RESPONSE_UNIFIED_RESPONSE":
+                        case 34:
+                            message.capabilities[i] = 34;
+                            break;
+                        case "PROMOTION_MESSAGE":
+                        case 35:
+                            message.capabilities[i] = 35;
+                            break;
+                        case "SIMPLIFIED_PROFILE_PAGE":
+                        case 36:
+                            message.capabilities[i] = 36;
+                            break;
+                        case "RICH_RESPONSE_SOURCES_IN_MESSAGE":
+                        case 37:
+                            message.capabilities[i] = 37;
+                            break;
+                        case "RICH_RESPONSE_SIDE_BY_SIDE_SURVEY":
+                        case 38:
+                            message.capabilities[i] = 38;
+                            break;
+                        case "RICH_RESPONSE_UNIFIED_TEXT_COMPONENT":
+                        case 39:
+                            message.capabilities[i] = 39;
+                            break;
+                        case "AI_SHARED_MEMORY":
+                        case 40:
+                            message.capabilities[i] = 40;
+                            break;
+                        case "RICH_RESPONSE_UNIFIED_SOURCES":
+                        case 41:
+                            message.capabilities[i] = 41;
+                            break;
+                        case "RICH_RESPONSE_UNIFIED_DOMAIN_CITATIONS":
+                        case 42:
+                            message.capabilities[i] = 42;
+                            break;
+                    }
+            }
+            return message;
+        };
+        BotCapabilityMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.capabilities = [];
+            if (message.capabilities && message.capabilities.length) {
+                object.capabilities = [];
+                for (var j = 0; j < message.capabilities.length; ++j)
+                    object.capabilities[j] =
+                        options.enums === String
+                            ? $root.BotMetadata.BotCapabilityMetadata.BotCapabilityType[
+                                  message.capabilities[j]
+                              ] === undefined
+                                ? message.capabilities[j]
+                                : $root.BotMetadata.BotCapabilityMetadata.BotCapabilityType[
+                                      message.capabilities[j]
+                                  ]
+                            : message.capabilities[j];
+            }
+            return object;
+        };
+        BotCapabilityMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotCapabilityMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotCapabilityMetadata";
+        };
+        BotCapabilityMetadata.BotCapabilityType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN")] = 0;
+            values[(valuesById[1] = "PROGRESS_INDICATOR")] = 1;
+            values[(valuesById[2] = "RICH_RESPONSE_HEADING")] = 2;
+            values[(valuesById[3] = "RICH_RESPONSE_NESTED_LIST")] = 3;
+            values[(valuesById[4] = "AI_MEMORY")] = 4;
+            values[(valuesById[5] = "RICH_RESPONSE_THREAD_SURFING")] = 5;
+            values[(valuesById[6] = "RICH_RESPONSE_TABLE")] = 6;
+            values[(valuesById[7] = "RICH_RESPONSE_CODE")] = 7;
+            values[(valuesById[8] = "RICH_RESPONSE_STRUCTURED_RESPONSE")] = 8;
+            values[(valuesById[9] = "RICH_RESPONSE_INLINE_IMAGE")] = 9;
+            values[(valuesById[10] = "WA_IG_1P_PLUGIN_RANKING_CONTROL")] = 10;
+            values[(valuesById[11] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_1")] = 11;
+            values[(valuesById[12] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_2")] = 12;
+            values[(valuesById[13] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_3")] = 13;
+            values[(valuesById[14] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_4")] = 14;
+            values[(valuesById[15] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_5")] = 15;
+            values[(valuesById[16] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_6")] = 16;
+            values[(valuesById[17] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_7")] = 17;
+            values[(valuesById[18] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_8")] = 18;
+            values[(valuesById[19] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_9")] = 19;
+            values[(valuesById[20] = "WA_IG_1P_PLUGIN_RANKING_UPDATE_10")] = 20;
+            values[(valuesById[21] = "RICH_RESPONSE_SUB_HEADING")] = 21;
+            values[(valuesById[22] = "RICH_RESPONSE_GRID_IMAGE")] = 22;
+            values[(valuesById[23] = "AI_STUDIO_UGC_MEMORY")] = 23;
+            values[(valuesById[24] = "RICH_RESPONSE_LATEX")] = 24;
+            values[(valuesById[25] = "RICH_RESPONSE_MAPS")] = 25;
+            values[(valuesById[26] = "RICH_RESPONSE_INLINE_REELS")] = 26;
+            values[(valuesById[27] = "AGENTIC_PLANNING")] = 27;
+            values[(valuesById[28] = "ACCOUNT_LINKING")] = 28;
+            values[(valuesById[29] = "STREAMING_DISAGGREGATION")] = 29;
+            values[(valuesById[30] = "RICH_RESPONSE_GRID_IMAGE_3P")] = 30;
+            values[(valuesById[31] = "RICH_RESPONSE_LATEX_INLINE")] = 31;
+            values[(valuesById[32] = "QUERY_PLAN")] = 32;
+            values[(valuesById[33] = "PROACTIVE_MESSAGE")] = 33;
+            values[(valuesById[34] = "RICH_RESPONSE_UNIFIED_RESPONSE")] = 34;
+            values[(valuesById[35] = "PROMOTION_MESSAGE")] = 35;
+            values[(valuesById[36] = "SIMPLIFIED_PROFILE_PAGE")] = 36;
+            values[(valuesById[37] = "RICH_RESPONSE_SOURCES_IN_MESSAGE")] = 37;
+            values[(valuesById[38] = "RICH_RESPONSE_SIDE_BY_SIDE_SURVEY")] = 38;
+            values[(valuesById[39] = "RICH_RESPONSE_UNIFIED_TEXT_COMPONENT")] = 39;
+            values[(valuesById[40] = "AI_SHARED_MEMORY")] = 40;
+            values[(valuesById[41] = "RICH_RESPONSE_UNIFIED_SOURCES")] = 41;
+            values[(valuesById[42] = "RICH_RESPONSE_UNIFIED_DOMAIN_CITATIONS")] = 42;
+            return values;
+        })();
+        return BotCapabilityMetadata;
+    })();
+    BotMetadata.BotProgressIndicatorMetadata = (function () {
+        function BotProgressIndicatorMetadata(properties) {
+            this.stepsMetadata = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotProgressIndicatorMetadata.prototype.progressDescription = "";
+        BotProgressIndicatorMetadata.prototype.stepsMetadata = $util.emptyArray;
+        BotProgressIndicatorMetadata.create = function create(properties) {
+            return new BotProgressIndicatorMetadata(properties);
+        };
+        BotProgressIndicatorMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (
+                message.progressDescription != null &&
+                Object.hasOwnProperty.call(message, "progressDescription")
+            )
+                writer.uint32(10).string(message.progressDescription);
+            if (message.stepsMetadata != null && message.stepsMetadata.length)
+                for (var i = 0; i < message.stepsMetadata.length; ++i)
+                    $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.encode(
+                        message.stepsMetadata[i],
+                        writer.uint32(18).fork()
+                    ).ldelim();
+            return writer;
+        };
+        BotProgressIndicatorMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotProgressIndicatorMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotProgressIndicatorMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.progressDescription = reader.string();
+                        break;
+                    }
+                    case 2: {
+                        if (!(message.stepsMetadata && message.stepsMetadata.length))
+                            message.stepsMetadata = [];
+                        message.stepsMetadata.push(
+                            $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.decode(
+                                reader,
+                                reader.uint32()
+                            )
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotProgressIndicatorMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotProgressIndicatorMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (
+                message.progressDescription != null &&
+                message.hasOwnProperty("progressDescription")
+            )
+                if (!$util.isString(message.progressDescription))
+                    return "progressDescription: string expected";
+            if (message.stepsMetadata != null && message.hasOwnProperty("stepsMetadata")) {
+                if (!Array.isArray(message.stepsMetadata)) return "stepsMetadata: array expected";
+                for (var i = 0; i < message.stepsMetadata.length; ++i) {
+                    var error =
+                        $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.verify(
+                            message.stepsMetadata[i]
+                        );
+                    if (error) return "stepsMetadata." + error;
+                }
+            }
+            return null;
+        };
+        BotProgressIndicatorMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotProgressIndicatorMetadata) return object;
+            var message = new $root.BotMetadata.BotProgressIndicatorMetadata();
+            if (object.progressDescription != null)
+                message.progressDescription = String(object.progressDescription);
+            if (object.stepsMetadata) {
+                if (!Array.isArray(object.stepsMetadata))
+                    throw TypeError(
+                        ".BotMetadata.BotProgressIndicatorMetadata.stepsMetadata: array expected"
+                    );
+                message.stepsMetadata = [];
+                for (var i = 0; i < object.stepsMetadata.length; ++i) {
+                    if (typeof object.stepsMetadata[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotProgressIndicatorMetadata.stepsMetadata: object expected"
+                        );
+                    message.stepsMetadata[i] =
+                        $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.fromObject(
+                            object.stepsMetadata[i]
+                        );
+                }
+            }
+            return message;
+        };
+        BotProgressIndicatorMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.stepsMetadata = [];
+            if (options.defaults) object.progressDescription = "";
+            if (
+                message.progressDescription != null &&
+                message.hasOwnProperty("progressDescription")
+            )
+                object.progressDescription = message.progressDescription;
+            if (message.stepsMetadata && message.stepsMetadata.length) {
+                object.stepsMetadata = [];
+                for (var j = 0; j < message.stepsMetadata.length; ++j)
+                    object.stepsMetadata[j] =
+                        $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.toObject(
+                            message.stepsMetadata[j],
+                            options
+                        );
+            }
+            return object;
+        };
+        BotProgressIndicatorMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotProgressIndicatorMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotProgressIndicatorMetadata";
+        };
+        BotProgressIndicatorMetadata.BotPlanningStepMetadata = (function () {
+            function BotPlanningStepMetadata(properties) {
+                this.sourcesMetadata = [];
+                this.sections = [];
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            BotPlanningStepMetadata.prototype.statusTitle = "";
+            BotPlanningStepMetadata.prototype.statusBody = "";
+            BotPlanningStepMetadata.prototype.sourcesMetadata = $util.emptyArray;
+            BotPlanningStepMetadata.prototype.status = 0;
+            BotPlanningStepMetadata.prototype.isReasoning = false;
+            BotPlanningStepMetadata.prototype.isEnhancedSearch = false;
+            BotPlanningStepMetadata.prototype.sections = $util.emptyArray;
+            BotPlanningStepMetadata.create = function create(properties) {
+                return new BotPlanningStepMetadata(properties);
+            };
+            BotPlanningStepMetadata.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (
+                    message.statusTitle != null &&
+                    Object.hasOwnProperty.call(message, "statusTitle")
+                )
+                    writer.uint32(10).string(message.statusTitle);
+                if (message.statusBody != null && Object.hasOwnProperty.call(message, "statusBody"))
+                    writer.uint32(18).string(message.statusBody);
+                if (message.sourcesMetadata != null && message.sourcesMetadata.length)
+                    for (var i = 0; i < message.sourcesMetadata.length; ++i)
+                        $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata.encode(
+                            message.sourcesMetadata[i],
+                            writer.uint32(26).fork()
+                        ).ldelim();
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    writer.uint32(32).int32(message.status);
+                if (
+                    message.isReasoning != null &&
+                    Object.hasOwnProperty.call(message, "isReasoning")
+                )
+                    writer.uint32(40).bool(message.isReasoning);
+                if (
+                    message.isEnhancedSearch != null &&
+                    Object.hasOwnProperty.call(message, "isEnhancedSearch")
+                )
+                    writer.uint32(48).bool(message.isEnhancedSearch);
+                if (message.sections != null && message.sections.length)
+                    for (var i = 0; i < message.sections.length; ++i)
+                        $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata.encode(
+                            message.sections[i],
+                            writer.uint32(58).fork()
+                        ).ldelim();
+                return writer;
+            };
+            BotPlanningStepMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            BotPlanningStepMetadata.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message =
+                        new $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.statusTitle = reader.string();
+                            break;
+                        }
+                        case 2: {
+                            message.statusBody = reader.string();
+                            break;
+                        }
+                        case 3: {
+                            if (!(message.sourcesMetadata && message.sourcesMetadata.length))
+                                message.sourcesMetadata = [];
+                            message.sourcesMetadata.push(
+                                $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata.decode(
+                                    reader,
+                                    reader.uint32()
+                                )
+                            );
+                            break;
+                        }
+                        case 4: {
+                            message.status = reader.int32();
+                            break;
+                        }
+                        case 5: {
+                            message.isReasoning = reader.bool();
+                            break;
+                        }
+                        case 6: {
+                            message.isEnhancedSearch = reader.bool();
+                            break;
+                        }
+                        case 7: {
+                            if (!(message.sections && message.sections.length))
+                                message.sections = [];
+                            message.sections.push(
+                                $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata.decode(
+                                    reader,
+                                    reader.uint32()
+                                )
+                            );
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            BotPlanningStepMetadata.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            BotPlanningStepMetadata.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.statusTitle != null && message.hasOwnProperty("statusTitle"))
+                    if (!$util.isString(message.statusTitle)) return "statusTitle: string expected";
+                if (message.statusBody != null && message.hasOwnProperty("statusBody"))
+                    if (!$util.isString(message.statusBody)) return "statusBody: string expected";
+                if (message.sourcesMetadata != null && message.hasOwnProperty("sourcesMetadata")) {
+                    if (!Array.isArray(message.sourcesMetadata))
+                        return "sourcesMetadata: array expected";
+                    for (var i = 0; i < message.sourcesMetadata.length; ++i) {
+                        var error =
+                            $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata.verify(
+                                message.sourcesMetadata[i]
+                            );
+                        if (error) return "sourcesMetadata." + error;
+                    }
+                }
+                if (message.status != null && message.hasOwnProperty("status"))
+                    switch (message.status) {
+                        default:
+                            return "status: enum value expected";
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                            break;
+                    }
+                if (message.isReasoning != null && message.hasOwnProperty("isReasoning"))
+                    if (typeof message.isReasoning !== "boolean")
+                        return "isReasoning: boolean expected";
+                if (message.isEnhancedSearch != null && message.hasOwnProperty("isEnhancedSearch"))
+                    if (typeof message.isEnhancedSearch !== "boolean")
+                        return "isEnhancedSearch: boolean expected";
+                if (message.sections != null && message.hasOwnProperty("sections")) {
+                    if (!Array.isArray(message.sections)) return "sections: array expected";
+                    for (var i = 0; i < message.sections.length; ++i) {
+                        var error =
+                            $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata.verify(
+                                message.sections[i]
+                            );
+                        if (error) return "sections." + error;
+                    }
+                }
+                return null;
+            };
+            BotPlanningStepMetadata.fromObject = function fromObject(object) {
+                if (
+                    object instanceof
+                    $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata
+                )
+                    return object;
+                var message =
+                    new $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata();
+                if (object.statusTitle != null) message.statusTitle = String(object.statusTitle);
+                if (object.statusBody != null) message.statusBody = String(object.statusBody);
+                if (object.sourcesMetadata) {
+                    if (!Array.isArray(object.sourcesMetadata))
+                        throw TypeError(
+                            ".BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.sourcesMetadata: array expected"
+                        );
+                    message.sourcesMetadata = [];
+                    for (var i = 0; i < object.sourcesMetadata.length; ++i) {
+                        if (typeof object.sourcesMetadata[i] !== "object")
+                            throw TypeError(
+                                ".BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.sourcesMetadata: object expected"
+                            );
+                        message.sourcesMetadata[i] =
+                            $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata.fromObject(
+                                object.sourcesMetadata[i]
+                            );
+                    }
+                }
+                switch (object.status) {
+                    default:
+                        if (typeof object.status === "number") {
+                            message.status = object.status;
+                            break;
+                        }
+                        break;
+                    case "UNKNOWN":
+                    case 0:
+                        message.status = 0;
+                        break;
+                    case "PLANNED":
+                    case 1:
+                        message.status = 1;
+                        break;
+                    case "EXECUTING":
+                    case 2:
+                        message.status = 2;
+                        break;
+                    case "FINISHED":
+                    case 3:
+                        message.status = 3;
+                        break;
+                }
+                if (object.isReasoning != null) message.isReasoning = Boolean(object.isReasoning);
+                if (object.isEnhancedSearch != null)
+                    message.isEnhancedSearch = Boolean(object.isEnhancedSearch);
+                if (object.sections) {
+                    if (!Array.isArray(object.sections))
+                        throw TypeError(
+                            ".BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.sections: array expected"
+                        );
+                    message.sections = [];
+                    for (var i = 0; i < object.sections.length; ++i) {
+                        if (typeof object.sections[i] !== "object")
+                            throw TypeError(
+                                ".BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.sections: object expected"
+                            );
+                        message.sections[i] =
+                            $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata.fromObject(
+                                object.sections[i]
+                            );
+                    }
+                }
+                return message;
+            };
+            BotPlanningStepMetadata.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.arrays || options.defaults) {
+                    object.sourcesMetadata = [];
+                    object.sections = [];
+                }
+                if (options.defaults) {
+                    object.statusTitle = "";
+                    object.statusBody = "";
+                    object.status = options.enums === String ? "UNKNOWN" : 0;
+                    object.isReasoning = false;
+                    object.isEnhancedSearch = false;
+                }
+                if (message.statusTitle != null && message.hasOwnProperty("statusTitle"))
+                    object.statusTitle = message.statusTitle;
+                if (message.statusBody != null && message.hasOwnProperty("statusBody"))
+                    object.statusBody = message.statusBody;
+                if (message.sourcesMetadata && message.sourcesMetadata.length) {
+                    object.sourcesMetadata = [];
+                    for (var j = 0; j < message.sourcesMetadata.length; ++j)
+                        object.sourcesMetadata[j] =
+                            $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata.toObject(
+                                message.sourcesMetadata[j],
+                                options
+                            );
+                }
+                if (message.status != null && message.hasOwnProperty("status"))
+                    object.status =
+                        options.enums === String
+                            ? $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata
+                                  .PlanningStepStatus[message.status] === undefined
+                                ? message.status
+                                : $root.BotMetadata.BotProgressIndicatorMetadata
+                                      .BotPlanningStepMetadata.PlanningStepStatus[message.status]
+                            : message.status;
+                if (message.isReasoning != null && message.hasOwnProperty("isReasoning"))
+                    object.isReasoning = message.isReasoning;
+                if (message.isEnhancedSearch != null && message.hasOwnProperty("isEnhancedSearch"))
+                    object.isEnhancedSearch = message.isEnhancedSearch;
+                if (message.sections && message.sections.length) {
+                    object.sections = [];
+                    for (var j = 0; j < message.sections.length; ++j)
+                        object.sections[j] =
+                            $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata.toObject(
+                                message.sections[j],
+                                options
+                            );
+                }
+                return object;
+            };
+            BotPlanningStepMetadata.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            BotPlanningStepMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return (
+                    typeUrlPrefix +
+                    "/BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata"
+                );
+            };
+            BotPlanningStepMetadata.BotPlanningSearchSourceMetadata = (function () {
+                function BotPlanningSearchSourceMetadata(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+                }
+                BotPlanningSearchSourceMetadata.prototype.title = "";
+                BotPlanningSearchSourceMetadata.prototype.provider = 0;
+                BotPlanningSearchSourceMetadata.prototype.sourceUrl = "";
+                BotPlanningSearchSourceMetadata.prototype.favIconUrl = "";
+                BotPlanningSearchSourceMetadata.create = function create(properties) {
+                    return new BotPlanningSearchSourceMetadata(properties);
+                };
+                BotPlanningSearchSourceMetadata.encode = function encode(message, writer) {
+                    if (!writer) writer = $Writer.create();
+                    if (message.title != null && Object.hasOwnProperty.call(message, "title"))
+                        writer.uint32(10).string(message.title);
+                    if (message.provider != null && Object.hasOwnProperty.call(message, "provider"))
+                        writer.uint32(16).int32(message.provider);
+                    if (
+                        message.sourceUrl != null &&
+                        Object.hasOwnProperty.call(message, "sourceUrl")
+                    )
+                        writer.uint32(26).string(message.sourceUrl);
+                    if (
+                        message.favIconUrl != null &&
+                        Object.hasOwnProperty.call(message, "favIconUrl")
+                    )
+                        writer.uint32(34).string(message.favIconUrl);
+                    return writer;
+                };
+                BotPlanningSearchSourceMetadata.encodeDelimited = function encodeDelimited(
+                    message,
+                    writer
+                ) {
+                    return this.encode(message, writer).ldelim();
+                };
+                BotPlanningSearchSourceMetadata.decode = function decode(reader, length, error) {
+                    if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length,
+                        message =
+                            new $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourceMetadata();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        if (tag === error) break;
+                        switch (tag >>> 3) {
+                            case 1: {
+                                message.title = reader.string();
+                                break;
+                            }
+                            case 2: {
+                                message.provider = reader.int32();
+                                break;
+                            }
+                            case 3: {
+                                message.sourceUrl = reader.string();
+                                break;
+                            }
+                            case 4: {
+                                message.favIconUrl = reader.string();
+                                break;
+                            }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                        }
+                    }
+                    return message;
+                };
+                BotPlanningSearchSourceMetadata.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+                BotPlanningSearchSourceMetadata.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null) return "object expected";
+                    if (message.title != null && message.hasOwnProperty("title"))
+                        if (!$util.isString(message.title)) return "title: string expected";
+                    if (message.provider != null && message.hasOwnProperty("provider"))
+                        switch (message.provider) {
+                            default:
+                                return "provider: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                break;
+                        }
+                    if (message.sourceUrl != null && message.hasOwnProperty("sourceUrl"))
+                        if (!$util.isString(message.sourceUrl)) return "sourceUrl: string expected";
+                    if (message.favIconUrl != null && message.hasOwnProperty("favIconUrl"))
+                        if (!$util.isString(message.favIconUrl))
+                            return "favIconUrl: string expected";
+                    return null;
+                };
+                BotPlanningSearchSourceMetadata.fromObject = function fromObject(object) {
+                    if (
+                        object instanceof
+                        $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata
+                            .BotPlanningSearchSourceMetadata
+                    )
+                        return object;
+                    var message =
+                        new $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourceMetadata();
+                    if (object.title != null) message.title = String(object.title);
+                    switch (object.provider) {
+                        default:
+                            if (typeof object.provider === "number") {
+                                message.provider = object.provider;
+                                break;
+                            }
+                            break;
+                        case "UNKNOWN_PROVIDER":
+                        case 0:
+                            message.provider = 0;
+                            break;
+                        case "OTHER":
+                        case 1:
+                            message.provider = 1;
+                            break;
+                        case "GOOGLE":
+                        case 2:
+                            message.provider = 2;
+                            break;
+                        case "BING":
+                        case 3:
+                            message.provider = 3;
+                            break;
+                    }
+                    if (object.sourceUrl != null) message.sourceUrl = String(object.sourceUrl);
+                    if (object.favIconUrl != null) message.favIconUrl = String(object.favIconUrl);
+                    return message;
+                };
+                BotPlanningSearchSourceMetadata.toObject = function toObject(message, options) {
+                    if (!options) options = {};
+                    var object = {};
+                    if (options.defaults) {
+                        object.title = "";
+                        object.provider = options.enums === String ? "UNKNOWN_PROVIDER" : 0;
+                        object.sourceUrl = "";
+                        object.favIconUrl = "";
+                    }
+                    if (message.title != null && message.hasOwnProperty("title"))
+                        object.title = message.title;
+                    if (message.provider != null && message.hasOwnProperty("provider"))
+                        object.provider =
+                            options.enums === String
+                                ? $root.BotMetadata.BotProgressIndicatorMetadata
+                                      .BotPlanningStepMetadata.BotSearchSourceProvider[
+                                      message.provider
+                                  ] === undefined
+                                    ? message.provider
+                                    : $root.BotMetadata.BotProgressIndicatorMetadata
+                                          .BotPlanningStepMetadata.BotSearchSourceProvider[
+                                          message.provider
+                                      ]
+                                : message.provider;
+                    if (message.sourceUrl != null && message.hasOwnProperty("sourceUrl"))
+                        object.sourceUrl = message.sourceUrl;
+                    if (message.favIconUrl != null && message.hasOwnProperty("favIconUrl"))
+                        object.favIconUrl = message.favIconUrl;
+                    return object;
+                };
+                BotPlanningSearchSourceMetadata.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+                BotPlanningSearchSourceMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return (
+                        typeUrlPrefix +
+                        "/BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourceMetadata"
+                    );
+                };
+                return BotPlanningSearchSourceMetadata;
+            })();
+            BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata = (function () {
+                function BotPlanningSearchSourcesMetadata(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+                }
+                BotPlanningSearchSourcesMetadata.prototype.sourceTitle = "";
+                BotPlanningSearchSourcesMetadata.prototype.provider = 0;
+                BotPlanningSearchSourcesMetadata.prototype.sourceUrl = "";
+                BotPlanningSearchSourcesMetadata.create = function create(properties) {
+                    return new BotPlanningSearchSourcesMetadata(properties);
+                };
+                BotPlanningSearchSourcesMetadata.encode = function encode(message, writer) {
+                    if (!writer) writer = $Writer.create();
+                    if (
+                        message.sourceTitle != null &&
+                        Object.hasOwnProperty.call(message, "sourceTitle")
+                    )
+                        writer.uint32(10).string(message.sourceTitle);
+                    if (message.provider != null && Object.hasOwnProperty.call(message, "provider"))
+                        writer.uint32(16).int32(message.provider);
+                    if (
+                        message.sourceUrl != null &&
+                        Object.hasOwnProperty.call(message, "sourceUrl")
+                    )
+                        writer.uint32(26).string(message.sourceUrl);
+                    return writer;
+                };
+                BotPlanningSearchSourcesMetadata.encodeDelimited = function encodeDelimited(
+                    message,
+                    writer
+                ) {
+                    return this.encode(message, writer).ldelim();
+                };
+                BotPlanningSearchSourcesMetadata.decode = function decode(reader, length, error) {
+                    if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length,
+                        message =
+                            new $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        if (tag === error) break;
+                        switch (tag >>> 3) {
+                            case 1: {
+                                message.sourceTitle = reader.string();
+                                break;
+                            }
+                            case 2: {
+                                message.provider = reader.int32();
+                                break;
+                            }
+                            case 3: {
+                                message.sourceUrl = reader.string();
+                                break;
+                            }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                        }
+                    }
+                    return message;
+                };
+                BotPlanningSearchSourcesMetadata.decodeDelimited = function decodeDelimited(
+                    reader
+                ) {
+                    if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+                BotPlanningSearchSourcesMetadata.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null) return "object expected";
+                    if (message.sourceTitle != null && message.hasOwnProperty("sourceTitle"))
+                        if (!$util.isString(message.sourceTitle))
+                            return "sourceTitle: string expected";
+                    if (message.provider != null && message.hasOwnProperty("provider"))
+                        switch (message.provider) {
+                            default:
+                                return "provider: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                break;
+                        }
+                    if (message.sourceUrl != null && message.hasOwnProperty("sourceUrl"))
+                        if (!$util.isString(message.sourceUrl)) return "sourceUrl: string expected";
+                    return null;
+                };
+                BotPlanningSearchSourcesMetadata.fromObject = function fromObject(object) {
+                    if (
+                        object instanceof
+                        $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata
+                            .BotPlanningSearchSourcesMetadata
+                    )
+                        return object;
+                    var message =
+                        new $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata();
+                    if (object.sourceTitle != null)
+                        message.sourceTitle = String(object.sourceTitle);
+                    switch (object.provider) {
+                        default:
+                            if (typeof object.provider === "number") {
+                                message.provider = object.provider;
+                                break;
+                            }
+                            break;
+                        case "UNKNOWN":
+                        case 0:
+                            message.provider = 0;
+                            break;
+                        case "OTHER":
+                        case 1:
+                            message.provider = 1;
+                            break;
+                        case "GOOGLE":
+                        case 2:
+                            message.provider = 2;
+                            break;
+                        case "BING":
+                        case 3:
+                            message.provider = 3;
+                            break;
+                    }
+                    if (object.sourceUrl != null) message.sourceUrl = String(object.sourceUrl);
+                    return message;
+                };
+                BotPlanningSearchSourcesMetadata.toObject = function toObject(message, options) {
+                    if (!options) options = {};
+                    var object = {};
+                    if (options.defaults) {
+                        object.sourceTitle = "";
+                        object.provider = options.enums === String ? "UNKNOWN" : 0;
+                        object.sourceUrl = "";
+                    }
+                    if (message.sourceTitle != null && message.hasOwnProperty("sourceTitle"))
+                        object.sourceTitle = message.sourceTitle;
+                    if (message.provider != null && message.hasOwnProperty("provider"))
+                        object.provider =
+                            options.enums === String
+                                ? $root.BotMetadata.BotProgressIndicatorMetadata
+                                      .BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata
+                                      .BotPlanningSearchSourceProvider[message.provider] ===
+                                  undefined
+                                    ? message.provider
+                                    : $root.BotMetadata.BotProgressIndicatorMetadata
+                                          .BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata
+                                          .BotPlanningSearchSourceProvider[message.provider]
+                                : message.provider;
+                    if (message.sourceUrl != null && message.hasOwnProperty("sourceUrl"))
+                        object.sourceUrl = message.sourceUrl;
+                    return object;
+                };
+                BotPlanningSearchSourcesMetadata.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+                BotPlanningSearchSourcesMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return (
+                        typeUrlPrefix +
+                        "/BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourcesMetadata"
+                    );
+                };
+                BotPlanningSearchSourcesMetadata.BotPlanningSearchSourceProvider = (function () {
+                    var valuesById = {},
+                        values = Object.create(valuesById);
+                    values[(valuesById[0] = "UNKNOWN")] = 0;
+                    values[(valuesById[1] = "OTHER")] = 1;
+                    values[(valuesById[2] = "GOOGLE")] = 2;
+                    values[(valuesById[3] = "BING")] = 3;
+                    return values;
+                })();
+                return BotPlanningSearchSourcesMetadata;
+            })();
+            BotPlanningStepMetadata.BotPlanningStepSectionMetadata = (function () {
+                function BotPlanningStepSectionMetadata(properties) {
+                    this.sourcesMetadata = [];
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+                }
+                BotPlanningStepSectionMetadata.prototype.sectionTitle = "";
+                BotPlanningStepSectionMetadata.prototype.sectionBody = "";
+                BotPlanningStepSectionMetadata.prototype.sourcesMetadata = $util.emptyArray;
+                BotPlanningStepSectionMetadata.create = function create(properties) {
+                    return new BotPlanningStepSectionMetadata(properties);
+                };
+                BotPlanningStepSectionMetadata.encode = function encode(message, writer) {
+                    if (!writer) writer = $Writer.create();
+                    if (
+                        message.sectionTitle != null &&
+                        Object.hasOwnProperty.call(message, "sectionTitle")
+                    )
+                        writer.uint32(10).string(message.sectionTitle);
+                    if (
+                        message.sectionBody != null &&
+                        Object.hasOwnProperty.call(message, "sectionBody")
+                    )
+                        writer.uint32(18).string(message.sectionBody);
+                    if (message.sourcesMetadata != null && message.sourcesMetadata.length)
+                        for (var i = 0; i < message.sourcesMetadata.length; ++i)
+                            $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourceMetadata.encode(
+                                message.sourcesMetadata[i],
+                                writer.uint32(26).fork()
+                            ).ldelim();
+                    return writer;
+                };
+                BotPlanningStepSectionMetadata.encodeDelimited = function encodeDelimited(
+                    message,
+                    writer
+                ) {
+                    return this.encode(message, writer).ldelim();
+                };
+                BotPlanningStepSectionMetadata.decode = function decode(reader, length, error) {
+                    if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length,
+                        message =
+                            new $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        if (tag === error) break;
+                        switch (tag >>> 3) {
+                            case 1: {
+                                message.sectionTitle = reader.string();
+                                break;
+                            }
+                            case 2: {
+                                message.sectionBody = reader.string();
+                                break;
+                            }
+                            case 3: {
+                                if (!(message.sourcesMetadata && message.sourcesMetadata.length))
+                                    message.sourcesMetadata = [];
+                                message.sourcesMetadata.push(
+                                    $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourceMetadata.decode(
+                                        reader,
+                                        reader.uint32()
+                                    )
+                                );
+                                break;
+                            }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                        }
+                    }
+                    return message;
+                };
+                BotPlanningStepSectionMetadata.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+                BotPlanningStepSectionMetadata.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null) return "object expected";
+                    if (message.sectionTitle != null && message.hasOwnProperty("sectionTitle"))
+                        if (!$util.isString(message.sectionTitle))
+                            return "sectionTitle: string expected";
+                    if (message.sectionBody != null && message.hasOwnProperty("sectionBody"))
+                        if (!$util.isString(message.sectionBody))
+                            return "sectionBody: string expected";
+                    if (
+                        message.sourcesMetadata != null &&
+                        message.hasOwnProperty("sourcesMetadata")
+                    ) {
+                        if (!Array.isArray(message.sourcesMetadata))
+                            return "sourcesMetadata: array expected";
+                        for (var i = 0; i < message.sourcesMetadata.length; ++i) {
+                            var error =
+                                $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourceMetadata.verify(
+                                    message.sourcesMetadata[i]
+                                );
+                            if (error) return "sourcesMetadata." + error;
+                        }
+                    }
+                    return null;
+                };
+                BotPlanningStepSectionMetadata.fromObject = function fromObject(object) {
+                    if (
+                        object instanceof
+                        $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata
+                            .BotPlanningStepSectionMetadata
+                    )
+                        return object;
+                    var message =
+                        new $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata();
+                    if (object.sectionTitle != null)
+                        message.sectionTitle = String(object.sectionTitle);
+                    if (object.sectionBody != null)
+                        message.sectionBody = String(object.sectionBody);
+                    if (object.sourcesMetadata) {
+                        if (!Array.isArray(object.sourcesMetadata))
+                            throw TypeError(
+                                ".BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata.sourcesMetadata: array expected"
+                            );
+                        message.sourcesMetadata = [];
+                        for (var i = 0; i < object.sourcesMetadata.length; ++i) {
+                            if (typeof object.sourcesMetadata[i] !== "object")
+                                throw TypeError(
+                                    ".BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata.sourcesMetadata: object expected"
+                                );
+                            message.sourcesMetadata[i] =
+                                $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourceMetadata.fromObject(
+                                    object.sourcesMetadata[i]
+                                );
+                        }
+                    }
+                    return message;
+                };
+                BotPlanningStepSectionMetadata.toObject = function toObject(message, options) {
+                    if (!options) options = {};
+                    var object = {};
+                    if (options.arrays || options.defaults) object.sourcesMetadata = [];
+                    if (options.defaults) {
+                        object.sectionTitle = "";
+                        object.sectionBody = "";
+                    }
+                    if (message.sectionTitle != null && message.hasOwnProperty("sectionTitle"))
+                        object.sectionTitle = message.sectionTitle;
+                    if (message.sectionBody != null && message.hasOwnProperty("sectionBody"))
+                        object.sectionBody = message.sectionBody;
+                    if (message.sourcesMetadata && message.sourcesMetadata.length) {
+                        object.sourcesMetadata = [];
+                        for (var j = 0; j < message.sourcesMetadata.length; ++j)
+                            object.sourcesMetadata[j] =
+                                $root.BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningSearchSourceMetadata.toObject(
+                                    message.sourcesMetadata[j],
+                                    options
+                                );
+                    }
+                    return object;
+                };
+                BotPlanningStepSectionMetadata.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+                BotPlanningStepSectionMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return (
+                        typeUrlPrefix +
+                        "/BotMetadata.BotProgressIndicatorMetadata.BotPlanningStepMetadata.BotPlanningStepSectionMetadata"
+                    );
+                };
+                return BotPlanningStepSectionMetadata;
+            })();
+            BotPlanningStepMetadata.BotSearchSourceProvider = (function () {
+                var valuesById = {},
+                    values = Object.create(valuesById);
+                values[(valuesById[0] = "UNKNOWN_PROVIDER")] = 0;
+                values[(valuesById[1] = "OTHER")] = 1;
+                values[(valuesById[2] = "GOOGLE")] = 2;
+                values[(valuesById[3] = "BING")] = 3;
+                return values;
+            })();
+            BotPlanningStepMetadata.PlanningStepStatus = (function () {
+                var valuesById = {},
+                    values = Object.create(valuesById);
+                values[(valuesById[0] = "UNKNOWN")] = 0;
+                values[(valuesById[1] = "PLANNED")] = 1;
+                values[(valuesById[2] = "EXECUTING")] = 2;
+                values[(valuesById[3] = "FINISHED")] = 3;
+                return values;
+            })();
+            return BotPlanningStepMetadata;
+        })();
+        return BotProgressIndicatorMetadata;
+    })();
+    BotMetadata.BotModelMetadata = (function () {
+        function BotModelMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotModelMetadata.prototype.modelType = 0;
+        BotModelMetadata.prototype.premiumModelStatus = 0;
+        BotModelMetadata.create = function create(properties) {
+            return new BotModelMetadata(properties);
+        };
+        BotModelMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.modelType != null && Object.hasOwnProperty.call(message, "modelType"))
+                writer.uint32(8).int32(message.modelType);
+            if (
+                message.premiumModelStatus != null &&
+                Object.hasOwnProperty.call(message, "premiumModelStatus")
+            )
+                writer.uint32(16).int32(message.premiumModelStatus);
+            return writer;
+        };
+        BotModelMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotModelMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotModelMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.modelType = reader.int32();
+                        break;
+                    }
+                    case 2: {
+                        message.premiumModelStatus = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotModelMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotModelMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.modelType != null && message.hasOwnProperty("modelType"))
+                switch (message.modelType) {
+                    default:
+                        return "modelType: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                }
+            if (message.premiumModelStatus != null && message.hasOwnProperty("premiumModelStatus"))
+                switch (message.premiumModelStatus) {
+                    default:
+                        return "premiumModelStatus: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                }
+            return null;
+        };
+        BotModelMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotModelMetadata) return object;
+            var message = new $root.BotMetadata.BotModelMetadata();
+            switch (object.modelType) {
+                default:
+                    if (typeof object.modelType === "number") {
+                        message.modelType = object.modelType;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN_TYPE":
+                case 0:
+                    message.modelType = 0;
+                    break;
+                case "LLAMA_PROD":
+                case 1:
+                    message.modelType = 1;
+                    break;
+                case "LLAMA_PROD_PREMIUM":
+                case 2:
+                    message.modelType = 2;
+                    break;
+            }
+            switch (object.premiumModelStatus) {
+                default:
+                    if (typeof object.premiumModelStatus === "number") {
+                        message.premiumModelStatus = object.premiumModelStatus;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN_STATUS":
+                case 0:
+                    message.premiumModelStatus = 0;
+                    break;
+                case "AVAILABLE":
+                case 1:
+                    message.premiumModelStatus = 1;
+                    break;
+                case "QUOTA_EXCEED_LIMIT":
+                case 2:
+                    message.premiumModelStatus = 2;
+                    break;
+            }
+            return message;
+        };
+        BotModelMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.modelType = options.enums === String ? "UNKNOWN_TYPE" : 0;
+                object.premiumModelStatus = options.enums === String ? "UNKNOWN_STATUS" : 0;
+            }
+            if (message.modelType != null && message.hasOwnProperty("modelType"))
+                object.modelType =
+                    options.enums === String
+                        ? $root.BotMetadata.BotModelMetadata.ModelType[message.modelType] ===
+                          undefined
+                            ? message.modelType
+                            : $root.BotMetadata.BotModelMetadata.ModelType[message.modelType]
+                        : message.modelType;
+            if (message.premiumModelStatus != null && message.hasOwnProperty("premiumModelStatus"))
+                object.premiumModelStatus =
+                    options.enums === String
+                        ? $root.BotMetadata.BotModelMetadata.PremiumModelStatus[
+                              message.premiumModelStatus
+                          ] === undefined
+                            ? message.premiumModelStatus
+                            : $root.BotMetadata.BotModelMetadata.PremiumModelStatus[
+                                  message.premiumModelStatus
+                              ]
+                        : message.premiumModelStatus;
+            return object;
+        };
+        BotModelMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotModelMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotModelMetadata";
+        };
+        BotModelMetadata.ModelType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN_TYPE")] = 0;
+            values[(valuesById[1] = "LLAMA_PROD")] = 1;
+            values[(valuesById[2] = "LLAMA_PROD_PREMIUM")] = 2;
+            return values;
+        })();
+        BotModelMetadata.PremiumModelStatus = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN_STATUS")] = 0;
+            values[(valuesById[1] = "AVAILABLE")] = 1;
+            values[(valuesById[2] = "QUOTA_EXCEED_LIMIT")] = 2;
+            return values;
+        })();
+        return BotModelMetadata;
+    })();
+    BotMetadata.BotReminderMetadata = (function () {
+        function BotReminderMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotReminderMetadata.prototype.requestMessageKey = null;
+        BotReminderMetadata.prototype.action = 1;
+        BotReminderMetadata.prototype.name = "";
+        BotReminderMetadata.prototype.nextTriggerTimestamp = $util.Long
+            ? $util.Long.fromBits(0, 0, true)
+            : 0;
+        BotReminderMetadata.prototype.frequency = 1;
+        BotReminderMetadata.create = function create(properties) {
+            return new BotReminderMetadata(properties);
+        };
+        BotReminderMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (
+                message.requestMessageKey != null &&
+                Object.hasOwnProperty.call(message, "requestMessageKey")
+            )
+                $root.Protocol.MessageKey.encode(
+                    message.requestMessageKey,
+                    writer.uint32(10).fork()
+                ).ldelim();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(16).int32(message.action);
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(26).string(message.name);
+            if (
+                message.nextTriggerTimestamp != null &&
+                Object.hasOwnProperty.call(message, "nextTriggerTimestamp")
+            )
+                writer.uint32(32).uint64(message.nextTriggerTimestamp);
+            if (message.frequency != null && Object.hasOwnProperty.call(message, "frequency"))
+                writer.uint32(40).int32(message.frequency);
+            return writer;
+        };
+        BotReminderMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotReminderMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotReminderMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.requestMessageKey = $root.Protocol.MessageKey.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 2: {
+                        message.action = reader.int32();
+                        break;
+                    }
+                    case 3: {
+                        message.name = reader.string();
+                        break;
+                    }
+                    case 4: {
+                        message.nextTriggerTimestamp = reader.uint64();
+                        break;
+                    }
+                    case 5: {
+                        message.frequency = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotReminderMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotReminderMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.requestMessageKey != null && message.hasOwnProperty("requestMessageKey")) {
+                var error = $root.Protocol.MessageKey.verify(message.requestMessageKey);
+                if (error) return "requestMessageKey." + error;
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                    default:
+                        return "action: enum value expected";
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        break;
+                }
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name)) return "name: string expected";
+            if (
+                message.nextTriggerTimestamp != null &&
+                message.hasOwnProperty("nextTriggerTimestamp")
+            )
+                if (
+                    !$util.isInteger(message.nextTriggerTimestamp) &&
+                    !(
+                        message.nextTriggerTimestamp &&
+                        $util.isInteger(message.nextTriggerTimestamp.low) &&
+                        $util.isInteger(message.nextTriggerTimestamp.high)
+                    )
+                )
+                    return "nextTriggerTimestamp: integer|Long expected";
+            if (message.frequency != null && message.hasOwnProperty("frequency"))
+                switch (message.frequency) {
+                    default:
+                        return "frequency: enum value expected";
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        break;
+                }
+            return null;
+        };
+        BotReminderMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotReminderMetadata) return object;
+            var message = new $root.BotMetadata.BotReminderMetadata();
+            if (object.requestMessageKey != null) {
+                if (typeof object.requestMessageKey !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotReminderMetadata.requestMessageKey: object expected"
+                    );
+                message.requestMessageKey = $root.Protocol.MessageKey.fromObject(
+                    object.requestMessageKey
+                );
+            }
+            switch (object.action) {
+                default:
+                    if (typeof object.action === "number") {
+                        message.action = object.action;
+                        break;
+                    }
+                    break;
+                case "NOTIFY":
+                case 1:
+                    message.action = 1;
+                    break;
+                case "CREATE":
+                case 2:
+                    message.action = 2;
+                    break;
+                case "DELETE":
+                case 3:
+                    message.action = 3;
+                    break;
+                case "UPDATE":
+                case 4:
+                    message.action = 4;
+                    break;
+            }
+            if (object.name != null) message.name = String(object.name);
+            if (object.nextTriggerTimestamp != null)
+                if ($util.Long)
+                    (message.nextTriggerTimestamp = $util.Long.fromValue(
+                        object.nextTriggerTimestamp
+                    )).unsigned = true;
+                else if (typeof object.nextTriggerTimestamp === "string")
+                    message.nextTriggerTimestamp = parseInt(object.nextTriggerTimestamp, 10);
+                else if (typeof object.nextTriggerTimestamp === "number")
+                    message.nextTriggerTimestamp = object.nextTriggerTimestamp;
+                else if (typeof object.nextTriggerTimestamp === "object")
+                    message.nextTriggerTimestamp = new $util.LongBits(
+                        object.nextTriggerTimestamp.low >>> 0,
+                        object.nextTriggerTimestamp.high >>> 0
+                    ).toNumber(true);
+            switch (object.frequency) {
+                default:
+                    if (typeof object.frequency === "number") {
+                        message.frequency = object.frequency;
+                        break;
+                    }
+                    break;
+                case "ONCE":
+                case 1:
+                    message.frequency = 1;
+                    break;
+                case "DAILY":
+                case 2:
+                    message.frequency = 2;
+                    break;
+                case "WEEKLY":
+                case 3:
+                    message.frequency = 3;
+                    break;
+                case "BIWEEKLY":
+                case 4:
+                    message.frequency = 4;
+                    break;
+                case "MONTHLY":
+                case 5:
+                    message.frequency = 5;
+                    break;
+            }
+            return message;
+        };
+        BotReminderMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.requestMessageKey = null;
+                object.action = options.enums === String ? "NOTIFY" : 1;
+                object.name = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.nextTriggerTimestamp =
+                        options.longs === String
+                            ? long.toString()
+                            : options.longs === Number
+                              ? long.toNumber()
+                              : long;
+                } else object.nextTriggerTimestamp = options.longs === String ? "0" : 0;
+                object.frequency = options.enums === String ? "ONCE" : 1;
+            }
+            if (message.requestMessageKey != null && message.hasOwnProperty("requestMessageKey"))
+                object.requestMessageKey = $root.Protocol.MessageKey.toObject(
+                    message.requestMessageKey,
+                    options
+                );
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action =
+                    options.enums === String
+                        ? $root.BotMetadata.BotReminderMetadata.ReminderAction[message.action] ===
+                          undefined
+                            ? message.action
+                            : $root.BotMetadata.BotReminderMetadata.ReminderAction[message.action]
+                        : message.action;
+            if (message.name != null && message.hasOwnProperty("name")) object.name = message.name;
+            if (
+                message.nextTriggerTimestamp != null &&
+                message.hasOwnProperty("nextTriggerTimestamp")
+            )
+                if (typeof message.nextTriggerTimestamp === "number")
+                    object.nextTriggerTimestamp =
+                        options.longs === String
+                            ? String(message.nextTriggerTimestamp)
+                            : message.nextTriggerTimestamp;
+                else
+                    object.nextTriggerTimestamp =
+                        options.longs === String
+                            ? $util.Long.prototype.toString.call(message.nextTriggerTimestamp)
+                            : options.longs === Number
+                              ? new $util.LongBits(
+                                    message.nextTriggerTimestamp.low >>> 0,
+                                    message.nextTriggerTimestamp.high >>> 0
+                                ).toNumber(true)
+                              : message.nextTriggerTimestamp;
+            if (message.frequency != null && message.hasOwnProperty("frequency"))
+                object.frequency =
+                    options.enums === String
+                        ? $root.BotMetadata.BotReminderMetadata.ReminderFrequency[
+                              message.frequency
+                          ] === undefined
+                            ? message.frequency
+                            : $root.BotMetadata.BotReminderMetadata.ReminderFrequency[
+                                  message.frequency
+                              ]
+                        : message.frequency;
+            return object;
+        };
+        BotReminderMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotReminderMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotReminderMetadata";
+        };
+        BotReminderMetadata.ReminderAction = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[1] = "NOTIFY")] = 1;
+            values[(valuesById[2] = "CREATE")] = 2;
+            values[(valuesById[3] = "DELETE")] = 3;
+            values[(valuesById[4] = "UPDATE")] = 4;
+            return values;
+        })();
+        BotReminderMetadata.ReminderFrequency = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[1] = "ONCE")] = 1;
+            values[(valuesById[2] = "DAILY")] = 2;
+            values[(valuesById[3] = "WEEKLY")] = 3;
+            values[(valuesById[4] = "BIWEEKLY")] = 4;
+            values[(valuesById[5] = "MONTHLY")] = 5;
+            return values;
+        })();
+        return BotReminderMetadata;
+    })();
+    BotMetadata.BotMemuMetadata = (function () {
+        function BotMemuMetadata(properties) {
+            this.faceImages = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotMemuMetadata.prototype.faceImages = $util.emptyArray;
+        BotMemuMetadata.create = function create(properties) {
+            return new BotMemuMetadata(properties);
+        };
+        BotMemuMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.faceImages != null && message.faceImages.length)
+                for (var i = 0; i < message.faceImages.length; ++i)
+                    $root.BotMetadata.BotMediaMetadata.encode(
+                        message.faceImages[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            return writer;
+        };
+        BotMemuMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotMemuMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotMemuMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.faceImages && message.faceImages.length))
+                            message.faceImages = [];
+                        message.faceImages.push(
+                            $root.BotMetadata.BotMediaMetadata.decode(reader, reader.uint32())
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotMemuMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotMemuMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.faceImages != null && message.hasOwnProperty("faceImages")) {
+                if (!Array.isArray(message.faceImages)) return "faceImages: array expected";
+                for (var i = 0; i < message.faceImages.length; ++i) {
+                    var error = $root.BotMetadata.BotMediaMetadata.verify(message.faceImages[i]);
+                    if (error) return "faceImages." + error;
+                }
+            }
+            return null;
+        };
+        BotMemuMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotMemuMetadata) return object;
+            var message = new $root.BotMetadata.BotMemuMetadata();
+            if (object.faceImages) {
+                if (!Array.isArray(object.faceImages))
+                    throw TypeError(".BotMetadata.BotMemuMetadata.faceImages: array expected");
+                message.faceImages = [];
+                for (var i = 0; i < object.faceImages.length; ++i) {
+                    if (typeof object.faceImages[i] !== "object")
+                        throw TypeError(".BotMetadata.BotMemuMetadata.faceImages: object expected");
+                    message.faceImages[i] = $root.BotMetadata.BotMediaMetadata.fromObject(
+                        object.faceImages[i]
+                    );
+                }
+            }
+            return message;
+        };
+        BotMemuMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.faceImages = [];
+            if (message.faceImages && message.faceImages.length) {
+                object.faceImages = [];
+                for (var j = 0; j < message.faceImages.length; ++j)
+                    object.faceImages[j] = $root.BotMetadata.BotMediaMetadata.toObject(
+                        message.faceImages[j],
+                        options
+                    );
+            }
+            return object;
+        };
+        BotMemuMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotMemuMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotMemuMetadata";
+        };
+        return BotMemuMetadata;
+    })();
+    BotMetadata.BotMediaMetadata = (function () {
+        function BotMediaMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotMediaMetadata.prototype.fileSha256 = "";
+        BotMediaMetadata.prototype.mediaKey = "";
+        BotMediaMetadata.prototype.fileEncSha256 = "";
+        BotMediaMetadata.prototype.directPath = "";
+        BotMediaMetadata.prototype.mediaKeyTimestamp = $util.Long
+            ? $util.Long.fromBits(0, 0, false)
+            : 0;
+        BotMediaMetadata.prototype.mimetype = "";
+        BotMediaMetadata.prototype.orientationType = 1;
+        BotMediaMetadata.create = function create(properties) {
+            return new BotMediaMetadata(properties);
+        };
+        BotMediaMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.fileSha256 != null && Object.hasOwnProperty.call(message, "fileSha256"))
+                writer.uint32(10).string(message.fileSha256);
+            if (message.mediaKey != null && Object.hasOwnProperty.call(message, "mediaKey"))
+                writer.uint32(18).string(message.mediaKey);
+            if (
+                message.fileEncSha256 != null &&
+                Object.hasOwnProperty.call(message, "fileEncSha256")
+            )
+                writer.uint32(26).string(message.fileEncSha256);
+            if (message.directPath != null && Object.hasOwnProperty.call(message, "directPath"))
+                writer.uint32(34).string(message.directPath);
+            if (
+                message.mediaKeyTimestamp != null &&
+                Object.hasOwnProperty.call(message, "mediaKeyTimestamp")
+            )
+                writer.uint32(40).int64(message.mediaKeyTimestamp);
+            if (message.mimetype != null && Object.hasOwnProperty.call(message, "mimetype"))
+                writer.uint32(50).string(message.mimetype);
+            if (
+                message.orientationType != null &&
+                Object.hasOwnProperty.call(message, "orientationType")
+            )
+                writer.uint32(56).int32(message.orientationType);
+            return writer;
+        };
+        BotMediaMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotMediaMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotMediaMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.fileSha256 = reader.string();
+                        break;
+                    }
+                    case 2: {
+                        message.mediaKey = reader.string();
+                        break;
+                    }
+                    case 3: {
+                        message.fileEncSha256 = reader.string();
+                        break;
+                    }
+                    case 4: {
+                        message.directPath = reader.string();
+                        break;
+                    }
+                    case 5: {
+                        message.mediaKeyTimestamp = reader.int64();
+                        break;
+                    }
+                    case 6: {
+                        message.mimetype = reader.string();
+                        break;
+                    }
+                    case 7: {
+                        message.orientationType = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotMediaMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotMediaMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.fileSha256 != null && message.hasOwnProperty("fileSha256"))
+                if (!$util.isString(message.fileSha256)) return "fileSha256: string expected";
+            if (message.mediaKey != null && message.hasOwnProperty("mediaKey"))
+                if (!$util.isString(message.mediaKey)) return "mediaKey: string expected";
+            if (message.fileEncSha256 != null && message.hasOwnProperty("fileEncSha256"))
+                if (!$util.isString(message.fileEncSha256)) return "fileEncSha256: string expected";
+            if (message.directPath != null && message.hasOwnProperty("directPath"))
+                if (!$util.isString(message.directPath)) return "directPath: string expected";
+            if (message.mediaKeyTimestamp != null && message.hasOwnProperty("mediaKeyTimestamp"))
+                if (
+                    !$util.isInteger(message.mediaKeyTimestamp) &&
+                    !(
+                        message.mediaKeyTimestamp &&
+                        $util.isInteger(message.mediaKeyTimestamp.low) &&
+                        $util.isInteger(message.mediaKeyTimestamp.high)
+                    )
+                )
+                    return "mediaKeyTimestamp: integer|Long expected";
+            if (message.mimetype != null && message.hasOwnProperty("mimetype"))
+                if (!$util.isString(message.mimetype)) return "mimetype: string expected";
+            if (message.orientationType != null && message.hasOwnProperty("orientationType"))
+                switch (message.orientationType) {
+                    default:
+                        return "orientationType: enum value expected";
+                    case 1:
+                    case 2:
+                    case 3:
+                        break;
+                }
+            return null;
+        };
+        BotMediaMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotMediaMetadata) return object;
+            var message = new $root.BotMetadata.BotMediaMetadata();
+            if (object.fileSha256 != null) message.fileSha256 = String(object.fileSha256);
+            if (object.mediaKey != null) message.mediaKey = String(object.mediaKey);
+            if (object.fileEncSha256 != null) message.fileEncSha256 = String(object.fileEncSha256);
+            if (object.directPath != null) message.directPath = String(object.directPath);
+            if (object.mediaKeyTimestamp != null)
+                if ($util.Long)
+                    (message.mediaKeyTimestamp = $util.Long.fromValue(
+                        object.mediaKeyTimestamp
+                    )).unsigned = false;
+                else if (typeof object.mediaKeyTimestamp === "string")
+                    message.mediaKeyTimestamp = parseInt(object.mediaKeyTimestamp, 10);
+                else if (typeof object.mediaKeyTimestamp === "number")
+                    message.mediaKeyTimestamp = object.mediaKeyTimestamp;
+                else if (typeof object.mediaKeyTimestamp === "object")
+                    message.mediaKeyTimestamp = new $util.LongBits(
+                        object.mediaKeyTimestamp.low >>> 0,
+                        object.mediaKeyTimestamp.high >>> 0
+                    ).toNumber();
+            if (object.mimetype != null) message.mimetype = String(object.mimetype);
+            switch (object.orientationType) {
+                default:
+                    if (typeof object.orientationType === "number") {
+                        message.orientationType = object.orientationType;
+                        break;
+                    }
+                    break;
+                case "CENTER":
+                case 1:
+                    message.orientationType = 1;
+                    break;
+                case "LEFT":
+                case 2:
+                    message.orientationType = 2;
+                    break;
+                case "RIGHT":
+                case 3:
+                    message.orientationType = 3;
+                    break;
+            }
+            return message;
+        };
+        BotMediaMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.fileSha256 = "";
+                object.mediaKey = "";
+                object.fileEncSha256 = "";
+                object.directPath = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.mediaKeyTimestamp =
+                        options.longs === String
+                            ? long.toString()
+                            : options.longs === Number
+                              ? long.toNumber()
+                              : long;
+                } else object.mediaKeyTimestamp = options.longs === String ? "0" : 0;
+                object.mimetype = "";
+                object.orientationType = options.enums === String ? "CENTER" : 1;
+            }
+            if (message.fileSha256 != null && message.hasOwnProperty("fileSha256"))
+                object.fileSha256 = message.fileSha256;
+            if (message.mediaKey != null && message.hasOwnProperty("mediaKey"))
+                object.mediaKey = message.mediaKey;
+            if (message.fileEncSha256 != null && message.hasOwnProperty("fileEncSha256"))
+                object.fileEncSha256 = message.fileEncSha256;
+            if (message.directPath != null && message.hasOwnProperty("directPath"))
+                object.directPath = message.directPath;
+            if (message.mediaKeyTimestamp != null && message.hasOwnProperty("mediaKeyTimestamp"))
+                if (typeof message.mediaKeyTimestamp === "number")
+                    object.mediaKeyTimestamp =
+                        options.longs === String
+                            ? String(message.mediaKeyTimestamp)
+                            : message.mediaKeyTimestamp;
+                else
+                    object.mediaKeyTimestamp =
+                        options.longs === String
+                            ? $util.Long.prototype.toString.call(message.mediaKeyTimestamp)
+                            : options.longs === Number
+                              ? new $util.LongBits(
+                                    message.mediaKeyTimestamp.low >>> 0,
+                                    message.mediaKeyTimestamp.high >>> 0
+                                ).toNumber()
+                              : message.mediaKeyTimestamp;
+            if (message.mimetype != null && message.hasOwnProperty("mimetype"))
+                object.mimetype = message.mimetype;
+            if (message.orientationType != null && message.hasOwnProperty("orientationType"))
+                object.orientationType =
+                    options.enums === String
+                        ? $root.BotMetadata.BotMediaMetadata.OrientationType[
+                              message.orientationType
+                          ] === undefined
+                            ? message.orientationType
+                            : $root.BotMetadata.BotMediaMetadata.OrientationType[
+                                  message.orientationType
+                              ]
+                        : message.orientationType;
+            return object;
+        };
+        BotMediaMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotMediaMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotMediaMetadata";
+        };
+        BotMediaMetadata.OrientationType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[1] = "CENTER")] = 1;
+            values[(valuesById[2] = "LEFT")] = 2;
+            values[(valuesById[3] = "RIGHT")] = 3;
+            return values;
+        })();
+        return BotMediaMetadata;
+    })();
+    BotMetadata.BotSessionMetadata = (function () {
+        function BotSessionMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotSessionMetadata.prototype.sessionId = "";
+        BotSessionMetadata.prototype.sessionSource = 0;
+        BotSessionMetadata.create = function create(properties) {
+            return new BotSessionMetadata(properties);
+        };
+        BotSessionMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.sessionId != null && Object.hasOwnProperty.call(message, "sessionId"))
+                writer.uint32(10).string(message.sessionId);
+            if (
+                message.sessionSource != null &&
+                Object.hasOwnProperty.call(message, "sessionSource")
+            )
+                writer.uint32(16).int32(message.sessionSource);
+            return writer;
+        };
+        BotSessionMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotSessionMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotSessionMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.sessionId = reader.string();
+                        break;
+                    }
+                    case 2: {
+                        message.sessionSource = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotSessionMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotSessionMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.sessionId != null && message.hasOwnProperty("sessionId"))
+                if (!$util.isString(message.sessionId)) return "sessionId: string expected";
+            if (message.sessionSource != null && message.hasOwnProperty("sessionSource"))
+                switch (message.sessionSource) {
+                    default:
+                        return "sessionSource: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        break;
+                }
+            return null;
+        };
+        BotSessionMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotSessionMetadata) return object;
+            var message = new $root.BotMetadata.BotSessionMetadata();
+            if (object.sessionId != null) message.sessionId = String(object.sessionId);
+            switch (object.sessionSource) {
+                default:
+                    if (typeof object.sessionSource === "number") {
+                        message.sessionSource = object.sessionSource;
+                        break;
+                    }
+                    break;
+                case "NONE":
+                case 0:
+                    message.sessionSource = 0;
+                    break;
+                case "NULL_STATE":
+                case 1:
+                    message.sessionSource = 1;
+                    break;
+                case "TYPEAHEAD":
+                case 2:
+                    message.sessionSource = 2;
+                    break;
+                case "USER_INPUT":
+                case 3:
+                    message.sessionSource = 3;
+                    break;
+                case "EMU_FLASH":
+                case 4:
+                    message.sessionSource = 4;
+                    break;
+                case "EMU_FLASH_FOLLOWUP":
+                case 5:
+                    message.sessionSource = 5;
+                    break;
+                case "VOICE":
+                case 6:
+                    message.sessionSource = 6;
+                    break;
+            }
+            return message;
+        };
+        BotSessionMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.sessionId = "";
+                object.sessionSource = options.enums === String ? "NONE" : 0;
+            }
+            if (message.sessionId != null && message.hasOwnProperty("sessionId"))
+                object.sessionId = message.sessionId;
+            if (message.sessionSource != null && message.hasOwnProperty("sessionSource"))
+                object.sessionSource =
+                    options.enums === String
+                        ? $root.BotMetadata.BotSessionSource[message.sessionSource] === undefined
+                            ? message.sessionSource
+                            : $root.BotMetadata.BotSessionSource[message.sessionSource]
+                        : message.sessionSource;
+            return object;
+        };
+        BotSessionMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotSessionMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotSessionMetadata";
+        };
+        return BotSessionMetadata;
+    })();
+    BotMetadata.BotMetricsMetadata = (function () {
+        function BotMetricsMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotMetricsMetadata.prototype.destinationId = "";
+        BotMetricsMetadata.prototype.destinationEntryPoint = 1;
+        BotMetricsMetadata.prototype.threadOrigin = 1;
+        BotMetricsMetadata.create = function create(properties) {
+            return new BotMetricsMetadata(properties);
+        };
+        BotMetricsMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (
+                message.destinationId != null &&
+                Object.hasOwnProperty.call(message, "destinationId")
+            )
+                writer.uint32(10).string(message.destinationId);
+            if (
+                message.destinationEntryPoint != null &&
+                Object.hasOwnProperty.call(message, "destinationEntryPoint")
+            )
+                writer.uint32(16).int32(message.destinationEntryPoint);
+            if (message.threadOrigin != null && Object.hasOwnProperty.call(message, "threadOrigin"))
+                writer.uint32(24).int32(message.threadOrigin);
+            return writer;
+        };
+        BotMetricsMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotMetricsMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotMetricsMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.destinationId = reader.string();
+                        break;
+                    }
+                    case 2: {
+                        message.destinationEntryPoint = reader.int32();
+                        break;
+                    }
+                    case 3: {
+                        message.threadOrigin = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotMetricsMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotMetricsMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.destinationId != null && message.hasOwnProperty("destinationId"))
+                if (!$util.isString(message.destinationId)) return "destinationId: string expected";
+            if (
+                message.destinationEntryPoint != null &&
+                message.hasOwnProperty("destinationEntryPoint")
+            )
+                switch (message.destinationEntryPoint) {
+                    default:
+                        return "destinationEntryPoint: enum value expected";
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                        break;
+                }
+            if (message.threadOrigin != null && message.hasOwnProperty("threadOrigin"))
+                switch (message.threadOrigin) {
+                    default:
+                        return "threadOrigin: enum value expected";
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        break;
+                }
+            return null;
+        };
+        BotMetricsMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotMetricsMetadata) return object;
+            var message = new $root.BotMetadata.BotMetricsMetadata();
+            if (object.destinationId != null) message.destinationId = String(object.destinationId);
+            switch (object.destinationEntryPoint) {
+                default:
+                    if (typeof object.destinationEntryPoint === "number") {
+                        message.destinationEntryPoint = object.destinationEntryPoint;
+                        break;
+                    }
+                    break;
+                case "FAVICON":
+                case 1:
+                    message.destinationEntryPoint = 1;
+                    break;
+                case "CHATLIST":
+                case 2:
+                    message.destinationEntryPoint = 2;
+                    break;
+                case "AISEARCH_NULL_STATE_PAPER_PLANE":
+                case 3:
+                    message.destinationEntryPoint = 3;
+                    break;
+                case "AISEARCH_NULL_STATE_SUGGESTION":
+                case 4:
+                    message.destinationEntryPoint = 4;
+                    break;
+                case "AISEARCH_TYPE_AHEAD_SUGGESTION":
+                case 5:
+                    message.destinationEntryPoint = 5;
+                    break;
+                case "AISEARCH_TYPE_AHEAD_PAPER_PLANE":
+                case 6:
+                    message.destinationEntryPoint = 6;
+                    break;
+                case "AISEARCH_TYPE_AHEAD_RESULT_CHATLIST":
+                case 7:
+                    message.destinationEntryPoint = 7;
+                    break;
+                case "AISEARCH_TYPE_AHEAD_RESULT_MESSAGES":
+                case 8:
+                    message.destinationEntryPoint = 8;
+                    break;
+                case "AIVOICE_SEARCH_BAR":
+                case 9:
+                    message.destinationEntryPoint = 9;
+                    break;
+                case "AIVOICE_FAVICON":
+                case 10:
+                    message.destinationEntryPoint = 10;
+                    break;
+                case "AISTUDIO":
+                case 11:
+                    message.destinationEntryPoint = 11;
+                    break;
+                case "DEEPLINK":
+                case 12:
+                    message.destinationEntryPoint = 12;
+                    break;
+                case "NOTIFICATION":
+                case 13:
+                    message.destinationEntryPoint = 13;
+                    break;
+                case "PROFILE_MESSAGE_BUTTON":
+                case 14:
+                    message.destinationEntryPoint = 14;
+                    break;
+                case "FORWARD":
+                case 15:
+                    message.destinationEntryPoint = 15;
+                    break;
+                case "APP_SHORTCUT":
+                case 16:
+                    message.destinationEntryPoint = 16;
+                    break;
+                case "FF_FAMILY":
+                case 17:
+                    message.destinationEntryPoint = 17;
+                    break;
+                case "AI_TAB":
+                case 18:
+                    message.destinationEntryPoint = 18;
+                    break;
+                case "AI_HOME":
+                case 19:
+                    message.destinationEntryPoint = 19;
+                    break;
+                case "AI_DEEPLINK_IMMERSIVE":
+                case 20:
+                    message.destinationEntryPoint = 20;
+                    break;
+                case "AI_DEEPLINK":
+                case 21:
+                    message.destinationEntryPoint = 21;
+                    break;
+                case "META_AI_CHAT_SHORTCUT_AI_STUDIO":
+                case 22:
+                    message.destinationEntryPoint = 22;
+                    break;
+                case "UGC_CHAT_SHORTCUT_AI_STUDIO":
+                case 23:
+                    message.destinationEntryPoint = 23;
+                    break;
+                case "NEW_CHAT_AI_STUDIO":
+                case 24:
+                    message.destinationEntryPoint = 24;
+                    break;
+                case "AIVOICE_FAVICON_CALL_HISTORY":
+                case 25:
+                    message.destinationEntryPoint = 25;
+                    break;
+                case "ASK_META_AI_CONTEXT_MENU":
+                case 26:
+                    message.destinationEntryPoint = 26;
+                    break;
+                case "ASK_META_AI_CONTEXT_MENU_1ON1":
+                case 27:
+                    message.destinationEntryPoint = 27;
+                    break;
+                case "ASK_META_AI_CONTEXT_MENU_GROUP":
+                case 28:
+                    message.destinationEntryPoint = 28;
+                    break;
+                case "INVOKE_META_AI_1ON1":
+                case 29:
+                    message.destinationEntryPoint = 29;
+                    break;
+                case "INVOKE_META_AI_GROUP":
+                case 30:
+                    message.destinationEntryPoint = 30;
+                    break;
+                case "META_AI_FORWARD":
+                case 31:
+                    message.destinationEntryPoint = 31;
+                    break;
+            }
+            switch (object.threadOrigin) {
+                default:
+                    if (typeof object.threadOrigin === "number") {
+                        message.threadOrigin = object.threadOrigin;
+                        break;
+                    }
+                    break;
+                case "AI_TAB_THREAD":
+                case 1:
+                    message.threadOrigin = 1;
+                    break;
+                case "AI_HOME_THREAD":
+                case 2:
+                    message.threadOrigin = 2;
+                    break;
+                case "AI_DEEPLINK_IMMERSIVE_THREAD":
+                case 3:
+                    message.threadOrigin = 3;
+                    break;
+                case "AI_DEEPLINK_THREAD":
+                case 4:
+                    message.threadOrigin = 4;
+                    break;
+                case "ASK_META_AI_CONTEXT_MENU_THREAD":
+                case 5:
+                    message.threadOrigin = 5;
+                    break;
+            }
+            return message;
+        };
+        BotMetricsMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.destinationId = "";
+                object.destinationEntryPoint = options.enums === String ? "FAVICON" : 1;
+                object.threadOrigin = options.enums === String ? "AI_TAB_THREAD" : 1;
+            }
+            if (message.destinationId != null && message.hasOwnProperty("destinationId"))
+                object.destinationId = message.destinationId;
+            if (
+                message.destinationEntryPoint != null &&
+                message.hasOwnProperty("destinationEntryPoint")
+            )
+                object.destinationEntryPoint =
+                    options.enums === String
+                        ? $root.BotMetadata.BotMetricsEntryPoint[message.destinationEntryPoint] ===
+                          undefined
+                            ? message.destinationEntryPoint
+                            : $root.BotMetadata.BotMetricsEntryPoint[message.destinationEntryPoint]
+                        : message.destinationEntryPoint;
+            if (message.threadOrigin != null && message.hasOwnProperty("threadOrigin"))
+                object.threadOrigin =
+                    options.enums === String
+                        ? $root.BotMetadata.BotMetricsThreadEntryPoint[message.threadOrigin] ===
+                          undefined
+                            ? message.threadOrigin
+                            : $root.BotMetadata.BotMetricsThreadEntryPoint[message.threadOrigin]
+                        : message.threadOrigin;
+            return object;
+        };
+        BotMetricsMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotMetricsMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotMetricsMetadata";
+        };
+        return BotMetricsMetadata;
+    })();
+    BotMetadata.BotRenderingMetadata = (function () {
+        function BotRenderingMetadata(properties) {
+            this.keywords = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotRenderingMetadata.prototype.keywords = $util.emptyArray;
+        BotRenderingMetadata.create = function create(properties) {
+            return new BotRenderingMetadata(properties);
+        };
+        BotRenderingMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.keywords != null && message.keywords.length)
+                for (var i = 0; i < message.keywords.length; ++i)
+                    $root.BotMetadata.BotRenderingMetadata.Keyword.encode(
+                        message.keywords[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            return writer;
+        };
+        BotRenderingMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotRenderingMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotRenderingMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.keywords && message.keywords.length)) message.keywords = [];
+                        message.keywords.push(
+                            $root.BotMetadata.BotRenderingMetadata.Keyword.decode(
+                                reader,
+                                reader.uint32()
+                            )
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotRenderingMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotRenderingMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.keywords != null && message.hasOwnProperty("keywords")) {
+                if (!Array.isArray(message.keywords)) return "keywords: array expected";
+                for (var i = 0; i < message.keywords.length; ++i) {
+                    var error = $root.BotMetadata.BotRenderingMetadata.Keyword.verify(
+                        message.keywords[i]
+                    );
+                    if (error) return "keywords." + error;
+                }
+            }
+            return null;
+        };
+        BotRenderingMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotRenderingMetadata) return object;
+            var message = new $root.BotMetadata.BotRenderingMetadata();
+            if (object.keywords) {
+                if (!Array.isArray(object.keywords))
+                    throw TypeError(".BotMetadata.BotRenderingMetadata.keywords: array expected");
+                message.keywords = [];
+                for (var i = 0; i < object.keywords.length; ++i) {
+                    if (typeof object.keywords[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotRenderingMetadata.keywords: object expected"
+                        );
+                    message.keywords[i] = $root.BotMetadata.BotRenderingMetadata.Keyword.fromObject(
+                        object.keywords[i]
+                    );
+                }
+            }
+            return message;
+        };
+        BotRenderingMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.keywords = [];
+            if (message.keywords && message.keywords.length) {
+                object.keywords = [];
+                for (var j = 0; j < message.keywords.length; ++j)
+                    object.keywords[j] = $root.BotMetadata.BotRenderingMetadata.Keyword.toObject(
+                        message.keywords[j],
+                        options
+                    );
+            }
+            return object;
+        };
+        BotRenderingMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotRenderingMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotRenderingMetadata";
+        };
+        BotRenderingMetadata.Keyword = (function () {
+            function Keyword(properties) {
+                this.associatedPrompts = [];
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+            }
+            Keyword.prototype.value = "";
+            Keyword.prototype.associatedPrompts = $util.emptyArray;
+            Keyword.create = function create(properties) {
+                return new Keyword(properties);
+            };
+            Keyword.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                if (message.value != null && Object.hasOwnProperty.call(message, "value"))
+                    writer.uint32(10).string(message.value);
+                if (message.associatedPrompts != null && message.associatedPrompts.length)
+                    for (var i = 0; i < message.associatedPrompts.length; ++i)
+                        writer.uint32(18).string(message.associatedPrompts[i]);
+                return writer;
+            };
+            Keyword.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+            Keyword.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length,
+                    message = new $root.BotMetadata.BotRenderingMetadata.Keyword();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    if (tag === error) break;
+                    switch (tag >>> 3) {
+                        case 1: {
+                            message.value = reader.string();
+                            break;
+                        }
+                        case 2: {
+                            if (!(message.associatedPrompts && message.associatedPrompts.length))
+                                message.associatedPrompts = [];
+                            message.associatedPrompts.push(reader.string());
+                            break;
+                        }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                    }
+                }
+                return message;
+            };
+            Keyword.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+            Keyword.verify = function verify(message) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (message.value != null && message.hasOwnProperty("value"))
+                    if (!$util.isString(message.value)) return "value: string expected";
+                if (
+                    message.associatedPrompts != null &&
+                    message.hasOwnProperty("associatedPrompts")
+                ) {
+                    if (!Array.isArray(message.associatedPrompts))
+                        return "associatedPrompts: array expected";
+                    for (var i = 0; i < message.associatedPrompts.length; ++i)
+                        if (!$util.isString(message.associatedPrompts[i]))
+                            return "associatedPrompts: string[] expected";
+                }
+                return null;
+            };
+            Keyword.fromObject = function fromObject(object) {
+                if (object instanceof $root.BotMetadata.BotRenderingMetadata.Keyword) return object;
+                var message = new $root.BotMetadata.BotRenderingMetadata.Keyword();
+                if (object.value != null) message.value = String(object.value);
+                if (object.associatedPrompts) {
+                    if (!Array.isArray(object.associatedPrompts))
+                        throw TypeError(
+                            ".BotMetadata.BotRenderingMetadata.Keyword.associatedPrompts: array expected"
+                        );
+                    message.associatedPrompts = [];
+                    for (var i = 0; i < object.associatedPrompts.length; ++i)
+                        message.associatedPrompts[i] = String(object.associatedPrompts[i]);
+                }
+                return message;
+            };
+            Keyword.toObject = function toObject(message, options) {
+                if (!options) options = {};
+                var object = {};
+                if (options.arrays || options.defaults) object.associatedPrompts = [];
+                if (options.defaults) object.value = "";
+                if (message.value != null && message.hasOwnProperty("value"))
+                    object.value = message.value;
+                if (message.associatedPrompts && message.associatedPrompts.length) {
+                    object.associatedPrompts = [];
+                    for (var j = 0; j < message.associatedPrompts.length; ++j)
+                        object.associatedPrompts[j] = message.associatedPrompts[j];
+                }
+                return object;
+            };
+            Keyword.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            Keyword.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/BotMetadata.BotRenderingMetadata.Keyword";
+            };
+            return Keyword;
+        })();
+        return BotRenderingMetadata;
+    })();
+    BotMetadata.BotPromotionMessageMetadata = (function () {
+        function BotPromotionMessageMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotPromotionMessageMetadata.prototype.promotionType = 0;
+        BotPromotionMessageMetadata.prototype.buttonTitle = "";
+        BotPromotionMessageMetadata.create = function create(properties) {
+            return new BotPromotionMessageMetadata(properties);
+        };
+        BotPromotionMessageMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (
+                message.promotionType != null &&
+                Object.hasOwnProperty.call(message, "promotionType")
+            )
+                writer.uint32(8).int32(message.promotionType);
+            if (message.buttonTitle != null && Object.hasOwnProperty.call(message, "buttonTitle"))
+                writer.uint32(18).string(message.buttonTitle);
+            return writer;
+        };
+        BotPromotionMessageMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotPromotionMessageMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotPromotionMessageMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.promotionType = reader.int32();
+                        break;
+                    }
+                    case 2: {
+                        message.buttonTitle = reader.string();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotPromotionMessageMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotPromotionMessageMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.promotionType != null && message.hasOwnProperty("promotionType"))
+                switch (message.promotionType) {
+                    default:
+                        return "promotionType: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                }
+            if (message.buttonTitle != null && message.hasOwnProperty("buttonTitle"))
+                if (!$util.isString(message.buttonTitle)) return "buttonTitle: string expected";
+            return null;
+        };
+        BotPromotionMessageMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotPromotionMessageMetadata) return object;
+            var message = new $root.BotMetadata.BotPromotionMessageMetadata();
+            switch (object.promotionType) {
+                default:
+                    if (typeof object.promotionType === "number") {
+                        message.promotionType = object.promotionType;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN_TYPE":
+                case 0:
+                    message.promotionType = 0;
+                    break;
+                case "C50":
+                case 1:
+                    message.promotionType = 1;
+                    break;
+                case "SURVEY_PLATFORM":
+                case 2:
+                    message.promotionType = 2;
+                    break;
+            }
+            if (object.buttonTitle != null) message.buttonTitle = String(object.buttonTitle);
+            return message;
+        };
+        BotPromotionMessageMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.promotionType = options.enums === String ? "UNKNOWN_TYPE" : 0;
+                object.buttonTitle = "";
+            }
+            if (message.promotionType != null && message.hasOwnProperty("promotionType"))
+                object.promotionType =
+                    options.enums === String
+                        ? $root.BotMetadata.BotPromotionMessageMetadata.BotPromotionType[
+                              message.promotionType
+                          ] === undefined
+                            ? message.promotionType
+                            : $root.BotMetadata.BotPromotionMessageMetadata.BotPromotionType[
+                                  message.promotionType
+                              ]
+                        : message.promotionType;
+            if (message.buttonTitle != null && message.hasOwnProperty("buttonTitle"))
+                object.buttonTitle = message.buttonTitle;
+            return object;
+        };
+        BotPromotionMessageMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotPromotionMessageMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotPromotionMessageMetadata";
+        };
+        BotPromotionMessageMetadata.BotPromotionType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN_TYPE")] = 0;
+            values[(valuesById[1] = "C50")] = 1;
+            values[(valuesById[2] = "SURVEY_PLATFORM")] = 2;
+            return values;
+        })();
+        return BotPromotionMessageMetadata;
+    })();
+    BotMetadata.BotSignatureVerificationUseCaseProof = (function () {
+        function BotSignatureVerificationUseCaseProof(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotSignatureVerificationUseCaseProof.prototype.version = 0;
+        BotSignatureVerificationUseCaseProof.prototype.useCase = 0;
+        BotSignatureVerificationUseCaseProof.prototype.signature = $util.newBuffer([]);
+        BotSignatureVerificationUseCaseProof.prototype.certificateChain = $util.newBuffer([]);
+        BotSignatureVerificationUseCaseProof.create = function create(properties) {
+            return new BotSignatureVerificationUseCaseProof(properties);
+        };
+        BotSignatureVerificationUseCaseProof.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.version != null && Object.hasOwnProperty.call(message, "version"))
+                writer.uint32(8).int32(message.version);
+            if (message.useCase != null && Object.hasOwnProperty.call(message, "useCase"))
+                writer.uint32(16).int32(message.useCase);
+            if (message.signature != null && Object.hasOwnProperty.call(message, "signature"))
+                writer.uint32(26).bytes(message.signature);
+            if (
+                message.certificateChain != null &&
+                Object.hasOwnProperty.call(message, "certificateChain")
+            )
+                writer.uint32(34).bytes(message.certificateChain);
+            return writer;
+        };
+        BotSignatureVerificationUseCaseProof.encodeDelimited = function encodeDelimited(
+            message,
+            writer
+        ) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotSignatureVerificationUseCaseProof.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotSignatureVerificationUseCaseProof();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.version = reader.int32();
+                        break;
+                    }
+                    case 2: {
+                        message.useCase = reader.int32();
+                        break;
+                    }
+                    case 3: {
+                        message.signature = reader.bytes();
+                        break;
+                    }
+                    case 4: {
+                        message.certificateChain = reader.bytes();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotSignatureVerificationUseCaseProof.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotSignatureVerificationUseCaseProof.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.version != null && message.hasOwnProperty("version"))
+                if (!$util.isInteger(message.version)) return "version: integer expected";
+            if (message.useCase != null && message.hasOwnProperty("useCase"))
+                switch (message.useCase) {
+                    default:
+                        return "useCase: enum value expected";
+                    case 0:
+                        break;
+                }
+            if (message.signature != null && message.hasOwnProperty("signature"))
+                if (
+                    !(
+                        (message.signature && typeof message.signature.length === "number") ||
+                        $util.isString(message.signature)
+                    )
+                )
+                    return "signature: buffer expected";
+            if (message.certificateChain != null && message.hasOwnProperty("certificateChain"))
+                if (
+                    !(
+                        (message.certificateChain &&
+                            typeof message.certificateChain.length === "number") ||
+                        $util.isString(message.certificateChain)
+                    )
+                )
+                    return "certificateChain: buffer expected";
+            return null;
+        };
+        BotSignatureVerificationUseCaseProof.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotSignatureVerificationUseCaseProof)
+                return object;
+            var message = new $root.BotMetadata.BotSignatureVerificationUseCaseProof();
+            if (object.version != null) message.version = object.version | 0;
+            switch (object.useCase) {
+                default:
+                    if (typeof object.useCase === "number") {
+                        message.useCase = object.useCase;
+                        break;
+                    }
+                    break;
+                case "WA_BOT_MSG":
+                case 0:
+                    message.useCase = 0;
+                    break;
+            }
+            if (object.signature != null)
+                if (typeof object.signature === "string")
+                    $util.base64.decode(
+                        object.signature,
+                        (message.signature = $util.newBuffer(
+                            $util.base64.length(object.signature)
+                        )),
+                        0
+                    );
+                else if (object.signature.length >= 0) message.signature = object.signature;
+            if (object.certificateChain != null)
+                if (typeof object.certificateChain === "string")
+                    $util.base64.decode(
+                        object.certificateChain,
+                        (message.certificateChain = $util.newBuffer(
+                            $util.base64.length(object.certificateChain)
+                        )),
+                        0
+                    );
+                else if (object.certificateChain.length >= 0)
+                    message.certificateChain = object.certificateChain;
+            return message;
+        };
+        BotSignatureVerificationUseCaseProof.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.version = 0;
+                object.useCase = options.enums === String ? "WA_BOT_MSG" : 0;
+                if (options.bytes === String) object.signature = "";
+                else {
+                    object.signature = [];
+                    if (options.bytes !== Array)
+                        object.signature = $util.newBuffer(object.signature);
+                }
+                if (options.bytes === String) object.certificateChain = "";
+                else {
+                    object.certificateChain = [];
+                    if (options.bytes !== Array)
+                        object.certificateChain = $util.newBuffer(object.certificateChain);
+                }
+            }
+            if (message.version != null && message.hasOwnProperty("version"))
+                object.version = message.version;
+            if (message.useCase != null && message.hasOwnProperty("useCase"))
+                object.useCase =
+                    options.enums === String
+                        ? $root.BotMetadata.BotSignatureVerificationUseCaseProof
+                              .BotSignatureUseCase[message.useCase] === undefined
+                            ? message.useCase
+                            : $root.BotMetadata.BotSignatureVerificationUseCaseProof
+                                  .BotSignatureUseCase[message.useCase]
+                        : message.useCase;
+            if (message.signature != null && message.hasOwnProperty("signature"))
+                object.signature =
+                    options.bytes === String
+                        ? $util.base64.encode(message.signature, 0, message.signature.length)
+                        : options.bytes === Array
+                          ? Array.prototype.slice.call(message.signature)
+                          : message.signature;
+            if (message.certificateChain != null && message.hasOwnProperty("certificateChain"))
+                object.certificateChain =
+                    options.bytes === String
+                        ? $util.base64.encode(
+                              message.certificateChain,
+                              0,
+                              message.certificateChain.length
+                          )
+                        : options.bytes === Array
+                          ? Array.prototype.slice.call(message.certificateChain)
+                          : message.certificateChain;
+            return object;
+        };
+        BotSignatureVerificationUseCaseProof.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotSignatureVerificationUseCaseProof.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotSignatureVerificationUseCaseProof";
+        };
+        BotSignatureVerificationUseCaseProof.BotSignatureUseCase = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "WA_BOT_MSG")] = 0;
+            return values;
+        })();
+        return BotSignatureVerificationUseCaseProof;
+    })();
+    BotMetadata.BotSignatureVerificationMetadata = (function () {
+        function BotSignatureVerificationMetadata(properties) {
+            this.proofs = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotSignatureVerificationMetadata.prototype.proofs = $util.emptyArray;
+        BotSignatureVerificationMetadata.create = function create(properties) {
+            return new BotSignatureVerificationMetadata(properties);
+        };
+        BotSignatureVerificationMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.proofs != null && message.proofs.length)
+                for (var i = 0; i < message.proofs.length; ++i)
+                    $root.BotMetadata.BotSignatureVerificationUseCaseProof.encode(
+                        message.proofs[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            return writer;
+        };
+        BotSignatureVerificationMetadata.encodeDelimited = function encodeDelimited(
+            message,
+            writer
+        ) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotSignatureVerificationMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotSignatureVerificationMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.proofs && message.proofs.length)) message.proofs = [];
+                        message.proofs.push(
+                            $root.BotMetadata.BotSignatureVerificationUseCaseProof.decode(
+                                reader,
+                                reader.uint32()
+                            )
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotSignatureVerificationMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotSignatureVerificationMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.proofs != null && message.hasOwnProperty("proofs")) {
+                if (!Array.isArray(message.proofs)) return "proofs: array expected";
+                for (var i = 0; i < message.proofs.length; ++i) {
+                    var error = $root.BotMetadata.BotSignatureVerificationUseCaseProof.verify(
+                        message.proofs[i]
+                    );
+                    if (error) return "proofs." + error;
+                }
+            }
+            return null;
+        };
+        BotSignatureVerificationMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotSignatureVerificationMetadata) return object;
+            var message = new $root.BotMetadata.BotSignatureVerificationMetadata();
+            if (object.proofs) {
+                if (!Array.isArray(object.proofs))
+                    throw TypeError(
+                        ".BotMetadata.BotSignatureVerificationMetadata.proofs: array expected"
+                    );
+                message.proofs = [];
+                for (var i = 0; i < object.proofs.length; ++i) {
+                    if (typeof object.proofs[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotSignatureVerificationMetadata.proofs: object expected"
+                        );
+                    message.proofs[i] =
+                        $root.BotMetadata.BotSignatureVerificationUseCaseProof.fromObject(
+                            object.proofs[i]
+                        );
+                }
+            }
+            return message;
+        };
+        BotSignatureVerificationMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.proofs = [];
+            if (message.proofs && message.proofs.length) {
+                object.proofs = [];
+                for (var j = 0; j < message.proofs.length; ++j)
+                    object.proofs[j] =
+                        $root.BotMetadata.BotSignatureVerificationUseCaseProof.toObject(
+                            message.proofs[j],
+                            options
+                        );
+            }
+            return object;
+        };
+        BotSignatureVerificationMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotSignatureVerificationMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotSignatureVerificationMetadata";
+        };
+        return BotSignatureVerificationMetadata;
+    })();
+    BotMetadata.BotMemoryFact = (function () {
+        function BotMemoryFact(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotMemoryFact.prototype.fact = "";
+        BotMemoryFact.prototype.factId = "";
+        BotMemoryFact.create = function create(properties) {
+            return new BotMemoryFact(properties);
+        };
+        BotMemoryFact.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.fact != null && Object.hasOwnProperty.call(message, "fact"))
+                writer.uint32(10).string(message.fact);
+            if (message.factId != null && Object.hasOwnProperty.call(message, "factId"))
+                writer.uint32(18).string(message.factId);
+            return writer;
+        };
+        BotMemoryFact.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotMemoryFact.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotMemoryFact();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.fact = reader.string();
+                        break;
+                    }
+                    case 2: {
+                        message.factId = reader.string();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotMemoryFact.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotMemoryFact.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.fact != null && message.hasOwnProperty("fact"))
+                if (!$util.isString(message.fact)) return "fact: string expected";
+            if (message.factId != null && message.hasOwnProperty("factId"))
+                if (!$util.isString(message.factId)) return "factId: string expected";
+            return null;
+        };
+        BotMemoryFact.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotMemoryFact) return object;
+            var message = new $root.BotMetadata.BotMemoryFact();
+            if (object.fact != null) message.fact = String(object.fact);
+            if (object.factId != null) message.factId = String(object.factId);
+            return message;
+        };
+        BotMemoryFact.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.fact = "";
+                object.factId = "";
+            }
+            if (message.fact != null && message.hasOwnProperty("fact")) object.fact = message.fact;
+            if (message.factId != null && message.hasOwnProperty("factId"))
+                object.factId = message.factId;
+            return object;
+        };
+        BotMemoryFact.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotMemoryFact.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotMemoryFact";
+        };
+        return BotMemoryFact;
+    })();
+    BotMetadata.BotMemoryMetadata = (function () {
+        function BotMemoryMetadata(properties) {
+            this.addedFacts = [];
+            this.removedFacts = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotMemoryMetadata.prototype.addedFacts = $util.emptyArray;
+        BotMemoryMetadata.prototype.removedFacts = $util.emptyArray;
+        BotMemoryMetadata.prototype.disclaimer = "";
+        BotMemoryMetadata.create = function create(properties) {
+            return new BotMemoryMetadata(properties);
+        };
+        BotMemoryMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.addedFacts != null && message.addedFacts.length)
+                for (var i = 0; i < message.addedFacts.length; ++i)
+                    $root.BotMetadata.BotMemoryFact.encode(
+                        message.addedFacts[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            if (message.removedFacts != null && message.removedFacts.length)
+                for (var i = 0; i < message.removedFacts.length; ++i)
+                    $root.BotMetadata.BotMemoryFact.encode(
+                        message.removedFacts[i],
+                        writer.uint32(18).fork()
+                    ).ldelim();
+            if (message.disclaimer != null && Object.hasOwnProperty.call(message, "disclaimer"))
+                writer.uint32(26).string(message.disclaimer);
+            return writer;
+        };
+        BotMemoryMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotMemoryMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotMemoryMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.addedFacts && message.addedFacts.length))
+                            message.addedFacts = [];
+                        message.addedFacts.push(
+                            $root.BotMetadata.BotMemoryFact.decode(reader, reader.uint32())
+                        );
+                        break;
+                    }
+                    case 2: {
+                        if (!(message.removedFacts && message.removedFacts.length))
+                            message.removedFacts = [];
+                        message.removedFacts.push(
+                            $root.BotMetadata.BotMemoryFact.decode(reader, reader.uint32())
+                        );
+                        break;
+                    }
+                    case 3: {
+                        message.disclaimer = reader.string();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotMemoryMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotMemoryMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.addedFacts != null && message.hasOwnProperty("addedFacts")) {
+                if (!Array.isArray(message.addedFacts)) return "addedFacts: array expected";
+                for (var i = 0; i < message.addedFacts.length; ++i) {
+                    var error = $root.BotMetadata.BotMemoryFact.verify(message.addedFacts[i]);
+                    if (error) return "addedFacts." + error;
+                }
+            }
+            if (message.removedFacts != null && message.hasOwnProperty("removedFacts")) {
+                if (!Array.isArray(message.removedFacts)) return "removedFacts: array expected";
+                for (var i = 0; i < message.removedFacts.length; ++i) {
+                    var error = $root.BotMetadata.BotMemoryFact.verify(message.removedFacts[i]);
+                    if (error) return "removedFacts." + error;
+                }
+            }
+            if (message.disclaimer != null && message.hasOwnProperty("disclaimer"))
+                if (!$util.isString(message.disclaimer)) return "disclaimer: string expected";
+            return null;
+        };
+        BotMemoryMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotMemoryMetadata) return object;
+            var message = new $root.BotMetadata.BotMemoryMetadata();
+            if (object.addedFacts) {
+                if (!Array.isArray(object.addedFacts))
+                    throw TypeError(".BotMetadata.BotMemoryMetadata.addedFacts: array expected");
+                message.addedFacts = [];
+                for (var i = 0; i < object.addedFacts.length; ++i) {
+                    if (typeof object.addedFacts[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotMemoryMetadata.addedFacts: object expected"
+                        );
+                    message.addedFacts[i] = $root.BotMetadata.BotMemoryFact.fromObject(
+                        object.addedFacts[i]
+                    );
+                }
+            }
+            if (object.removedFacts) {
+                if (!Array.isArray(object.removedFacts))
+                    throw TypeError(".BotMetadata.BotMemoryMetadata.removedFacts: array expected");
+                message.removedFacts = [];
+                for (var i = 0; i < object.removedFacts.length; ++i) {
+                    if (typeof object.removedFacts[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotMemoryMetadata.removedFacts: object expected"
+                        );
+                    message.removedFacts[i] = $root.BotMetadata.BotMemoryFact.fromObject(
+                        object.removedFacts[i]
+                    );
+                }
+            }
+            if (object.disclaimer != null) message.disclaimer = String(object.disclaimer);
+            return message;
+        };
+        BotMemoryMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) {
+                object.addedFacts = [];
+                object.removedFacts = [];
+            }
+            if (options.defaults) object.disclaimer = "";
+            if (message.addedFacts && message.addedFacts.length) {
+                object.addedFacts = [];
+                for (var j = 0; j < message.addedFacts.length; ++j)
+                    object.addedFacts[j] = $root.BotMetadata.BotMemoryFact.toObject(
+                        message.addedFacts[j],
+                        options
+                    );
+            }
+            if (message.removedFacts && message.removedFacts.length) {
+                object.removedFacts = [];
+                for (var j = 0; j < message.removedFacts.length; ++j)
+                    object.removedFacts[j] = $root.BotMetadata.BotMemoryFact.toObject(
+                        message.removedFacts[j],
+                        options
+                    );
+            }
+            if (message.disclaimer != null && message.hasOwnProperty("disclaimer"))
+                object.disclaimer = message.disclaimer;
+            return object;
+        };
+        BotMemoryMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotMemoryMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotMemoryMetadata";
+        };
+        return BotMemoryMetadata;
+    })();
+    BotMetadata.BotLinkedAccount = (function () {
+        function BotLinkedAccount(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotLinkedAccount.prototype.type = 0;
+        BotLinkedAccount.create = function create(properties) {
+            return new BotLinkedAccount(properties);
+        };
+        BotLinkedAccount.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(8).int32(message.type);
+            return writer;
+        };
+        BotLinkedAccount.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotLinkedAccount.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotLinkedAccount();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.type = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotLinkedAccount.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotLinkedAccount.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                    default:
+                        return "type: enum value expected";
+                    case 0:
+                        break;
+                }
+            return null;
+        };
+        BotLinkedAccount.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotLinkedAccount) return object;
+            var message = new $root.BotMetadata.BotLinkedAccount();
+            switch (object.type) {
+                default:
+                    if (typeof object.type === "number") {
+                        message.type = object.type;
+                        break;
+                    }
+                    break;
+                case "BOT_LINKED_ACCOUNT_TYPE_1P":
+                case 0:
+                    message.type = 0;
+                    break;
+            }
+            return message;
+        };
+        BotLinkedAccount.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults)
+                object.type = options.enums === String ? "BOT_LINKED_ACCOUNT_TYPE_1P" : 0;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type =
+                    options.enums === String
+                        ? $root.BotMetadata.BotLinkedAccount.BotLinkedAccountType[message.type] ===
+                          undefined
+                            ? message.type
+                            : $root.BotMetadata.BotLinkedAccount.BotLinkedAccountType[message.type]
+                        : message.type;
+            return object;
+        };
+        BotLinkedAccount.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotLinkedAccount.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotLinkedAccount";
+        };
+        BotLinkedAccount.BotLinkedAccountType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "BOT_LINKED_ACCOUNT_TYPE_1P")] = 0;
+            return values;
+        })();
+        return BotLinkedAccount;
+    })();
+    BotMetadata.BotLinkedAccountsMetadata = (function () {
+        function BotLinkedAccountsMetadata(properties) {
+            this.accounts = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotLinkedAccountsMetadata.prototype.accounts = $util.emptyArray;
+        BotLinkedAccountsMetadata.prototype.acAuthTokens = $util.newBuffer([]);
+        BotLinkedAccountsMetadata.prototype.acErrorCode = 0;
+        BotLinkedAccountsMetadata.create = function create(properties) {
+            return new BotLinkedAccountsMetadata(properties);
+        };
+        BotLinkedAccountsMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.accounts != null && message.accounts.length)
+                for (var i = 0; i < message.accounts.length; ++i)
+                    $root.BotMetadata.BotLinkedAccount.encode(
+                        message.accounts[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            if (message.acAuthTokens != null && Object.hasOwnProperty.call(message, "acAuthTokens"))
+                writer.uint32(18).bytes(message.acAuthTokens);
+            if (message.acErrorCode != null && Object.hasOwnProperty.call(message, "acErrorCode"))
+                writer.uint32(24).int32(message.acErrorCode);
+            return writer;
+        };
+        BotLinkedAccountsMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotLinkedAccountsMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotLinkedAccountsMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.accounts && message.accounts.length)) message.accounts = [];
+                        message.accounts.push(
+                            $root.BotMetadata.BotLinkedAccount.decode(reader, reader.uint32())
+                        );
+                        break;
+                    }
+                    case 2: {
+                        message.acAuthTokens = reader.bytes();
+                        break;
+                    }
+                    case 3: {
+                        message.acErrorCode = reader.int32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotLinkedAccountsMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotLinkedAccountsMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.accounts != null && message.hasOwnProperty("accounts")) {
+                if (!Array.isArray(message.accounts)) return "accounts: array expected";
+                for (var i = 0; i < message.accounts.length; ++i) {
+                    var error = $root.BotMetadata.BotLinkedAccount.verify(message.accounts[i]);
+                    if (error) return "accounts." + error;
+                }
+            }
+            if (message.acAuthTokens != null && message.hasOwnProperty("acAuthTokens"))
+                if (
+                    !(
+                        (message.acAuthTokens && typeof message.acAuthTokens.length === "number") ||
+                        $util.isString(message.acAuthTokens)
+                    )
+                )
+                    return "acAuthTokens: buffer expected";
+            if (message.acErrorCode != null && message.hasOwnProperty("acErrorCode"))
+                if (!$util.isInteger(message.acErrorCode)) return "acErrorCode: integer expected";
+            return null;
+        };
+        BotLinkedAccountsMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotLinkedAccountsMetadata) return object;
+            var message = new $root.BotMetadata.BotLinkedAccountsMetadata();
+            if (object.accounts) {
+                if (!Array.isArray(object.accounts))
+                    throw TypeError(
+                        ".BotMetadata.BotLinkedAccountsMetadata.accounts: array expected"
+                    );
+                message.accounts = [];
+                for (var i = 0; i < object.accounts.length; ++i) {
+                    if (typeof object.accounts[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotLinkedAccountsMetadata.accounts: object expected"
+                        );
+                    message.accounts[i] = $root.BotMetadata.BotLinkedAccount.fromObject(
+                        object.accounts[i]
+                    );
+                }
+            }
+            if (object.acAuthTokens != null)
+                if (typeof object.acAuthTokens === "string")
+                    $util.base64.decode(
+                        object.acAuthTokens,
+                        (message.acAuthTokens = $util.newBuffer(
+                            $util.base64.length(object.acAuthTokens)
+                        )),
+                        0
+                    );
+                else if (object.acAuthTokens.length >= 0)
+                    message.acAuthTokens = object.acAuthTokens;
+            if (object.acErrorCode != null) message.acErrorCode = object.acErrorCode | 0;
+            return message;
+        };
+        BotLinkedAccountsMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.accounts = [];
+            if (options.defaults) {
+                if (options.bytes === String) object.acAuthTokens = "";
+                else {
+                    object.acAuthTokens = [];
+                    if (options.bytes !== Array)
+                        object.acAuthTokens = $util.newBuffer(object.acAuthTokens);
+                }
+                object.acErrorCode = 0;
+            }
+            if (message.accounts && message.accounts.length) {
+                object.accounts = [];
+                for (var j = 0; j < message.accounts.length; ++j)
+                    object.accounts[j] = $root.BotMetadata.BotLinkedAccount.toObject(
+                        message.accounts[j],
+                        options
+                    );
+            }
+            if (message.acAuthTokens != null && message.hasOwnProperty("acAuthTokens"))
+                object.acAuthTokens =
+                    options.bytes === String
+                        ? $util.base64.encode(message.acAuthTokens, 0, message.acAuthTokens.length)
+                        : options.bytes === Array
+                          ? Array.prototype.slice.call(message.acAuthTokens)
+                          : message.acAuthTokens;
+            if (message.acErrorCode != null && message.hasOwnProperty("acErrorCode"))
+                object.acErrorCode = message.acErrorCode;
+            return object;
+        };
+        BotLinkedAccountsMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotLinkedAccountsMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotLinkedAccountsMetadata";
+        };
+        return BotLinkedAccountsMetadata;
+    })();
+    BotMetadata.BotPromptSuggestion = (function () {
+        function BotPromptSuggestion(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotPromptSuggestion.prototype.prompt = "";
+        BotPromptSuggestion.prototype.promptId = "";
+        BotPromptSuggestion.create = function create(properties) {
+            return new BotPromptSuggestion(properties);
+        };
+        BotPromptSuggestion.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.prompt != null && Object.hasOwnProperty.call(message, "prompt"))
+                writer.uint32(10).string(message.prompt);
+            if (message.promptId != null && Object.hasOwnProperty.call(message, "promptId"))
+                writer.uint32(18).string(message.promptId);
+            return writer;
+        };
+        BotPromptSuggestion.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotPromptSuggestion.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotPromptSuggestion();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.prompt = reader.string();
+                        break;
+                    }
+                    case 2: {
+                        message.promptId = reader.string();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotPromptSuggestion.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotPromptSuggestion.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.prompt != null && message.hasOwnProperty("prompt"))
+                if (!$util.isString(message.prompt)) return "prompt: string expected";
+            if (message.promptId != null && message.hasOwnProperty("promptId"))
+                if (!$util.isString(message.promptId)) return "promptId: string expected";
+            return null;
+        };
+        BotPromptSuggestion.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotPromptSuggestion) return object;
+            var message = new $root.BotMetadata.BotPromptSuggestion();
+            if (object.prompt != null) message.prompt = String(object.prompt);
+            if (object.promptId != null) message.promptId = String(object.promptId);
+            return message;
+        };
+        BotPromptSuggestion.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.prompt = "";
+                object.promptId = "";
+            }
+            if (message.prompt != null && message.hasOwnProperty("prompt"))
+                object.prompt = message.prompt;
+            if (message.promptId != null && message.hasOwnProperty("promptId"))
+                object.promptId = message.promptId;
+            return object;
+        };
+        BotPromptSuggestion.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotPromptSuggestion.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotPromptSuggestion";
+        };
+        return BotPromptSuggestion;
+    })();
+    BotMetadata.BotPromptSuggestions = (function () {
+        function BotPromptSuggestions(properties) {
+            this.suggestions = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotPromptSuggestions.prototype.suggestions = $util.emptyArray;
+        BotPromptSuggestions.create = function create(properties) {
+            return new BotPromptSuggestions(properties);
+        };
+        BotPromptSuggestions.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.suggestions != null && message.suggestions.length)
+                for (var i = 0; i < message.suggestions.length; ++i)
+                    $root.BotMetadata.BotPromptSuggestion.encode(
+                        message.suggestions[i],
+                        writer.uint32(10).fork()
+                    ).ldelim();
+            return writer;
+        };
+        BotPromptSuggestions.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotPromptSuggestions.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotPromptSuggestions();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.suggestions && message.suggestions.length))
+                            message.suggestions = [];
+                        message.suggestions.push(
+                            $root.BotMetadata.BotPromptSuggestion.decode(reader, reader.uint32())
+                        );
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotPromptSuggestions.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotPromptSuggestions.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.suggestions != null && message.hasOwnProperty("suggestions")) {
+                if (!Array.isArray(message.suggestions)) return "suggestions: array expected";
+                for (var i = 0; i < message.suggestions.length; ++i) {
+                    var error = $root.BotMetadata.BotPromptSuggestion.verify(
+                        message.suggestions[i]
+                    );
+                    if (error) return "suggestions." + error;
+                }
+            }
+            return null;
+        };
+        BotPromptSuggestions.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotPromptSuggestions) return object;
+            var message = new $root.BotMetadata.BotPromptSuggestions();
+            if (object.suggestions) {
+                if (!Array.isArray(object.suggestions))
+                    throw TypeError(
+                        ".BotMetadata.BotPromptSuggestions.suggestions: array expected"
+                    );
+                message.suggestions = [];
+                for (var i = 0; i < object.suggestions.length; ++i) {
+                    if (typeof object.suggestions[i] !== "object")
+                        throw TypeError(
+                            ".BotMetadata.BotPromptSuggestions.suggestions: object expected"
+                        );
+                    message.suggestions[i] = $root.BotMetadata.BotPromptSuggestion.fromObject(
+                        object.suggestions[i]
+                    );
+                }
+            }
+            return message;
+        };
+        BotPromptSuggestions.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.suggestions = [];
+            if (message.suggestions && message.suggestions.length) {
+                object.suggestions = [];
+                for (var j = 0; j < message.suggestions.length; ++j)
+                    object.suggestions[j] = $root.BotMetadata.BotPromptSuggestion.toObject(
+                        message.suggestions[j],
+                        options
+                    );
+            }
+            return object;
+        };
+        BotPromptSuggestions.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotPromptSuggestions.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotPromptSuggestions";
+        };
+        return BotPromptSuggestions;
+    })();
+    BotMetadata.BotSuggestedPromptMetadata = (function () {
+        function BotSuggestedPromptMetadata(properties) {
+            this.suggestedPrompts = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotSuggestedPromptMetadata.prototype.suggestedPrompts = $util.emptyArray;
+        BotSuggestedPromptMetadata.prototype.selectedPromptIndex = 0;
+        BotSuggestedPromptMetadata.prototype.promptSuggestions = null;
+        BotSuggestedPromptMetadata.prototype.selectedPromptId = "";
+        BotSuggestedPromptMetadata.create = function create(properties) {
+            return new BotSuggestedPromptMetadata(properties);
+        };
+        BotSuggestedPromptMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.suggestedPrompts != null && message.suggestedPrompts.length)
+                for (var i = 0; i < message.suggestedPrompts.length; ++i)
+                    writer.uint32(10).string(message.suggestedPrompts[i]);
+            if (
+                message.selectedPromptIndex != null &&
+                Object.hasOwnProperty.call(message, "selectedPromptIndex")
+            )
+                writer.uint32(16).uint32(message.selectedPromptIndex);
+            if (
+                message.promptSuggestions != null &&
+                Object.hasOwnProperty.call(message, "promptSuggestions")
+            )
+                $root.BotMetadata.BotPromptSuggestions.encode(
+                    message.promptSuggestions,
+                    writer.uint32(26).fork()
+                ).ldelim();
+            if (
+                message.selectedPromptId != null &&
+                Object.hasOwnProperty.call(message, "selectedPromptId")
+            )
+                writer.uint32(34).string(message.selectedPromptId);
+            return writer;
+        };
+        BotSuggestedPromptMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotSuggestedPromptMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotSuggestedPromptMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        if (!(message.suggestedPrompts && message.suggestedPrompts.length))
+                            message.suggestedPrompts = [];
+                        message.suggestedPrompts.push(reader.string());
+                        break;
+                    }
+                    case 2: {
+                        message.selectedPromptIndex = reader.uint32();
+                        break;
+                    }
+                    case 3: {
+                        message.promptSuggestions = $root.BotMetadata.BotPromptSuggestions.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 4: {
+                        message.selectedPromptId = reader.string();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotSuggestedPromptMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotSuggestedPromptMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.suggestedPrompts != null && message.hasOwnProperty("suggestedPrompts")) {
+                if (!Array.isArray(message.suggestedPrompts))
+                    return "suggestedPrompts: array expected";
+                for (var i = 0; i < message.suggestedPrompts.length; ++i)
+                    if (!$util.isString(message.suggestedPrompts[i]))
+                        return "suggestedPrompts: string[] expected";
+            }
+            if (
+                message.selectedPromptIndex != null &&
+                message.hasOwnProperty("selectedPromptIndex")
+            )
+                if (!$util.isInteger(message.selectedPromptIndex))
+                    return "selectedPromptIndex: integer expected";
+            if (message.promptSuggestions != null && message.hasOwnProperty("promptSuggestions")) {
+                var error = $root.BotMetadata.BotPromptSuggestions.verify(
+                    message.promptSuggestions
+                );
+                if (error) return "promptSuggestions." + error;
+            }
+            if (message.selectedPromptId != null && message.hasOwnProperty("selectedPromptId"))
+                if (!$util.isString(message.selectedPromptId))
+                    return "selectedPromptId: string expected";
+            return null;
+        };
+        BotSuggestedPromptMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotSuggestedPromptMetadata) return object;
+            var message = new $root.BotMetadata.BotSuggestedPromptMetadata();
+            if (object.suggestedPrompts) {
+                if (!Array.isArray(object.suggestedPrompts))
+                    throw TypeError(
+                        ".BotMetadata.BotSuggestedPromptMetadata.suggestedPrompts: array expected"
+                    );
+                message.suggestedPrompts = [];
+                for (var i = 0; i < object.suggestedPrompts.length; ++i)
+                    message.suggestedPrompts[i] = String(object.suggestedPrompts[i]);
+            }
+            if (object.selectedPromptIndex != null)
+                message.selectedPromptIndex = object.selectedPromptIndex >>> 0;
+            if (object.promptSuggestions != null) {
+                if (typeof object.promptSuggestions !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotSuggestedPromptMetadata.promptSuggestions: object expected"
+                    );
+                message.promptSuggestions = $root.BotMetadata.BotPromptSuggestions.fromObject(
+                    object.promptSuggestions
+                );
+            }
+            if (object.selectedPromptId != null)
+                message.selectedPromptId = String(object.selectedPromptId);
+            return message;
+        };
+        BotSuggestedPromptMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.arrays || options.defaults) object.suggestedPrompts = [];
+            if (options.defaults) {
+                object.selectedPromptIndex = 0;
+                object.promptSuggestions = null;
+                object.selectedPromptId = "";
+            }
+            if (message.suggestedPrompts && message.suggestedPrompts.length) {
+                object.suggestedPrompts = [];
+                for (var j = 0; j < message.suggestedPrompts.length; ++j)
+                    object.suggestedPrompts[j] = message.suggestedPrompts[j];
+            }
+            if (
+                message.selectedPromptIndex != null &&
+                message.hasOwnProperty("selectedPromptIndex")
+            )
+                object.selectedPromptIndex = message.selectedPromptIndex;
+            if (message.promptSuggestions != null && message.hasOwnProperty("promptSuggestions"))
+                object.promptSuggestions = $root.BotMetadata.BotPromptSuggestions.toObject(
+                    message.promptSuggestions,
+                    options
+                );
+            if (message.selectedPromptId != null && message.hasOwnProperty("selectedPromptId"))
+                object.selectedPromptId = message.selectedPromptId;
+            return object;
+        };
+        BotSuggestedPromptMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotSuggestedPromptMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotSuggestedPromptMetadata";
+        };
+        return BotSuggestedPromptMetadata;
+    })();
+    BotMetadata.BotPluginMetadata = (function () {
+        function BotPluginMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotPluginMetadata.prototype.provider = 0;
+        BotPluginMetadata.prototype.pluginType = 0;
+        BotPluginMetadata.prototype.thumbnailCdnUrl = "";
+        BotPluginMetadata.prototype.profilePhotoCdnUrl = "";
+        BotPluginMetadata.prototype.searchProviderUrl = "";
+        BotPluginMetadata.prototype.referenceIndex = 0;
+        BotPluginMetadata.prototype.expectedLinksCount = 0;
+        BotPluginMetadata.prototype.searchQuery = "";
+        BotPluginMetadata.prototype.parentPluginMessageKey = null;
+        BotPluginMetadata.prototype.deprecatedField = 0;
+        BotPluginMetadata.prototype.parentPluginType = 0;
+        BotPluginMetadata.prototype.faviconCdnUrl = "";
+        BotPluginMetadata.create = function create(properties) {
+            return new BotPluginMetadata(properties);
+        };
+        BotPluginMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.provider != null && Object.hasOwnProperty.call(message, "provider"))
+                writer.uint32(8).int32(message.provider);
+            if (message.pluginType != null && Object.hasOwnProperty.call(message, "pluginType"))
+                writer.uint32(16).int32(message.pluginType);
+            if (
+                message.thumbnailCdnUrl != null &&
+                Object.hasOwnProperty.call(message, "thumbnailCdnUrl")
+            )
+                writer.uint32(26).string(message.thumbnailCdnUrl);
+            if (
+                message.profilePhotoCdnUrl != null &&
+                Object.hasOwnProperty.call(message, "profilePhotoCdnUrl")
+            )
+                writer.uint32(34).string(message.profilePhotoCdnUrl);
+            if (
+                message.searchProviderUrl != null &&
+                Object.hasOwnProperty.call(message, "searchProviderUrl")
+            )
+                writer.uint32(42).string(message.searchProviderUrl);
+            if (
+                message.referenceIndex != null &&
+                Object.hasOwnProperty.call(message, "referenceIndex")
+            )
+                writer.uint32(48).uint32(message.referenceIndex);
+            if (
+                message.expectedLinksCount != null &&
+                Object.hasOwnProperty.call(message, "expectedLinksCount")
+            )
+                writer.uint32(56).uint32(message.expectedLinksCount);
+            if (message.searchQuery != null && Object.hasOwnProperty.call(message, "searchQuery"))
+                writer.uint32(74).string(message.searchQuery);
+            if (
+                message.parentPluginMessageKey != null &&
+                Object.hasOwnProperty.call(message, "parentPluginMessageKey")
+            )
+                $root.Protocol.MessageKey.encode(
+                    message.parentPluginMessageKey,
+                    writer.uint32(82).fork()
+                ).ldelim();
+            if (
+                message.deprecatedField != null &&
+                Object.hasOwnProperty.call(message, "deprecatedField")
+            )
+                writer.uint32(88).int32(message.deprecatedField);
+            if (
+                message.parentPluginType != null &&
+                Object.hasOwnProperty.call(message, "parentPluginType")
+            )
+                writer.uint32(96).int32(message.parentPluginType);
+            if (
+                message.faviconCdnUrl != null &&
+                Object.hasOwnProperty.call(message, "faviconCdnUrl")
+            )
+                writer.uint32(106).string(message.faviconCdnUrl);
+            return writer;
+        };
+        BotPluginMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotPluginMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotPluginMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.provider = reader.int32();
+                        break;
+                    }
+                    case 2: {
+                        message.pluginType = reader.int32();
+                        break;
+                    }
+                    case 3: {
+                        message.thumbnailCdnUrl = reader.string();
+                        break;
+                    }
+                    case 4: {
+                        message.profilePhotoCdnUrl = reader.string();
+                        break;
+                    }
+                    case 5: {
+                        message.searchProviderUrl = reader.string();
+                        break;
+                    }
+                    case 6: {
+                        message.referenceIndex = reader.uint32();
+                        break;
+                    }
+                    case 7: {
+                        message.expectedLinksCount = reader.uint32();
+                        break;
+                    }
+                    case 9: {
+                        message.searchQuery = reader.string();
+                        break;
+                    }
+                    case 10: {
+                        message.parentPluginMessageKey = $root.Protocol.MessageKey.decode(
+                            reader,
+                            reader.uint32()
+                        );
+                        break;
+                    }
+                    case 11: {
+                        message.deprecatedField = reader.int32();
+                        break;
+                    }
+                    case 12: {
+                        message.parentPluginType = reader.int32();
+                        break;
+                    }
+                    case 13: {
+                        message.faviconCdnUrl = reader.string();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotPluginMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotPluginMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.provider != null && message.hasOwnProperty("provider"))
+                switch (message.provider) {
+                    default:
+                        return "provider: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                        break;
+                }
+            if (message.pluginType != null && message.hasOwnProperty("pluginType"))
+                switch (message.pluginType) {
+                    default:
+                        return "pluginType: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                }
+            if (message.thumbnailCdnUrl != null && message.hasOwnProperty("thumbnailCdnUrl"))
+                if (!$util.isString(message.thumbnailCdnUrl))
+                    return "thumbnailCdnUrl: string expected";
+            if (message.profilePhotoCdnUrl != null && message.hasOwnProperty("profilePhotoCdnUrl"))
+                if (!$util.isString(message.profilePhotoCdnUrl))
+                    return "profilePhotoCdnUrl: string expected";
+            if (message.searchProviderUrl != null && message.hasOwnProperty("searchProviderUrl"))
+                if (!$util.isString(message.searchProviderUrl))
+                    return "searchProviderUrl: string expected";
+            if (message.referenceIndex != null && message.hasOwnProperty("referenceIndex"))
+                if (!$util.isInteger(message.referenceIndex))
+                    return "referenceIndex: integer expected";
+            if (message.expectedLinksCount != null && message.hasOwnProperty("expectedLinksCount"))
+                if (!$util.isInteger(message.expectedLinksCount))
+                    return "expectedLinksCount: integer expected";
+            if (message.searchQuery != null && message.hasOwnProperty("searchQuery"))
+                if (!$util.isString(message.searchQuery)) return "searchQuery: string expected";
+            if (
+                message.parentPluginMessageKey != null &&
+                message.hasOwnProperty("parentPluginMessageKey")
+            ) {
+                var error = $root.Protocol.MessageKey.verify(message.parentPluginMessageKey);
+                if (error) return "parentPluginMessageKey." + error;
+            }
+            if (message.deprecatedField != null && message.hasOwnProperty("deprecatedField"))
+                switch (message.deprecatedField) {
+                    default:
+                        return "deprecatedField: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                }
+            if (message.parentPluginType != null && message.hasOwnProperty("parentPluginType"))
+                switch (message.parentPluginType) {
+                    default:
+                        return "parentPluginType: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                }
+            if (message.faviconCdnUrl != null && message.hasOwnProperty("faviconCdnUrl"))
+                if (!$util.isString(message.faviconCdnUrl)) return "faviconCdnUrl: string expected";
+            return null;
+        };
+        BotPluginMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotPluginMetadata) return object;
+            var message = new $root.BotMetadata.BotPluginMetadata();
+            switch (object.provider) {
+                default:
+                    if (typeof object.provider === "number") {
+                        message.provider = object.provider;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN":
+                case 0:
+                    message.provider = 0;
+                    break;
+                case "BING":
+                case 1:
+                    message.provider = 1;
+                    break;
+                case "GOOGLE":
+                case 2:
+                    message.provider = 2;
+                    break;
+                case "SUPPORT":
+                case 3:
+                    message.provider = 3;
+                    break;
+            }
+            switch (object.pluginType) {
+                default:
+                    if (typeof object.pluginType === "number") {
+                        message.pluginType = object.pluginType;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN_PLUGIN":
+                case 0:
+                    message.pluginType = 0;
+                    break;
+                case "REELS":
+                case 1:
+                    message.pluginType = 1;
+                    break;
+                case "SEARCH":
+                case 2:
+                    message.pluginType = 2;
+                    break;
+            }
+            if (object.thumbnailCdnUrl != null)
+                message.thumbnailCdnUrl = String(object.thumbnailCdnUrl);
+            if (object.profilePhotoCdnUrl != null)
+                message.profilePhotoCdnUrl = String(object.profilePhotoCdnUrl);
+            if (object.searchProviderUrl != null)
+                message.searchProviderUrl = String(object.searchProviderUrl);
+            if (object.referenceIndex != null) message.referenceIndex = object.referenceIndex >>> 0;
+            if (object.expectedLinksCount != null)
+                message.expectedLinksCount = object.expectedLinksCount >>> 0;
+            if (object.searchQuery != null) message.searchQuery = String(object.searchQuery);
+            if (object.parentPluginMessageKey != null) {
+                if (typeof object.parentPluginMessageKey !== "object")
+                    throw TypeError(
+                        ".BotMetadata.BotPluginMetadata.parentPluginMessageKey: object expected"
+                    );
+                message.parentPluginMessageKey = $root.Protocol.MessageKey.fromObject(
+                    object.parentPluginMessageKey
+                );
+            }
+            switch (object.deprecatedField) {
+                default:
+                    if (typeof object.deprecatedField === "number") {
+                        message.deprecatedField = object.deprecatedField;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN_PLUGIN":
+                case 0:
+                    message.deprecatedField = 0;
+                    break;
+                case "REELS":
+                case 1:
+                    message.deprecatedField = 1;
+                    break;
+                case "SEARCH":
+                case 2:
+                    message.deprecatedField = 2;
+                    break;
+            }
+            switch (object.parentPluginType) {
+                default:
+                    if (typeof object.parentPluginType === "number") {
+                        message.parentPluginType = object.parentPluginType;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN_PLUGIN":
+                case 0:
+                    message.parentPluginType = 0;
+                    break;
+                case "REELS":
+                case 1:
+                    message.parentPluginType = 1;
+                    break;
+                case "SEARCH":
+                case 2:
+                    message.parentPluginType = 2;
+                    break;
+            }
+            if (object.faviconCdnUrl != null) message.faviconCdnUrl = String(object.faviconCdnUrl);
+            return message;
+        };
+        BotPluginMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.provider = options.enums === String ? "UNKNOWN" : 0;
+                object.pluginType = options.enums === String ? "UNKNOWN_PLUGIN" : 0;
+                object.thumbnailCdnUrl = "";
+                object.profilePhotoCdnUrl = "";
+                object.searchProviderUrl = "";
+                object.referenceIndex = 0;
+                object.expectedLinksCount = 0;
+                object.searchQuery = "";
+                object.parentPluginMessageKey = null;
+                object.deprecatedField = options.enums === String ? "UNKNOWN_PLUGIN" : 0;
+                object.parentPluginType = options.enums === String ? "UNKNOWN_PLUGIN" : 0;
+                object.faviconCdnUrl = "";
+            }
+            if (message.provider != null && message.hasOwnProperty("provider"))
+                object.provider =
+                    options.enums === String
+                        ? $root.BotMetadata.BotPluginMetadata.SearchProvider[message.provider] ===
+                          undefined
+                            ? message.provider
+                            : $root.BotMetadata.BotPluginMetadata.SearchProvider[message.provider]
+                        : message.provider;
+            if (message.pluginType != null && message.hasOwnProperty("pluginType"))
+                object.pluginType =
+                    options.enums === String
+                        ? $root.BotMetadata.BotPluginMetadata.PluginType[message.pluginType] ===
+                          undefined
+                            ? message.pluginType
+                            : $root.BotMetadata.BotPluginMetadata.PluginType[message.pluginType]
+                        : message.pluginType;
+            if (message.thumbnailCdnUrl != null && message.hasOwnProperty("thumbnailCdnUrl"))
+                object.thumbnailCdnUrl = message.thumbnailCdnUrl;
+            if (message.profilePhotoCdnUrl != null && message.hasOwnProperty("profilePhotoCdnUrl"))
+                object.profilePhotoCdnUrl = message.profilePhotoCdnUrl;
+            if (message.searchProviderUrl != null && message.hasOwnProperty("searchProviderUrl"))
+                object.searchProviderUrl = message.searchProviderUrl;
+            if (message.referenceIndex != null && message.hasOwnProperty("referenceIndex"))
+                object.referenceIndex = message.referenceIndex;
+            if (message.expectedLinksCount != null && message.hasOwnProperty("expectedLinksCount"))
+                object.expectedLinksCount = message.expectedLinksCount;
+            if (message.searchQuery != null && message.hasOwnProperty("searchQuery"))
+                object.searchQuery = message.searchQuery;
+            if (
+                message.parentPluginMessageKey != null &&
+                message.hasOwnProperty("parentPluginMessageKey")
+            )
+                object.parentPluginMessageKey = $root.Protocol.MessageKey.toObject(
+                    message.parentPluginMessageKey,
+                    options
+                );
+            if (message.deprecatedField != null && message.hasOwnProperty("deprecatedField"))
+                object.deprecatedField =
+                    options.enums === String
+                        ? $root.BotMetadata.BotPluginMetadata.PluginType[
+                              message.deprecatedField
+                          ] === undefined
+                            ? message.deprecatedField
+                            : $root.BotMetadata.BotPluginMetadata.PluginType[
+                                  message.deprecatedField
+                              ]
+                        : message.deprecatedField;
+            if (message.parentPluginType != null && message.hasOwnProperty("parentPluginType"))
+                object.parentPluginType =
+                    options.enums === String
+                        ? $root.BotMetadata.BotPluginMetadata.PluginType[
+                              message.parentPluginType
+                          ] === undefined
+                            ? message.parentPluginType
+                            : $root.BotMetadata.BotPluginMetadata.PluginType[
+                                  message.parentPluginType
+                              ]
+                        : message.parentPluginType;
+            if (message.faviconCdnUrl != null && message.hasOwnProperty("faviconCdnUrl"))
+                object.faviconCdnUrl = message.faviconCdnUrl;
+            return object;
+        };
+        BotPluginMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotPluginMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotPluginMetadata";
+        };
+        BotPluginMetadata.PluginType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN_PLUGIN")] = 0;
+            values[(valuesById[1] = "REELS")] = 1;
+            values[(valuesById[2] = "SEARCH")] = 2;
+            return values;
+        })();
+        BotPluginMetadata.SearchProvider = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN")] = 0;
+            values[(valuesById[1] = "BING")] = 1;
+            values[(valuesById[2] = "GOOGLE")] = 2;
+            values[(valuesById[3] = "SUPPORT")] = 3;
+            return values;
+        })();
+        return BotPluginMetadata;
+    })();
+    BotMetadata.BotAvatarMetadata = (function () {
+        function BotAvatarMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        BotAvatarMetadata.prototype.sentiment = 0;
+        BotAvatarMetadata.prototype.behaviorGraph = "";
+        BotAvatarMetadata.prototype.action = 0;
+        BotAvatarMetadata.prototype.intensity = 0;
+        BotAvatarMetadata.prototype.wordCount = 0;
+        BotAvatarMetadata.create = function create(properties) {
+            return new BotAvatarMetadata(properties);
+        };
+        BotAvatarMetadata.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.sentiment != null && Object.hasOwnProperty.call(message, "sentiment"))
+                writer.uint32(8).uint32(message.sentiment);
+            if (
+                message.behaviorGraph != null &&
+                Object.hasOwnProperty.call(message, "behaviorGraph")
+            )
+                writer.uint32(18).string(message.behaviorGraph);
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(24).uint32(message.action);
+            if (message.intensity != null && Object.hasOwnProperty.call(message, "intensity"))
+                writer.uint32(32).uint32(message.intensity);
+            if (message.wordCount != null && Object.hasOwnProperty.call(message, "wordCount"))
+                writer.uint32(40).uint32(message.wordCount);
+            return writer;
+        };
+        BotAvatarMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        BotAvatarMetadata.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.BotMetadata.BotAvatarMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.sentiment = reader.uint32();
+                        break;
+                    }
+                    case 2: {
+                        message.behaviorGraph = reader.string();
+                        break;
+                    }
+                    case 3: {
+                        message.action = reader.uint32();
+                        break;
+                    }
+                    case 4: {
+                        message.intensity = reader.uint32();
+                        break;
+                    }
+                    case 5: {
+                        message.wordCount = reader.uint32();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        BotAvatarMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        BotAvatarMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            if (message.sentiment != null && message.hasOwnProperty("sentiment"))
+                if (!$util.isInteger(message.sentiment)) return "sentiment: integer expected";
+            if (message.behaviorGraph != null && message.hasOwnProperty("behaviorGraph"))
+                if (!$util.isString(message.behaviorGraph)) return "behaviorGraph: string expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                if (!$util.isInteger(message.action)) return "action: integer expected";
+            if (message.intensity != null && message.hasOwnProperty("intensity"))
+                if (!$util.isInteger(message.intensity)) return "intensity: integer expected";
+            if (message.wordCount != null && message.hasOwnProperty("wordCount"))
+                if (!$util.isInteger(message.wordCount)) return "wordCount: integer expected";
+            return null;
+        };
+        BotAvatarMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.BotMetadata.BotAvatarMetadata) return object;
+            var message = new $root.BotMetadata.BotAvatarMetadata();
+            if (object.sentiment != null) message.sentiment = object.sentiment >>> 0;
+            if (object.behaviorGraph != null) message.behaviorGraph = String(object.behaviorGraph);
+            if (object.action != null) message.action = object.action >>> 0;
+            if (object.intensity != null) message.intensity = object.intensity >>> 0;
+            if (object.wordCount != null) message.wordCount = object.wordCount >>> 0;
+            return message;
+        };
+        BotAvatarMetadata.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (options.defaults) {
+                object.sentiment = 0;
+                object.behaviorGraph = "";
+                object.action = 0;
+                object.intensity = 0;
+                object.wordCount = 0;
+            }
+            if (message.sentiment != null && message.hasOwnProperty("sentiment"))
+                object.sentiment = message.sentiment;
+            if (message.behaviorGraph != null && message.hasOwnProperty("behaviorGraph"))
+                object.behaviorGraph = message.behaviorGraph;
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = message.action;
+            if (message.intensity != null && message.hasOwnProperty("intensity"))
+                object.intensity = message.intensity;
+            if (message.wordCount != null && message.hasOwnProperty("wordCount"))
+                object.wordCount = message.wordCount;
+            return object;
+        };
+        BotAvatarMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        BotAvatarMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BotMetadata.BotAvatarMetadata";
+        };
+        return BotAvatarMetadata;
+    })();
+    BotMetadata.BotSessionSource = (function () {
+        var valuesById = {},
+            values = Object.create(valuesById);
+        values[(valuesById[0] = "NONE")] = 0;
+        values[(valuesById[1] = "NULL_STATE")] = 1;
+        values[(valuesById[2] = "TYPEAHEAD")] = 2;
+        values[(valuesById[3] = "USER_INPUT")] = 3;
+        values[(valuesById[4] = "EMU_FLASH")] = 4;
+        values[(valuesById[5] = "EMU_FLASH_FOLLOWUP")] = 5;
+        values[(valuesById[6] = "VOICE")] = 6;
+        return values;
+    })();
+    BotMetadata.BotMetricsThreadEntryPoint = (function () {
+        var valuesById = {},
+            values = Object.create(valuesById);
+        values[(valuesById[1] = "AI_TAB_THREAD")] = 1;
+        values[(valuesById[2] = "AI_HOME_THREAD")] = 2;
+        values[(valuesById[3] = "AI_DEEPLINK_IMMERSIVE_THREAD")] = 3;
+        values[(valuesById[4] = "AI_DEEPLINK_THREAD")] = 4;
+        values[(valuesById[5] = "ASK_META_AI_CONTEXT_MENU_THREAD")] = 5;
+        return values;
+    })();
+    BotMetadata.BotMetricsEntryPoint = (function () {
+        var valuesById = {},
+            values = Object.create(valuesById);
+        values[(valuesById[1] = "FAVICON")] = 1;
+        values[(valuesById[2] = "CHATLIST")] = 2;
+        values[(valuesById[3] = "AISEARCH_NULL_STATE_PAPER_PLANE")] = 3;
+        values[(valuesById[4] = "AISEARCH_NULL_STATE_SUGGESTION")] = 4;
+        values[(valuesById[5] = "AISEARCH_TYPE_AHEAD_SUGGESTION")] = 5;
+        values[(valuesById[6] = "AISEARCH_TYPE_AHEAD_PAPER_PLANE")] = 6;
+        values[(valuesById[7] = "AISEARCH_TYPE_AHEAD_RESULT_CHATLIST")] = 7;
+        values[(valuesById[8] = "AISEARCH_TYPE_AHEAD_RESULT_MESSAGES")] = 8;
+        values[(valuesById[9] = "AIVOICE_SEARCH_BAR")] = 9;
+        values[(valuesById[10] = "AIVOICE_FAVICON")] = 10;
+        values[(valuesById[11] = "AISTUDIO")] = 11;
+        values[(valuesById[12] = "DEEPLINK")] = 12;
+        values[(valuesById[13] = "NOTIFICATION")] = 13;
+        values[(valuesById[14] = "PROFILE_MESSAGE_BUTTON")] = 14;
+        values[(valuesById[15] = "FORWARD")] = 15;
+        values[(valuesById[16] = "APP_SHORTCUT")] = 16;
+        values[(valuesById[17] = "FF_FAMILY")] = 17;
+        values[(valuesById[18] = "AI_TAB")] = 18;
+        values[(valuesById[19] = "AI_HOME")] = 19;
+        values[(valuesById[20] = "AI_DEEPLINK_IMMERSIVE")] = 20;
+        values[(valuesById[21] = "AI_DEEPLINK")] = 21;
+        values[(valuesById[22] = "META_AI_CHAT_SHORTCUT_AI_STUDIO")] = 22;
+        values[(valuesById[23] = "UGC_CHAT_SHORTCUT_AI_STUDIO")] = 23;
+        values[(valuesById[24] = "NEW_CHAT_AI_STUDIO")] = 24;
+        values[(valuesById[25] = "AIVOICE_FAVICON_CALL_HISTORY")] = 25;
+        values[(valuesById[26] = "ASK_META_AI_CONTEXT_MENU")] = 26;
+        values[(valuesById[27] = "ASK_META_AI_CONTEXT_MENU_1ON1")] = 27;
+        values[(valuesById[28] = "ASK_META_AI_CONTEXT_MENU_GROUP")] = 28;
+        values[(valuesById[29] = "INVOKE_META_AI_1ON1")] = 29;
+        values[(valuesById[30] = "INVOKE_META_AI_GROUP")] = 30;
+        values[(valuesById[31] = "META_AI_FORWARD")] = 31;
+        return values;
+    })();
+    return BotMetadata;
+})();
+$root.Protocol = (function () {
+    var Protocol = {};
+    Protocol.LimitSharing = (function () {
+        function LimitSharing(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        LimitSharing.prototype.sharingLimited = null;
+        LimitSharing.prototype.trigger = null;
+        LimitSharing.prototype.limitSharingSettingTimestamp = null;
+        LimitSharing.prototype.initiatedByMe = null;
+        var $oneOfFields;
+        Object.defineProperty(LimitSharing.prototype, "_sharingLimited", {
+            get: $util.oneOfGetter(($oneOfFields = ["sharingLimited"])),
+            set: $util.oneOfSetter($oneOfFields),
+        });
+        Object.defineProperty(LimitSharing.prototype, "_trigger", {
+            get: $util.oneOfGetter(($oneOfFields = ["trigger"])),
+            set: $util.oneOfSetter($oneOfFields),
+        });
+        Object.defineProperty(LimitSharing.prototype, "_limitSharingSettingTimestamp", {
+            get: $util.oneOfGetter(($oneOfFields = ["limitSharingSettingTimestamp"])),
+            set: $util.oneOfSetter($oneOfFields),
+        });
+        Object.defineProperty(LimitSharing.prototype, "_initiatedByMe", {
+            get: $util.oneOfGetter(($oneOfFields = ["initiatedByMe"])),
+            set: $util.oneOfSetter($oneOfFields),
+        });
+        LimitSharing.create = function create(properties) {
+            return new LimitSharing(properties);
+        };
+        LimitSharing.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (
+                message.sharingLimited != null &&
+                Object.hasOwnProperty.call(message, "sharingLimited")
+            )
+                writer.uint32(8).bool(message.sharingLimited);
+            if (message.trigger != null && Object.hasOwnProperty.call(message, "trigger"))
+                writer.uint32(16).int32(message.trigger);
+            if (
+                message.limitSharingSettingTimestamp != null &&
+                Object.hasOwnProperty.call(message, "limitSharingSettingTimestamp")
+            )
+                writer.uint32(24).int64(message.limitSharingSettingTimestamp);
+            if (
+                message.initiatedByMe != null &&
+                Object.hasOwnProperty.call(message, "initiatedByMe")
+            )
+                writer.uint32(32).bool(message.initiatedByMe);
+            return writer;
+        };
+        LimitSharing.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        LimitSharing.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.Protocol.LimitSharing();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.sharingLimited = reader.bool();
+                        break;
+                    }
+                    case 2: {
+                        message.trigger = reader.int32();
+                        break;
+                    }
+                    case 3: {
+                        message.limitSharingSettingTimestamp = reader.int64();
+                        break;
+                    }
+                    case 4: {
+                        message.initiatedByMe = reader.bool();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        LimitSharing.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        LimitSharing.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            var properties = {};
+            if (message.sharingLimited != null && message.hasOwnProperty("sharingLimited")) {
+                properties._sharingLimited = 1;
+                if (typeof message.sharingLimited !== "boolean")
+                    return "sharingLimited: boolean expected";
+            }
+            if (message.trigger != null && message.hasOwnProperty("trigger")) {
+                properties._trigger = 1;
+                switch (message.trigger) {
+                    default:
+                        return "trigger: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                        break;
+                }
+            }
+            if (
+                message.limitSharingSettingTimestamp != null &&
+                message.hasOwnProperty("limitSharingSettingTimestamp")
+            ) {
+                properties._limitSharingSettingTimestamp = 1;
+                if (
+                    !$util.isInteger(message.limitSharingSettingTimestamp) &&
+                    !(
+                        message.limitSharingSettingTimestamp &&
+                        $util.isInteger(message.limitSharingSettingTimestamp.low) &&
+                        $util.isInteger(message.limitSharingSettingTimestamp.high)
+                    )
+                )
+                    return "limitSharingSettingTimestamp: integer|Long expected";
+            }
+            if (message.initiatedByMe != null && message.hasOwnProperty("initiatedByMe")) {
+                properties._initiatedByMe = 1;
+                if (typeof message.initiatedByMe !== "boolean")
+                    return "initiatedByMe: boolean expected";
+            }
+            return null;
+        };
+        LimitSharing.fromObject = function fromObject(object) {
+            if (object instanceof $root.Protocol.LimitSharing) return object;
+            var message = new $root.Protocol.LimitSharing();
+            if (object.sharingLimited != null)
+                message.sharingLimited = Boolean(object.sharingLimited);
+            switch (object.trigger) {
+                default:
+                    if (typeof object.trigger === "number") {
+                        message.trigger = object.trigger;
+                        break;
+                    }
+                    break;
+                case "UNKNOWN":
+                case 0:
+                    message.trigger = 0;
+                    break;
+                case "CHAT_SETTING":
+                case 1:
+                    message.trigger = 1;
+                    break;
+                case "BIZ_SUPPORTS_FB_HOSTING":
+                case 2:
+                    message.trigger = 2;
+                    break;
+                case "UNKNOWN_GROUP":
+                case 3:
+                    message.trigger = 3;
+                    break;
+            }
+            if (object.limitSharingSettingTimestamp != null)
+                if ($util.Long)
+                    (message.limitSharingSettingTimestamp = $util.Long.fromValue(
+                        object.limitSharingSettingTimestamp
+                    )).unsigned = false;
+                else if (typeof object.limitSharingSettingTimestamp === "string")
+                    message.limitSharingSettingTimestamp = parseInt(
+                        object.limitSharingSettingTimestamp,
+                        10
+                    );
+                else if (typeof object.limitSharingSettingTimestamp === "number")
+                    message.limitSharingSettingTimestamp = object.limitSharingSettingTimestamp;
+                else if (typeof object.limitSharingSettingTimestamp === "object")
+                    message.limitSharingSettingTimestamp = new $util.LongBits(
+                        object.limitSharingSettingTimestamp.low >>> 0,
+                        object.limitSharingSettingTimestamp.high >>> 0
+                    ).toNumber();
+            if (object.initiatedByMe != null) message.initiatedByMe = Boolean(object.initiatedByMe);
+            return message;
+        };
+        LimitSharing.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (message.sharingLimited != null && message.hasOwnProperty("sharingLimited")) {
+                object.sharingLimited = message.sharingLimited;
+                if (options.oneofs) object._sharingLimited = "sharingLimited";
+            }
+            if (message.trigger != null && message.hasOwnProperty("trigger")) {
+                object.trigger =
+                    options.enums === String
+                        ? $root.Protocol.LimitSharing.TriggerType[message.trigger] === undefined
+                            ? message.trigger
+                            : $root.Protocol.LimitSharing.TriggerType[message.trigger]
+                        : message.trigger;
+                if (options.oneofs) object._trigger = "trigger";
+            }
+            if (
+                message.limitSharingSettingTimestamp != null &&
+                message.hasOwnProperty("limitSharingSettingTimestamp")
+            ) {
+                if (typeof message.limitSharingSettingTimestamp === "number")
+                    object.limitSharingSettingTimestamp =
+                        options.longs === String
+                            ? String(message.limitSharingSettingTimestamp)
+                            : message.limitSharingSettingTimestamp;
+                else
+                    object.limitSharingSettingTimestamp =
+                        options.longs === String
+                            ? $util.Long.prototype.toString.call(
+                                  message.limitSharingSettingTimestamp
+                              )
+                            : options.longs === Number
+                              ? new $util.LongBits(
+                                    message.limitSharingSettingTimestamp.low >>> 0,
+                                    message.limitSharingSettingTimestamp.high >>> 0
+                                ).toNumber()
+                              : message.limitSharingSettingTimestamp;
+                if (options.oneofs)
+                    object._limitSharingSettingTimestamp = "limitSharingSettingTimestamp";
+            }
+            if (message.initiatedByMe != null && message.hasOwnProperty("initiatedByMe")) {
+                object.initiatedByMe = message.initiatedByMe;
+                if (options.oneofs) object._initiatedByMe = "initiatedByMe";
+            }
+            return object;
+        };
+        LimitSharing.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        LimitSharing.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Protocol.LimitSharing";
+        };
+        LimitSharing.TriggerType = (function () {
+            var valuesById = {},
+                values = Object.create(valuesById);
+            values[(valuesById[0] = "UNKNOWN")] = 0;
+            values[(valuesById[1] = "CHAT_SETTING")] = 1;
+            values[(valuesById[2] = "BIZ_SUPPORTS_FB_HOSTING")] = 2;
+            values[(valuesById[3] = "UNKNOWN_GROUP")] = 3;
+            return values;
+        })();
+        return LimitSharing;
+    })();
+    Protocol.MessageKey = (function () {
+        function MessageKey(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null) this[keys[i]] = properties[keys[i]];
+        }
+        MessageKey.prototype.remoteJid = null;
+        MessageKey.prototype.fromMe = null;
+        MessageKey.prototype.id = null;
+        MessageKey.prototype.participant = null;
+        var $oneOfFields;
+        Object.defineProperty(MessageKey.prototype, "_remoteJid", {
+            get: $util.oneOfGetter(($oneOfFields = ["remoteJid"])),
+            set: $util.oneOfSetter($oneOfFields),
+        });
+        Object.defineProperty(MessageKey.prototype, "_fromMe", {
+            get: $util.oneOfGetter(($oneOfFields = ["fromMe"])),
+            set: $util.oneOfSetter($oneOfFields),
+        });
+        Object.defineProperty(MessageKey.prototype, "_id", {
+            get: $util.oneOfGetter(($oneOfFields = ["id"])),
+            set: $util.oneOfSetter($oneOfFields),
+        });
+        Object.defineProperty(MessageKey.prototype, "_participant", {
+            get: $util.oneOfGetter(($oneOfFields = ["participant"])),
+            set: $util.oneOfSetter($oneOfFields),
+        });
+        MessageKey.create = function create(properties) {
+            return new MessageKey(properties);
+        };
+        MessageKey.encode = function encode(message, writer) {
+            if (!writer) writer = $Writer.create();
+            if (message.remoteJid != null && Object.hasOwnProperty.call(message, "remoteJid"))
+                writer.uint32(10).string(message.remoteJid);
+            if (message.fromMe != null && Object.hasOwnProperty.call(message, "fromMe"))
+                writer.uint32(16).bool(message.fromMe);
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(26).string(message.id);
+            if (message.participant != null && Object.hasOwnProperty.call(message, "participant"))
+                writer.uint32(34).string(message.participant);
+            return writer;
+        };
+        MessageKey.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+        MessageKey.decode = function decode(reader, length, error) {
+            if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length,
+                message = new $root.Protocol.MessageKey();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error) break;
+                switch (tag >>> 3) {
+                    case 1: {
+                        message.remoteJid = reader.string();
+                        break;
+                    }
+                    case 2: {
+                        message.fromMe = reader.bool();
+                        break;
+                    }
+                    case 3: {
+                        message.id = reader.string();
+                        break;
+                    }
+                    case 4: {
+                        message.participant = reader.string();
+                        break;
+                    }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                }
+            }
+            return message;
+        };
+        MessageKey.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+        MessageKey.verify = function verify(message) {
+            if (typeof message !== "object" || message === null) return "object expected";
+            var properties = {};
+            if (message.remoteJid != null && message.hasOwnProperty("remoteJid")) {
+                properties._remoteJid = 1;
+                if (!$util.isString(message.remoteJid)) return "remoteJid: string expected";
+            }
+            if (message.fromMe != null && message.hasOwnProperty("fromMe")) {
+                properties._fromMe = 1;
+                if (typeof message.fromMe !== "boolean") return "fromMe: boolean expected";
+            }
+            if (message.id != null && message.hasOwnProperty("id")) {
+                properties._id = 1;
+                if (!$util.isString(message.id)) return "id: string expected";
+            }
+            if (message.participant != null && message.hasOwnProperty("participant")) {
+                properties._participant = 1;
+                if (!$util.isString(message.participant)) return "participant: string expected";
+            }
+            return null;
+        };
+        MessageKey.fromObject = function fromObject(object) {
+            if (object instanceof $root.Protocol.MessageKey) return object;
+            var message = new $root.Protocol.MessageKey();
+            if (object.remoteJid != null) message.remoteJid = String(object.remoteJid);
+            if (object.fromMe != null) message.fromMe = Boolean(object.fromMe);
+            if (object.id != null) message.id = String(object.id);
+            if (object.participant != null) message.participant = String(object.participant);
+            return message;
+        };
+        MessageKey.toObject = function toObject(message, options) {
+            if (!options) options = {};
+            var object = {};
+            if (message.remoteJid != null && message.hasOwnProperty("remoteJid")) {
+                object.remoteJid = message.remoteJid;
+                if (options.oneofs) object._remoteJid = "remoteJid";
+            }
+            if (message.fromMe != null && message.hasOwnProperty("fromMe")) {
+                object.fromMe = message.fromMe;
+                if (options.oneofs) object._fromMe = "fromMe";
+            }
+            if (message.id != null && message.hasOwnProperty("id")) {
+                object.id = message.id;
+                if (options.oneofs) object._id = "id";
+            }
+            if (message.participant != null && message.hasOwnProperty("participant")) {
+                object.participant = message.participant;
+                if (options.oneofs) object._participant = "participant";
+            }
+            return object;
+        };
+        MessageKey.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+        MessageKey.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Protocol.MessageKey";
+        };
+        return MessageKey;
+    })();
+    return Protocol;
+})();
+module.exports = $root;

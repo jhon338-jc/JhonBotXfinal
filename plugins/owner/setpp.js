@@ -1,0 +1,36 @@
+import Jimp from 'jimp'
+
+let handler = async (m, { conn }) => {
+    if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
+
+    let q = m.quoted ? m.quoted : m
+    let mime = (q.msg || q).mimetype || ''
+
+    if (!mime || !mime.startsWith('image/')) {
+        return conn.sendMessage(m.chat, { text: '⚠️ Kirim/Reply gambar dengan caption *.setpp*' })
+    }
+
+    try {
+        await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+        
+        let media = await q.download()
+        let image = await Jimp.read(media)
+        image.cover(640, 640)
+        let buffer = await image.getBufferAsync(Jimp.MIME_JPEG)
+
+        await conn.updateProfilePicture(m.chat, buffer)
+        conn.sendMessage(m.chat, { text: '✅ Foto profil grup berhasil diganti!' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+        
+    } catch (e) {
+        console.error(e)
+        conn.sendMessage(m.chat, { text: '❌ Gagal ganti foto profil! Pastikan bot admin.' })
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+    }
+}
+
+handler.command = ['setpp', 'setppgroup']
+handler.owner = true
+handler.botAdmin = true
+
+export default handler

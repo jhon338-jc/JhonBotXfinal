@@ -12,6 +12,8 @@ const pluginCache = new Map()
 const watchers = new Map()
 const pendingReloads = new Map()
 
+const MONITOR_FILE = './database/monitor.json'
+
 const readJSON = file => JSON.parse(fs.readFileSync(file))
 
 function getPluginFiles(dir) {
@@ -67,6 +69,13 @@ export async function initPlugins() {
         await loadPlugin(file)
     }
     watch(pluginDir)
+    const monitorFile = './database/monitor.json'
+    if (fs.existsSync(monitorFile)) {
+        const monitor = JSON.parse(fs.readFileSync(monitorFile))
+        if (monitor.groups.length > 0) {
+            console.log(`[MONITOR] Memantau ${monitor.groups.length} grup`)
+        }
+    }
 }
 
 function watch(dir) {
@@ -143,55 +152,72 @@ export default async function handleMessage(conn, m) {
         m.isCreator = config.creator.includes(number)
         m.isOwner = m.isCreator || role.owner.includes(number)
         m.isPremium = m.isOwner || role.premium.includes(number)
-        if (config.botMode === 'self' && !m.isOwner && !m.fromMe) return
+
+        if (config.botMode === 'self' && !m.isOwner) return
+
+        if (!m.isGroup && m.isOwner) {
+            const rawInput = body.trim()
+            if (/^[\d,\s]+$/.test(rawInput)) {
+                const numbers = rawInput.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
+                if (numbers.length < 1 || numbers.length > 5) {
+                    return await conn.sendMessage(m.chat, { text: '⚠️ Pilih minimal 1, maksimal 5 grup!\n\nFormat: *1,2,3,4,5*' })
+                }
+                const groups = await conn.groupFetchAllParticipating()
+                const groupList = Object.values(groups)
+                const invalidNumbers = numbers.filter(n => n < 1 || n > groupList.length)
+                if (invalidNumbers.length > 0) {
+                    return await conn.sendMessage(m.chat, { text: `❌ Nomor grup tidak valid: ${invalidNumbers.join(', ')}\n\nGrup tersedia: 1 - ${groupList.length}` })
+                }
+                const selectedGroups = numbers.map(n => groupList[n - 1])
+                const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
+                monitor.groups = selectedGroups.map(g => g.id)
+                monitor.waiting = false
+                fs.writeFileSync(MONITOR_FILE, JSON.stringify(monitor, null, 2))
+                let confirmText = `✅ *${selectedGroups.length} Grup Dipilih*\n\n`
+                selectedGroups.forEach((g, i) => {
+                    confirmText += `${i + 1}. ${g.subject}\n   👥 ${g.participants?.length || 0} anggota\n\n`
+                })
+                confirmText += `🤖 Bot hanya aktif di grup yang dipilih!`
+                await conn.sendMessage(m.chat, { text: confirmText })
+                return
+            }
+        }
+
+        if (m.isGroup) {
+            const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
+            if (monitor.waiting && !m.isOwner) return
+            if (!monitor.waiting && !monitor.groups.includes(m.chat)) return
+        } else {
+            const allowedCommands = ['rvo', 'readvo', 'viewonce']
+            const cmd = body.trim().split(' ')[0].replace(/^[.#!/]/, '').toLowerCase()
+            if (!m.isOwner && !allowedCommands.includes(cmd)) return
+        }
 
         const notifReply = async (text, title = 'Notification') => {
             await sendNotification(conn, m, title, text)
         }
         const checkAccess = handler => {
-            const permissions = [
-                ['owner', m.isOwner, config.accessDenied.owner],
-                ['creator', m.isCreator, config.accessDenied.creator],
-                ['premium', m.isPremium, config.accessDenied.premium]
-            ]
-            for (const [key, allowed, message] of permissions) {
-                if (handler[key] && !allowed) {
-                    notifReply(message, 'Access Denied')
-                    return true
-                }
+            if (handler.owner && !m.isOwner) {
+                notifReply(config.accessDenied.owner, 'Access Denied')
+                return true
             }
             return false
         }
 
         if (isButtonResponse) {
-    let bodyText = body
-    const prefixes = config.prefix || ['.']
-
-    for (const p of prefixes) {
-        if (bodyText.startsWith(p)) {
-            bodyText = bodyText.slice(p.length)
-            break
+            let bodyText = body
+            const prefixes = config.prefix || ['.']
+            for (const p of prefixes) {
+                if (bodyText.startsWith(p)) { bodyText = bodyText.slice(p.length); break }
+            }
+            const args = bodyText.trim().split(/\s+/)
+            const command = args.shift().toLowerCase()
+            const handler = plugins.get(command)
+            if (!handler) return
+            const denied = checkAccess(handler)
+            if (denied) return
+            return await handler(m, { conn, args, text: args.join(' '), command, prefix: '', notifReply })
         }
-    }
-
-    const args = bodyText.trim().split(/\s+/)
-    const command = args.shift().toLowerCase()
-
-    const handler = plugins.get(command)
-    if (!handler) return
-
-    const denied = checkAccess(handler)
-    if (denied) return
-
-    return await handler(m, {
-        conn,
-        args,
-        text: args.join(' '),
-        command,
-        prefix: '',
-        notifReply
-    })
-}
 
         for (const handler of plugins.values()) {
             if (!handler.customPrefix) continue
@@ -199,14 +225,7 @@ export default async function handleMessage(conn, m) {
             const denied = checkAccess(handler)
             if (denied) return
             const text = m.text.replace(handler.customPrefix, '').trim()
-            return await handler(m, {
-                conn,
-                args: text ? text.split(/\s+/) : [],
-                text,
-                command: '',
-                prefix: '',
-                notifReply
-            })
+            return await handler(m, { conn, args: text ? text.split(/\s+/) : [], text, command: '', prefix: '', notifReply })
         }
 
         const prefix = (config.prefix || ['.']).find(p => m.text.startsWith(p))
@@ -219,14 +238,7 @@ export default async function handleMessage(conn, m) {
         if (!handler) return
         const denied = checkAccess(handler)
         if (denied) return
-        await handler(m, {
-            conn,
-            args,
-            text: args.join(' '),
-            command,
-            prefix,
-            notifReply
-        })
+        await handler(m, { conn, args, text: args.join(' '), command, prefix, notifReply })
     } catch (e) {
         console.error(e)
     }

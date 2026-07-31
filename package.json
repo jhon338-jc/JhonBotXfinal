@@ -1,5 +1,5 @@
 {
-  "name": "Base Bot Wa ESM By LevviCode",
+  "name": "Jhon338 Bot",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
@@ -7,11 +7,10 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:levvleys@latest",
     "@hapi/boom": "^10.0.1",
+    "@whiskeysockets/baileys": "npm:levvleys@latest",
     "file-type": "^19.0.0",
-    "pino": "^8.17.2",
     "jimp": "^0.22.12",
-    
+    "pino": "^8.17.2"
   }
 }
