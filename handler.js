@@ -235,8 +235,8 @@ if (m.isGroup && !m.isOwner) {
             }
         }
 
-        // DM sepi total - bot tidak respon di chat pribadi sama sekali
-        if (!m.isGroup) return
+        // DM: hanya owner yang boleh pakai command lain, non-owner tetap sepi
+        if (!m.isGroup && !m.isOwner) return
 
         if (m.isGroup) {
             const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
