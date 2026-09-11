@@ -1,31 +1,26 @@
 let handler = async (m, { conn, text }) => {
-    if (!text) return conn.sendMessage(m.chat, { text: '⚠️ Masukkan URL TikTok!\n\nContoh: .tt https://vt.tiktok.com/xxx' })
-    
+    if (!text) return m.reply('Masukkan URL TikTok! Contoh: .tt url')
+
     try {
-        await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
-        
-        let url = `https://api.azbry.com/api/download/tiktok?url=${encodeURIComponent(text)}`
+        await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
+
+        let url = 'https://api.azbry.com/api/download/tiktokv2?url=' + encodeURIComponent(text)
         let res = await fetch(url)
         let json = await res.json()
-        
-        if (json.status && json.result) {
-            let data = json.result
-            let caption = `🎵 *TIKTOK*\n📌 ${data.title || '-'}\n👤 ${data.author || '-'}\n⏱️ ${data.duration || 0}s`
-            let videoUrl = data.links?.[0] || data.links?.[1] || data.links?.[2]
-            
-            if (videoUrl) await conn.sendMessage(m.chat, { video: { url: videoUrl }, caption }, { quoted: m })
-            if (data.music?.url) await conn.sendMessage(m.chat, { audio: { url: data.music.url }, mimetype: 'audio/mp4' }, { quoted: m })
-            
-            await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-            setTimeout(async () => { await conn.sendMessage(m.chat, { delete: m.key }) }, 1000)
+
+        if (json.status && json.result && json.result.downloads) {
+            let video = json.result.downloads.find(d => d.type === 'hd' || d.type === 'mp4')
+            let audio = json.result.downloads.find(d => d.type === 'mp3')
+
+            if (video) await conn.sendMessage(m.chat, { video: { url: video.url }, mimetype: 'video/mp4' }, { quoted: m })
+            if (audio) await conn.sendMessage(m.chat, { audio: { url: audio.url }, mimetype: 'audio/mp3' }, { quoted: m })
+
+            await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
         } else {
-            conn.sendMessage(m.chat, { text: '❌ Gagal Download! URL tidak valid.' })
-            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+            m.reply('Gagal Download!')
         }
     } catch (e) {
-        console.error(e)
-        conn.sendMessage(m.chat, { text: '❌ Error! Coba lagi.' })
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        m.reply('Error! Coba lagi.')
     }
 }
 

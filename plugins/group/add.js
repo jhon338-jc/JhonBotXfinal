@@ -1,5 +1,6 @@
 let handler = async (m, { conn, args }) => {
-    if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
+    if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
+if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
     
     let who = args[0] ? args[0].replace(/[^0-9]/g, '') + '@s.whatsapp.net' : null
     if (!who) return conn.sendMessage(m.chat, { text: '⚠️ Masukkan nomor!\n\nContoh: .add 628xxx' })

@@ -1,16 +1,26 @@
 {
-  "name": "Jhon338 Bot",
-  "version": "1.0.0",
+  "name": "jhon338-bot",
+  "version": "3.3.8",
+  "description": "Jhon338 WhatsApp Multi Device Bot - PC Terminal Compatible",
   "type": "module",
   "main": "index.js",
+  "author": "Jhon338",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "start:pc": "node index.js",
+    "postinstall": "node scripts/fix-splash.js"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@whiskeysockets/baileys": "npm:levvleys@latest",
-    "file-type": "^19.0.0",
+    "file-type": "^22.1.0",
     "jimp": "^0.22.12",
-    "pino": "^8.17.2"
+    "pino": "^10.3.1",
+    "puppeteer-core": "^24.43.1",
+    "sharp": "^0.35.4"
   }
 }

@@ -1,4 +1,5 @@
 let handler = async (m, { conn, args }) => {
+    if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
     if (!m.isOwner && !m.isAdmin) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner/Admin!' })
     
     let who

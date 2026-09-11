@@ -1,4 +1,5 @@
 let handler = async (m, { conn, args }) => {
+    if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
     if (!m.isOwner) return m.reply('❌ Khusus Owner!')
     
     let who = m.mentionedJid[0] || (args[0] ? args[0].replace(/[^0-9]/g, '') + '@s.whatsapp.net' : null)

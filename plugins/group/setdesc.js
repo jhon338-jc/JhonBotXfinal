@@ -1,4 +1,5 @@
 let handler = async (m, { conn, text }) => {
+    if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
     if (!m.isOwner) return m.reply('❌ Khusus Owner!')
     if (!text) return m.reply('⚠️ Masukkan deskripsi grup!\n\nContoh: .setdesc Deskripsi Baru')
     

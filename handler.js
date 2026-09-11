@@ -1,12 +1,24 @@
+import { autoMod, linkDetector } from './lib/autoMod.js'
+import { antiSpam } from './lib/antiSpam.js'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { sendNotification } from './lib/myFunction.js'
+import { rgbTag, COLORS } from './lib/rgb.js'
+
+// ============================================================
+//  JHON338 - BOT BRAIN (OTAK BOT)
+//  DEVELOPER BY JHON338  |  VERSION 3.3.8
+//  PC TERMINAL COMPATIBLE (Windows / Linux)
+// ============================================================
+export const DEVELOPER = 'Jhon338'
+export const VERSION = '3.4.0'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginDir = path.join(__dirname, 'plugins')
 
 export const plugins = new Map()
+export const beforeHooks = new Map()
 
 const pluginCache = new Map()
 const watchers = new Map()
@@ -49,11 +61,14 @@ async function loadPlugin(file) {
             plugins.set(key, handler)
             keys.push(key)
         }
+        if (module.before) {
+            beforeHooks.set(file, module.before)
+        }
         pluginCache.set(file, keys)
-        console.log(`[PLUGIN] Loaded ${path.relative(pluginDir, file)}`)
+        console.log(rgbTag('PLUGIN', 'Loaded ' + path.relative(pluginDir, file), COLORS.plugin))
     } catch (e) {
-        console.error(`[PLUGIN] Failed ${file}`)
-        console.error(e)
+        console.error(rgbTag('PLUGIN', 'Failed ' + file, COLORS.error))
+        console.error(rgbTag('PLUGIN', e?.message || e, COLORS.error))
     }
 }
 
@@ -61,21 +76,17 @@ async function unloadPlugin(file) {
     if (!pluginCache.has(file)) return
     for (const key of pluginCache.get(file)) plugins.delete(key)
     pluginCache.delete(file)
-    console.log(`[PLUGIN] Unloaded ${path.relative(pluginDir, file)}`)
+    beforeHooks.delete(file)
+    console.log(rgbTag('PLUGIN', 'Unloaded ' + path.relative(pluginDir, file), COLORS.warn))
 }
 
 export async function initPlugins() {
+    console.log(rgbTag(`${DEVELOPER} v${VERSION}`, 'Memuat plugin...', COLORS.start))
     for (const file of getPluginFiles(pluginDir)) {
         await loadPlugin(file)
     }
     watch(pluginDir)
-    const monitorFile = './database/monitor.json'
-    if (fs.existsSync(monitorFile)) {
-        const monitor = JSON.parse(fs.readFileSync(monitorFile))
-        if (monitor.groups.length > 0) {
-            console.log(`[MONITOR] Memantau ${monitor.groups.length} grup`)
-        }
-    }
+    console.log(rgbTag(`${DEVELOPER} v${VERSION}`, `Brain siap - Total ${plugins.size} command terdaftar`, COLORS.success))
 }
 
 function watch(dir) {
@@ -129,18 +140,29 @@ function extractCommandFromMessage(m) {
             } else if (m.message.buttonsResponseMessage) {
                 body = m.message.buttonsResponseMessage.selectedButtonId || ''
                 isButtonResponse = true
-            } else if (m.message?.stickerMessage) {
-                body = '__MENU_STICKER__'
             }
         }
     } catch (error) {
-        console.error('Error parsing message:', error)
+        console.error(rgbTag('PARSE', 'Error parsing message: ' + (error?.message || error), COLORS.error))
     }
     return { body, isButtonResponse }
 }
 
 export default async function handleMessage(conn, m) {
     try {
+        if (m.chat?.includes('@newsletter')) return
+        if (m.sender?.includes('@newsletter')) return
+
+        if (m.isGroup && m.messageStubType !== undefined && beforeHooks.size > 0) {
+            for (const before of beforeHooks.values()) {
+                try {
+                    await before(m, { conn })
+                } catch (e) {
+                    console.error(rgbTag('BEFORE', e?.message || e, COLORS.error))
+                }
+            }
+        }
+
         const { body, isButtonResponse } = extractCommandFromMessage(m)
         if (!body) return
         m.text = body
@@ -153,50 +175,83 @@ export default async function handleMessage(conn, m) {
         m.isOwner = m.isCreator || role.owner.includes(number)
         m.isPremium = m.isOwner || role.premium.includes(number)
 
+        // Cek grup monitor dulu
+        if (m.isGroup) {
+            const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
+            if (monitor.waiting && !m.isOwner) return
+            if (!monitor.waiting && !monitor.groups.includes(m.chat)) return
+        }
+
+
+// Auto Mod - Spam & Link Detection (khusus grup monitor, bukan owner)
+if (m.isGroup && !m.isOwner) {
+
+    const spamCheck = autoMod(conn, m)
+            if (spamCheck) {
+                if (spamCheck.type === 'warning') {
+                    await conn.sendMessage(m.chat, { text: `⚠️ *PERINGATAN SPAM*\n\n@${spamCheck.sender.split('@')[0]} jangan spam pesan yang sama!\n\nBot bakal kick kalau spam lagi.` }, { mentions: [spamCheck.sender] })
+                } else if (spamCheck.type === 'kick') {
+                    try {
+                        await conn.groupParticipantsUpdate(m.chat, [spamCheck.sender], 'remove')
+                        await conn.sendMessage(m.chat, { text: `👢 *USER DIKICK*\n\n@${spamCheck.sender.split('@')[0]} dikick karena spam!` }, { mentions: [spamCheck.sender] })
+                    } catch (e) {}
+                }
+                return
+            }
+
+            const linkCheck = linkDetector(conn, m)
+            if (linkCheck) {
+                try {
+                    await conn.sendMessage(m.chat, { delete: m.key })
+                    await conn.sendMessage(m.chat, { text: `🔒 *LINK DIHAPUS*\n\n@${linkCheck.sender.split('@')[0]} jangan kirim link di grup!` }, { mentions: [linkCheck.sender] })
+                } catch (e) {}
+                return
+            }
+        }
+
+        // Anti-spam command
+        if (!m.isOwner && antiSpam(m, 5, 10)) {
+            return await conn.sendMessage(m.chat, { text: '⚠️ *Anti-Spam*\n\nLu kebanyakan command! Tunggu 10 detik.' })
+        }
+
         if (config.botMode === 'self' && !m.isOwner) return
 
         if (!m.isGroup && m.isOwner) {
             const rawInput = body.trim()
             if (/^[\d,\s]+$/.test(rawInput)) {
                 const numbers = rawInput.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
-                if (numbers.length < 1 || numbers.length > 5) {
-                    return await conn.sendMessage(m.chat, { text: '⚠️ Pilih minimal 1, maksimal 5 grup!\n\nFormat: *1,2,3,4,5*' })
-                }
+                if (numbers.length < 1 || numbers.length > 5) return
                 const groups = await conn.groupFetchAllParticipating()
                 const groupList = Object.values(groups)
                 const invalidNumbers = numbers.filter(n => n < 1 || n > groupList.length)
-                if (invalidNumbers.length > 0) {
-                    return await conn.sendMessage(m.chat, { text: `❌ Nomor grup tidak valid: ${invalidNumbers.join(', ')}\n\nGrup tersedia: 1 - ${groupList.length}` })
-                }
+                if (invalidNumbers.length > 0) return
                 const selectedGroups = numbers.map(n => groupList[n - 1])
                 const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
                 monitor.groups = selectedGroups.map(g => g.id)
                 monitor.waiting = false
                 fs.writeFileSync(MONITOR_FILE, JSON.stringify(monitor, null, 2))
-                let confirmText = `✅ *${selectedGroups.length} Grup Dipilih*\n\n`
-                selectedGroups.forEach((g, i) => {
-                    confirmText += `${i + 1}. ${g.subject}\n   👥 ${g.participants?.length || 0} anggota\n\n`
-                })
-                confirmText += `🤖 Bot hanya aktif di grup yang dipilih!`
-                await conn.sendMessage(m.chat, { text: confirmText })
+                console.log(rgbTag('MONITOR', `${selectedGroups.length} grup terpilih di DM: ${selectedGroups.map(g => g.subject).join(', ')}`, COLORS.success))
                 return
             }
         }
+
+        // DM sepi total - bot tidak respon di chat pribadi sama sekali
+        if (!m.isGroup) return
 
         if (m.isGroup) {
             const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
             if (monitor.waiting && !m.isOwner) return
             if (!monitor.waiting && !monitor.groups.includes(m.chat)) return
-        } else {
-            const allowedCommands = ['rvo', 'readvo', 'viewonce']
-            const cmd = body.trim().split(' ')[0].replace(/^[.#!/]/, '').toLowerCase()
-            if (!m.isOwner && !allowedCommands.includes(cmd)) return
         }
 
         const notifReply = async (text, title = 'Notification') => {
             await sendNotification(conn, m, title, text)
         }
         const checkAccess = handler => {
+            if (handler.creator && !m.isCreator) {
+                notifReply('❌ Khusus Creator!', 'Access Denied')
+                return true
+            }
             if (handler.owner && !m.isOwner) {
                 notifReply(config.accessDenied.owner, 'Access Denied')
                 return true
@@ -240,6 +295,6 @@ export default async function handleMessage(conn, m) {
         if (denied) return
         await handler(m, { conn, args, text: args.join(' '), command, prefix, notifReply })
     } catch (e) {
-        console.error(e)
+        console.error(rgbTag('HANDLER', e?.message || e, COLORS.error))
     }
 }

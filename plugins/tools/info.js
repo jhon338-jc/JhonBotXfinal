@@ -12,11 +12,18 @@ let handler = async (m, { conn }) => {
     
     let text = `🤖 *BOT INFO*\n\n`
     text += `▧ Nama : ${config.botName}\n`
-    text += `▧ Dev : ${config.ownerName}\n`
+    text += `▧ Dev : ${config.developer || config.ownerName}\n`
+    text += `▧ Versi : ${config.version || '-'}\n`
     text += `▧ Mode : ${config.botMode.toUpperCase()}\n`
     text += `▧ Plugin : ${totalPlugin}\n`
     text += `▧ RAM : ${ram} GB\n`
-    text += `▧ Uptime : ${days}h ${hours}m ${minutes}s\n`
+    text += `▧ Uptime : ${days}h ${hours}m ${minutes}s\n\n`
+    text += `━─━─━─━─━─━─━─━\n`
+    text += `📌 *INFO BOT:*\n`
+    text += `▧ GitHub : ${config.githubRepo || '-'}\n`
+    text += `▧ Linktree : ${config.channelLink || '-'}\n\n`
+    text += `─━─━─━─━─━─━─━─\n`
+    text += `DEVELOPER BY ${(config.developer || 'JHON338').toUpperCase()} v${config.version || '3.4.0'}`
     
     conn.sendMessage(m.chat, { text })
 }

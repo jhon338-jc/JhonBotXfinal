@@ -2,13 +2,12 @@ import fs from 'fs'
 import Jimp from 'jimp'
 import config from '../../config.json' with { type: 'json' }
 import { plugins } from '../../handler.js'
-import os from 'os'
 
-let handler = async (m, { conn }) => {
+let handler = async (m, { conn, text }) => {
     const start = Date.now()
 
     const image = await Jimp.read(fs.readFileSync('./src/img/menu.jpg'))
-    image.resize(300, 300)
+    image.resize(640, 640)
     const thumb = await image.getBufferAsync(Jimp.MIME_JPEG)
 
     const ping = Date.now() - start
@@ -21,83 +20,231 @@ let handler = async (m, { conn }) => {
     const totalPlugin = [...new Set(plugins.values())].length
     const number = m.sender.split('@')[0]
 
-    let menuText = `
-乂 *BOT INFORMATION*
-
-*Name* : ${config.botName}
-*Type* : ESM - Plugin
-*Dev*  : ${config.ownerName}
-*Ping* : ${ping} ms
-*RAM* : ${ramUsed}MB
-*Status* : ${config.botMode.toUpperCase()}
-*Total Plugin* : ${totalPlugin}
-*Uptime* : ${days}d ${hours}h ${minutes}m ${seconds}s
-
-乂 *USER INFORMATION*
-
-*Name* : ${m.pushName || '-'}
-*Number* : +${number}
-*Status* : ${m.isOwner ? '👑 Owner' : '👤 User'}
-`.trim()
+    let menuText = `╭───『 *${config.botName}* 』───⬣
+│
+│  🤖 *Bot Information*
+│  ├ Nama : ${config.botName}
+│  ├ Dev : ${config.developer || config.ownerName}
+│  ├ Versi : ${config.version || '-'}
+│  ├ Mode : ${config.botMode.toUpperCase()}
+│  ├ Plugins : ${totalPlugin}
+│  ├ Ping : ${ping}ms
+│  ├ RAM : ${ramUsed}MB
+│  └ Uptime : ${days}d ${hours}h ${minutes}m ${seconds}s
+│
+│  👤 *User Information*
+│  ├ Nama : ${m.pushName || '-'}
+│  ├ Nomor : +${number}
+│  └ Status : ${m.isOwner ? '👑 Owner' : '👤 User'}
+│
+╰──────────────────⬣`
 
     let listMenu = [
-        { id: '.sg', title: '🔄 Pilih Grup', description: 'Pilih grup untuk dipantau' },
-        { id: '.grouplist', title: '📊 Semua Grup', description: 'Lihat semua grup & anggota' },
-        { id: '.mylist', title: '📋 Grup Dipantau', description: 'Lihat grup yang dipantau' },
-        { id: '.kick', title: '👤 Kick User', description: '.kick @user' },
-        { id: '.add', title: '➕ Add User', description: '.add 628xx' },
-        { id: '.addadmin', title: '👑 Add Admin', description: '.addadmin @user' },
-        { id: '.deladmin', title: '👑 Del Admin', description: '.deladmin @user' },
-        { id: '.setname', title: '✏️ Ganti Nama Grup', description: '.setname Nama Baru' },
-        { id: '.setdesc', title: '📝 Ganti Deskripsi', description: '.setdesc Deskripsi Baru' },
-        { id: '.setpp', title: '🖼️ Ganti PP Grup', description: 'Reply gambar + .setpp' },
-        { id: '.setppbot', title: '🤖 Ganti PP Bot', description: 'Reply gambar + .setppbot' },
-        { id: '.setbio', title: '📝 Ganti Bio Bot', description: '.setbio Bio keren' },
-        { id: '.setnamebot', title: '🏷️ Ganti Nama Bot', description: '.setnamebot Nama baru' },
-        { id: '.totag', title: '📢 Tag All', description: 'Tag semua anggota' },
-        { id: '.hidetag', title: '👻 Hide Tag', description: 'Tag semua (sembunyi)' },
-        { id: '.leave', title: '🚪 Leave Grup', description: 'Bot keluar dari grup' },
-        { id: '.addowner', title: '➕ Add Owner', description: '.addowner 628xx' },
-        { id: '.delowner', title: '➖ Del Owner', description: '.delowner 628xx' },
-        { id: '.stiker', title: '🎨 Stiker Brat', description: '.stiker teks' },
-        { id: '.simg', title: '🖼️ Stiker Gambar', description: '.simg reply gambar' },
-        { id: '.iqc', title: '🧠 IQ Checker', description: '.iqc - Cek IQ' },
-        { id: '.fakedana', title: '💸 Fake Dana', description: '.fakedana jumlah' },
-        { id: '.fakeff', title: '🎮 Fake FF', description: '.fakeff nama' },
-        { id: '.tt', title: '🎵 TikTok DL', description: '.tt url tiktok' },
-        { id: '.ig', title: '📷 Instagram DL', description: '.ig url instagram' },
-        { id: '.rvo', title: '👁️ Read View Once', description: '.rvo - Reply pesan VO' },
-        { id: '.ping', title: '🏓 Ping', description: 'Cek kecepatan bot' },
-        { id: '.info', title: 'ℹ️ Info Bot', description: 'Info lengkap bot' }
+        {
+            title: '🔄 Pilih Grup', description: 'Pilih grup untuk dipantau', command: '.sg'
+        },
+        {
+            title: '📊 Semua Grup', description: 'Lihat semua grup & anggota', command: '.grouplist'
+        },
+        {
+            title: '👤 Kick', description: 'Keluarkan anggota .kick @user', command: '.kick'
+        },
+        {
+            title: '➕ Add User', description: 'Tambah anggota .add 628xx', command: '.add'
+        },
+        {
+            title: '👑 Add Admin', description: 'Jadikan admin .addadmin @user', command: '.addadmin'
+        },
+        {
+            title: '👑 Del Admin', description: 'Copot admin .deladmin @user', command: '.deladmin'
+        },
+        {
+            title: '✏️ Ganti Nama Grup', description: '.setname Nama Baru', command: '.setname'
+        },
+        {
+            title: '📝 Ganti Deskripsi', description: '.setdesc Deskripsi Baru', command: '.setdesc'
+        },
+        {
+            title: '🖼️ Ganti PP Grup', description: 'Reply gambar + .setpp', command: '.setpp'
+        },
+        {
+            title: '📝 Ganti Bio Bot', description: '.setbio Bio keren', command: '.setbio'
+        },
+        {
+            title: '🏷️ Ganti Nama Bot', description: '.setnamebot Nama baru', command: '.setnamebot'
+        },
+        {
+            title: '📢 Tag All', description: 'Tag semua anggota', command: '.totag'
+        },
+        {
+            title: '👻 Hide Tag', description: 'Tag semua (sembunyi)', command: '.hidetag'
+        },
+        {
+            title: '🚪 Leave Grup', description: 'Bot keluar dari grup', command: '.leave'
+        },
+        {
+            title: '➕ Add Owner', description: '.addowner 628xx', command: '.addowner'
+        },
+        {
+            title: '➖ Del Owner', description: '.delowner 628xx', command: '.delowner'
+        },
+        {
+            title: '🎨 Stiker Brat', description: '.stiker teks', command: '.stiker'
+        },
+        {
+            title: '🖼️ Stiker Gambar', description: 'Reply gambar + .simg', command: '.simg'
+        },
+        {
+            title: '🎬 Stiker Video', description: 'Reply video + .simg', command: '.simg'
+        },
+        {
+            title: '🔄 Stiker ke Gambar', description: 'Reply stiker + .toimg', command: '.toimg'
+        },
+        {
+            title: '🖼️ Generate HTML', description: 'Kode HTML jadi screenshot', command: '.canvas'
+        },
+        {
+            title: '📄 File HTML', description: 'Kode HTML jadi file .html', command: '.htmlfile'
+        },
+        {
+            title: '🧠 IQ Checker', description: '.iqc - Cek IQ', command: '.iqc'
+        },
+        {
+            title: '💸 Fake Dana', description: '.fakedana jumlah', command: '.fakedana'
+        },
+        {
+            title: '🎮 Fake FF', description: '.fakeff nama', command: '.fakeff'
+        },
+        {
+            title: '🎵 TikTok DL', description: '.tt url tiktok', command: '.tt'
+        },
+        {
+            title: '📷 Instagram DL', description: '.ig url instagram', command: '.ig'
+        },
+        {
+            title: '📘 Facebook DL', description: '.fb url facebook', command: '.fb'
+        },
+        {
+            title: '🎶 YouTube MP3', description: '.mp3 url youtube', command: '.mp3'
+        },
+        {
+            title: '📦 MediaFire DL', description: '.mediafie url mediafire', command: '.mediafie'
+        },
+        {
+            title: '📜 Lirik Lagu', description: '.lirik judul lagu', command: '.lirik'
+        },
+        {
+            title: '📰 Berita Detik', description: '.detik - berita terbaru', command: '.detik'
+        },
+        {
+            title: '👁️ Read View Once', description: 'Reply pesan VO + .rvo', command: '.rvo'
+        },
+        {
+            title: '🏓 Ping', description: 'Cek kecepatan bot', command: '.ping'
+        },
+        {
+            title: 'ℹ️ Info Bot', description: 'Info lengkap bot', command: '.info'
+        }
     ]
 
     let listMenuUser = [
-        { id: '.grouplist', title: '📊 Semua Grup', description: 'Lihat semua grup & anggota' },
-        { id: '.mylist', title: '📋 Grup Dipantau', description: 'Lihat grup yang dipantau' },
-        { id: '.stiker', title: '🎨 Stiker Brat', description: '.stiker teks' },
-        { id: '.simg', title: '🖼️ Stiker Gambar', description: '.simg reply gambar' },
-        { id: '.iqc', title: '🧠 IQ Checker', description: '.iqc - Cek IQ' },
-        { id: '.fakedana', title: '💸 Fake Dana', description: '.fakedana jumlah' },
-        { id: '.fakeff', title: '🎮 Fake FF', description: '.fakeff nama' },
-        { id: '.tt', title: '🎵 TikTok DL', description: '.tt url tiktok' },
-        { id: '.ig', title: '📷 Instagram DL', description: '.ig url instagram' },
-        { id: '.rvo', title: '👁️ Read View Once', description: '.rvo - Reply pesan VO' },
-        { id: '.ping', title: '🏓 Ping', description: 'Cek kecepatan bot' },
-        { id: '.info', title: 'ℹ️ Info Bot', description: 'Info lengkap bot' }
+        {
+            title: '🎨 Stiker Brat', description: '.stiker teks', command: '.stiker'
+        },
+        {
+            title: '🖼️ Stiker Gambar', description: 'Reply gambar + .simg', command: '.simg'
+        },
+        {
+            title: '🎬 Stiker Video', description: 'Reply video + .simg', command: '.simg'
+        },
+        {
+            title: '🔄 Stiker ke Gambar', description: 'Reply stiker + .toimg', command: '.toimg'
+        },
+        {
+            title: '🖼️ Generate HTML', description: 'Kode HTML jadi screenshot', command: '.canvas'
+        },
+        {
+            title: '📄 File HTML', description: 'Kode HTML jadi file .html', command: '.htmlfile'
+        },
+        {
+            title: '🎵 TikTok DL', description: '.tt url tiktok', command: '.tt'
+        },
+        {
+            title: '📷 Instagram DL', description: '.ig url instagram', command: '.ig'
+        },
+        {
+            title: '📘 Facebook DL', description: '.fb url facebook', command: '.fb'
+        },
+        {
+            title: '🎶 YouTube MP3', description: '.mp3 url youtube', command: '.mp3'
+        },
+        {
+            title: '📦 MediaFire DL', description: '.mediafie url mediafire', command: '.mediafie'
+        },
+        {
+            title: '📜 Lirik Lagu', description: '.lirik judul lagu', command: '.lirik'
+        },
+        {
+            title: '📰 Berita Detik', description: '.detik - berita terbaru', command: '.detik'
+        },
+        {
+            title: '👁️ Read View Once', description: 'Reply pesan VO + .rvo', command: '.rvo'
+        },
+        {
+            title: '🏓 Ping', description: 'Cek kecepatan bot', command: '.ping'
+        },
+        {
+            title: 'ℹ️ Info Bot', description: 'Info lengkap bot', command: '.info'
+        }
     ]
 
     let finalList = m.isOwner ? listMenu : listMenuUser
     let sectionTitle = m.isOwner ? '👑 Menu Owner' : '📋 Menu User'
 
     await conn.sendMessage(m.chat, {
-        buttonLocation: {
-            latitude: 0, longitude: 0,
-            name: config.botName, address: config.ownerName,
-            jpegThumbnail: thumb, text: menuText,
-            footer: config.ownerName,
-            listButtonText: '☰ Menu',
-            listSectionTitle: sectionTitle,
-            listMenu: finalList
+        interactiveMessage: {
+            contextInfo: {
+                externalAdReply: {
+                    title: `${config.botName} • v${config.version}`,
+                    body: `DEVELOPER BY ${config.developer || 'JHON338'}`,
+                    mediaType: 1,
+                    thumbnail: thumb,
+                    sourceUrl: 'https://jhon338-jc.github.io/Linktree/',
+                    mediaUrl: 'https://jhon338-jc.github.io/Linktree/',
+                    renderLargerThumbnail: true
+                }
+            },
+            header: {
+                title: `👋 Halo ${m.pushName || 'User'}!`,
+                hasMediaAttachment: false
+            },
+            body: {
+                text: menuText
+            },
+            footer: {
+                text: `🔗 Linktree: ${config.channelLink}\n💻 GitHub: ${config.githubRepo}`
+            },
+            nativeFlowMessage: {
+                buttons: [
+                    {
+                        name: 'single_select',
+                        buttonParamsJson: JSON.stringify({
+                            title: '☰ BUKA MENU',
+                            sections: [
+                                {
+                                    title: sectionTitle,
+                                    rows: finalList.map(item => ({
+                                        id: item.command,
+                                        title: item.title,
+                                        description: item.description
+                                    }))
+                                }
+                            ]
+                        })
+                    }
+                ],
+                messageParamsJson: ''
+            }
         }
     }, { quoted: m })
 }

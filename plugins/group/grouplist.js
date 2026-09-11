@@ -1,6 +1,7 @@
 import fs from 'fs'
 
 let handler = async (m, { conn, args, command, notifReply }) => {
+    if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
     const monitorFile = './database/monitor.json'
     let monitor = JSON.parse(fs.readFileSync(monitorFile))
 

@@ -1,8 +1,9 @@
 import Jimp from 'jimp'
+import { rgbTag, COLORS } from '../../lib/rgb.js'
 
 let handler = async (m, { conn }) => {
-    if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
-
+if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
+if (!m.isGroup) return conn.sendMessage(m.chat, { text: '❌ Fitur ini khusus grup!' })
     let q = m.quoted ? m.quoted : m
     let mime = (q.msg || q).mimetype || ''
 
@@ -23,7 +24,7 @@ let handler = async (m, { conn }) => {
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         
     } catch (e) {
-        console.error(e)
+        console.error(rgbTag('SETPP', e?.message || e, COLORS.error))
         conn.sendMessage(m.chat, { text: '❌ Gagal ganti foto profil! Pastikan bot admin.' })
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }

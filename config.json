@@ -1,8 +1,10 @@
 {
   "botName": "Jhon338 - Bot",
-  "ownerName": "JhonChenank",
+  "ownerName": "JhonChenank3",
+  "developer": "Jhon338",
+  "version": "3.4.0",
   "creator": [
-    "6285775137463"
+    "62856022882669"
   ],
   "prefix": [
     ".",
@@ -11,6 +13,8 @@
     "/"
   ],
   "botMode": "public",
+  "channelLink": "https://jhon338-jc.github.io/Linktree/",
+  "githubRepo": "https://github.com/jhon338-jc/JhonBotXfinal",
   "accessDenied": {
     "owner": "Fitur ini khusus Owner.",
     "creator": "Fitur ini khusus Creator.",
