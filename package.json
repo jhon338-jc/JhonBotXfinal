@@ -12,7 +12,7 @@
   "scripts": {
     "start": "node index.js",
     "start:pc": "node index.js",
-    "postinstall": "node scripts/fix-splash.js"
+    "postinstall": "node scripts/fix-splash.js && node scripts/fix-mex.js"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
