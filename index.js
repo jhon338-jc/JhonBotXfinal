@@ -176,7 +176,7 @@ async function start() {
         socket = makeLevvaSocket({
             auth: state,
             browser: Browsers.windows('Chrome'),
-            logger: pino({ level: 'error' }),
+            logger: pino({ level: 'fatal' }),
             printQRInTerminal: false,
             markOnlineOnConnect: true,
             connectTimeoutMs: 60000,
