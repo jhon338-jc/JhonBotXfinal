@@ -202,48 +202,34 @@ let handler = async (m, { conn, text }) => {
     let sectionTitle = m.isOwner ? '👑 Menu Owner' : '📋 Menu User'
 
     await conn.sendMessage(m.chat, {
-        interactiveMessage: {
-            contextInfo: {
-                externalAdReply: {
-                    title: `${config.botName} • v${config.version}`,
-                    body: `DEVELOPER BY ${config.developer || 'JHON338'}`,
-                    mediaType: 1,
-                    thumbnail: thumb,
-                    sourceUrl: 'https://jhon338-jc.github.io/Linktree/',
-                    mediaUrl: 'https://jhon338-jc.github.io/Linktree/',
-                    renderLargerThumbnail: true
-                }
-            },
-            header: {
-                title: `👋 Halo ${m.pushName || 'User'}!`,
-                hasMediaAttachment: false
-            },
-            body: {
-                text: menuText
-            },
-            footer: {
-                text: `🔗 Linktree: ${config.channelLink}\n💻 GitHub: ${config.githubRepo}`
-            },
-            nativeFlowMessage: {
-                buttons: [
+        interactiveButtons: [{
+            name: 'single_select',
+            buttonParamsJson: JSON.stringify({
+                title: '☰ BUKA MENU',
+                sections: [
                     {
-                        name: 'single_select',
-                        buttonParamsJson: JSON.stringify({
-                            title: '☰ BUKA MENU',
-                            sections: [
-                                {
-                                    title: sectionTitle,
-                                    rows: finalList.map(item => ({
-                                        id: item.command,
-                                        title: item.title,
-                                        description: item.description
-                                    }))
-                                }
-                            ]
-                        })
+                        title: sectionTitle,
+                        rows: finalList.map(item => ({
+                            id: item.command,
+                            title: item.title,
+                            description: item.description
+                        }))
                     }
-                ],
-                messageParamsJson: ''
+                ]
+            })
+        }],
+        title: `👋 Halo ${m.pushName || 'User'}!`,
+        text: menuText,
+        footer: `🔗 Linktree: ${config.channelLink}\n💻 GitHub: ${config.githubRepo}`,
+        contextInfo: {
+            externalAdReply: {
+                title: `${config.botName} • v${config.version}`,
+                body: `DEVELOPER BY ${config.developer || 'JHON338'}`,
+                mediaType: 1,
+                thumbnail: thumb,
+                sourceUrl: 'https://jhon338-jc.github.io/Linktree/',
+                mediaUrl: 'https://jhon338-jc.github.io/Linktree/',
+                renderLargerThumbnail: true
             }
         }
     }, { quoted: m })
