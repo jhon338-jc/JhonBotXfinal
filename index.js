@@ -176,7 +176,7 @@ async function start() {
         socket = makeLevvaSocket({
             auth: state,
             browser: Browsers.windows('Chrome'),
-            logger: pino({ level: 'fatal' }),
+            logger: pino({ level: 'error' }),
             printQRInTerminal: false,
             markOnlineOnConnect: true,
             connectTimeoutMs: 60000,
@@ -290,7 +290,7 @@ async function start() {
                     delay = 60000
                 }
                 
-                console.log(rgbTag('DISCONNECT', `Status: ${statusCode}, Attempt: ${reconnectAttempt}`, COLORS.warn))
+                console.log(rgbTag('DISCONNECT', `Status: ${statusCode}, Attempt: ${reconnectAttempt} - ${errorMessage}`, COLORS.warn))
                 restartBot(delay)
             }
         })
