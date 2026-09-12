@@ -2,8 +2,14 @@ import fs from 'fs'
 
 let handler = async (m, { conn }) => {
     await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
-    const groups = await conn.groupFetchAllParticipating()
-    const groupList = Object.values(groups)
+    let groupList = []
+    try {
+        const groups = await conn.groupFetchAllParticipating()
+        groupList = Object.values(groups || {})
+    } catch (e) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❌ Gagal mengambil daftar grup: ' + (e?.message || e))
+    }
 
     if (!groupList.length) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
@@ -17,7 +23,14 @@ let handler = async (m, { conn }) => {
     })
     text += `│  💡 Balas dengan nomor grup\n│  Contoh: 2,5\n│  Maksimal 5 grup\n└─────────────────────────────────────┘`
 
-    const monitor = JSON.parse(fs.readFileSync('./database/monitor.json', 'utf-8'))
+    let monitor
+    try {
+        monitor = JSON.parse(fs.readFileSync('./database/monitor.json', 'utf-8'))
+        if (!monitor || typeof monitor !== 'object') monitor = {}
+    } catch {
+        monitor = {}
+    }
+    monitor.groups ??= []
     monitor.waiting = true
     fs.writeFileSync('./database/monitor.json', JSON.stringify(monitor, null, 2))
 

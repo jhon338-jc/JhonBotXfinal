@@ -5,7 +5,7 @@ import path from 'path'
 import sharp from 'sharp'
 import { createRequire } from 'module'
 import { rgbTag, COLORS } from '../../lib/rgb.js'
-import { saveImage, saveVideo } from '../../lib/autosave.js'
+import { saveImage, saveVideo, tmpName } from '../../lib/autosave.js'
 
 const require = createRequire(import.meta.url)
 const FFMPEG = process.env.FFMPEG_PATH || (() => {
@@ -34,8 +34,9 @@ let handler = async (m, { conn }) => {
 
     try {
         if (isAnimated) {
-            const webpPath = path.join(os.tmpdir(), `stick_${Date.now()}.webp`)
-            const mp4Path = path.join(os.tmpdir(), `video_${Date.now()}.mp4`)
+            const webpPath = path.join(os.tmpdir(), tmpName('webp', 'stick'))
+            const mp4Path = path.join(os.tmpdir(), tmpName('mp4', 'video'))
+            let pngPath = null
             fs.writeFileSync(webpPath, buffer)
 
             let sent = false
@@ -58,16 +59,16 @@ let handler = async (m, { conn }) => {
 
             // Fallback: frame pertama → PNG
             if (!sent) {
-                const pngPath = path.join(os.tmpdir(), `img_${Date.now()}.png`)
+                pngPath = path.join(os.tmpdir(), tmpName('png', 'img'))
                 execFileSync(FFMPEG, ['-v', 'error', '-i', webpPath, '-frames:v', '1', pngPath], { timeout: 60000 })
                 const imgBuf = fs.readFileSync(pngPath)
                 await saveImage(imgBuf)
                 await conn.sendMessage(m.chat, { image: imgBuf }, { quoted: m })
-                try { fs.unlinkSync(pngPath) } catch {}
             }
 
-            try { fs.unlinkSync(webpPath) } catch {}
-            try { fs.unlinkSync(mp4Path) } catch {}
+            for (const f of [webpPath, mp4Path, pngPath]) {
+                if (f) try { fs.unlinkSync(f) } catch {}
+            }
         } else {
             const imgBuffer = await sharp(buffer).png().toBuffer()
             await saveImage(imgBuffer)

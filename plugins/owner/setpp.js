@@ -17,6 +17,10 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         const media = await q.download()
+        if (!media || !media.length) {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+            return m.reply('❌ Gagal mengunduh gambar!')
+        }
         const image = await Jimp.read(media)
         image.cover(640, 640)
         const buffer = await image.getBufferAsync(Jimp.MIME_JPEG)

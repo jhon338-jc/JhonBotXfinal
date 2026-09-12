@@ -5,7 +5,7 @@ import path from 'path'
 import { createRequire } from 'module'
 import { rgbTag, COLORS } from '../../lib/rgb.js'
 import { makeSticker, makeWatermarkPng, videoStickerArgs } from '../../lib/sticker.js'
-import { saveSticker } from '../../lib/autosave.js'
+import { saveSticker, tmpName } from '../../lib/autosave.js'
 
 const require = createRequire(import.meta.url)
 const FFMPEG = process.env.FFMPEG_PATH || (() => {
@@ -45,27 +45,35 @@ let handler = async (m, { conn }) => {
         }
 
         if (isVideo) {
-            const mp4Path = path.join(os.tmpdir(), `tmp_v_${Date.now()}.mp4`)
-            const webpPath = path.join(os.tmpdir(), `tmp_v_${Date.now()}.webp`)
-            const wmPath = path.join(os.tmpdir(), `tmp_v_${Date.now()}_wm.png`)
+            const mp4Path = path.join(os.tmpdir(), tmpName('mp4', 'tmp_v'))
+            const webpPath = path.join(os.tmpdir(), tmpName('webp', 'tmp_v'))
+            const wmPath = path.join(os.tmpdir(), tmpName('png', 'tmp_v'))
 
-            fs.writeFileSync(mp4Path, buffer)
-            fs.writeFileSync(wmPath, await makeWatermarkPng())
-            execFileSync(FFMPEG, videoStickerArgs(mp4Path, wmPath, webpPath), { timeout: 90000 })
+            try {
+                fs.writeFileSync(mp4Path, buffer)
+                fs.writeFileSync(wmPath, await makeWatermarkPng())
+                execFileSync(FFMPEG, videoStickerArgs(mp4Path, wmPath, webpPath), { timeout: 90000 })
 
-            let stickerBuffer = fs.readFileSync(webpPath)
-            if (stickerBuffer.length > 650000) {
-                const webpPath2 = path.join(os.tmpdir(), `tmp_v_${Date.now()}_2.webp`)
-                execFileSync(FFMPEG, videoStickerArgs(mp4Path, wmPath, webpPath2, 512, { fps: 8, bitrate: '250k', maxrate: '300k', bufsize: '600k' }), { timeout: 90000 })
-                stickerBuffer = fs.readFileSync(webpPath2)
-                try { fs.unlinkSync(webpPath2) } catch {}
+                let stickerBuffer = fs.readFileSync(webpPath)
+                if (stickerBuffer.length > 650000) {
+                    const webpPath2 = path.join(os.tmpdir(), tmpName('webp', 'tmp_v'))
+                    try {
+                        execFileSync(FFMPEG, videoStickerArgs(mp4Path, wmPath, webpPath2, 512, { fps: 8, bitrate: '250k', maxrate: '300k', bufsize: '600k' }), { timeout: 90000 })
+                        const reduced = fs.readFileSync(webpPath2)
+                        if (reduced.length && reduced.length < stickerBuffer.length) stickerBuffer = reduced
+                    } finally {
+                        try { fs.unlinkSync(webpPath2) } catch {}
+                    }
+                    if (stickerBuffer.length > 990000) throw new Error('Sticker video terlalu besar (melebihi limit WhatsApp)')
+                }
+
+                await saveSticker(stickerBuffer)
+                await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
+            } finally {
+                for (const f of [mp4Path, webpPath, wmPath]) {
+                    try { fs.unlinkSync(f) } catch {}
+                }
             }
-
-            await saveSticker(stickerBuffer)
-            await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
-            try { fs.unlinkSync(mp4Path) } catch {}
-            try { fs.unlinkSync(webpPath) } catch {}
-            try { fs.unlinkSync(wmPath) } catch {}
         } else {
             const stickerBuffer = await makeSticker(buffer)
             await saveSticker(stickerBuffer)

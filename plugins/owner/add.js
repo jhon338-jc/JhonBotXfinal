@@ -1,3 +1,4 @@
+import { areJidsSameUser } from '@whiskeysockets/baileys'
 import { normalizeNumber } from '../../handler.js'
 
 let handler = async (m, { conn, args }) => {
@@ -7,13 +8,13 @@ let handler = async (m, { conn, args }) => {
     }
 
     const num = normalizeNumber(args[0])
-    if (!num) {
+    if (!num || !/^\d{8,15}$/.test(num)) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('⚠️ Masukkan nomor!\n\nContoh: .add 628xxx atau .add 08xxx')
+        return m.reply('⚠️ Masukkan nomor valid!\n\nContoh: .add 628xxx atau .add 08xxx')
     }
 
     const who = num + '@s.whatsapp.net'
-    if (who === conn.user?.id) {
+    if (conn.user?.id && areJidsSameUser(who, conn.decodeJid(conn.user.id))) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         return m.reply('❌ Tidak bisa menambahkan bot sendiri!')
     }

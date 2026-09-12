@@ -12,29 +12,51 @@ import handleMessage, { initPlugins, getPluginSummary, normalizeNumber } from '.
 import { rgb, rgbTag, COLORS } from './lib/rgb.js'
 import { ensureTemp } from './lib/autosave.js'
 
-process.on('uncaughtException', () => {})
-process.on('unhandledRejection', () => {})
+process.on('uncaughtException', (err) => {
+    console.error(rgbTag('FATAL', 'Uncaught Exception: ' + (err?.stack || err), COLORS.error))
+    try {
+        socket?.ev.removeAllListeners()
+        socket?.ws?.close?.()
+    } catch {}
+    restartBot(10000)
+})
+process.on('unhandledRejection', (err) => {
+    console.error(rgbTag('FATAL', 'Unhandled Rejection: ' + (err?.message || err), COLORS.error))
+})
 
-const CONFIG_FILE = './config.json'
 const MONITOR_FILE = './database/monitor.json'
 const OWNER_FILE = './database/owner.json'
 
 const readJSON = file => JSON.parse(fs.readFileSync(file, 'utf-8'))
 const writeJSON = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2))
 
+function loadConfig() {
+    try {
+        return readJSON('./config.json')
+    } catch {
+        return {}
+    }
+}
+
 let socket
 let reconnectTimer = null
 let reconnectAttempt = 0
 let isConnecting = false
 let pluginsLoaded = false
+let keepAliveTimer = null
+let rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
-const question = t => new Promise(r => rl.question(t, r))
+const question = t => {
+    if (rl && rl.closed) {
+        rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+    }
+    return new Promise(r => rl.question(t, r))
+}
 
-const config = readJSON(CONFIG_FILE)
-const BOT_NAME = config.botName || 'JhonBot'
-const VERSION = config.version || '3.3.8'
-const PAIR_CODE = config.pairingCode || 'JHON3382'
+let config = loadConfig()
+let BOT_NAME = config.botName || 'JhonBot'
+let VERSION = config.version || '3.3.8'
+let PAIR_CODE = config.pairingCode || 'JHON3382'
 
 // ==================== GAMBAR BOX LOG ====================
 function drawBox(lines, width = 44) {
@@ -86,6 +108,7 @@ function bannerConnected() {
 async function sendGroupListToOwner(conn) {
     try {
         const monitor = readJSON(MONITOR_FILE)
+        monitor.groups ??= []
         if (!monitor.waiting && monitor.groups.length > 0) {
             console.log(rgbTag('STARTUP', `Menggunakan ${monitor.groups.length} grup tersimpan`, COLORS.info))
             console.log(rgbTag('STARTUP', 'Ketik .grup ke bot untuk mengganti pilihan grup', COLORS.info))
@@ -160,8 +183,16 @@ async function start() {
 
     try {
         ensureTemp()
+        config = loadConfig()
+        BOT_NAME = config.botName || 'JhonBot'
+        VERSION = config.version || '3.3.8'
+        PAIR_CODE = config.pairingCode || 'JHON3382'
         console.log(bannerStart())
 
+        if (keepAliveTimer) {
+            clearInterval(keepAliveTimer)
+            keepAliveTimer = null
+        }
         if (socket) {
             socket.ev.removeAllListeners()
             socket.ws?.close?.()
@@ -190,8 +221,9 @@ async function start() {
             const number = await question(rgb('Nomor: ', [255, 170, 0], [255, 255, 120]))
             const cleanNumber = number.replace(/\D/g, '')
             if (!cleanNumber) {
-                console.log(rgbTag('PAIRING', 'Nomor tidak valid. Ulangi bot.', COLORS.error))
-                process.exit(1)
+                console.log(rgbTag('PAIRING', 'Nomor tidak valid. Ulangi...', COLORS.error))
+                restartBot(3000)
+                return
             }
             try {
                 const code = await socket.requestPairingCode(cleanNumber, PAIR_CODE)
@@ -214,7 +246,8 @@ async function start() {
                 console.log(rgbTag('PAIRING', `Nomor ${ownerNum} di-set sebagai OWNER`, COLORS.success))
             } catch (err) {
                 console.error(rgbTag('PAIRING', 'Gagal mengirim kode pairing: ' + (err?.message || err), COLORS.error))
-                process.exit(1)
+                restartBot(5000)
+                return
             } finally {
                 rl.close()
             }
@@ -226,17 +259,19 @@ async function start() {
 
         socket.ev.on('messages.upsert', async ({ messages }) => {
             if (!messages.length) return
-            setImmediate(async () => {
-                try {
-                    let m = messages[0]
-                    if (!m?.message || m.key.remoteJid === 'status@broadcast') return
-                    if (m.key.remoteJid?.includes('@newsletter')) return
-                    m = await smsg(socket, m)
-                    if (m) await handleMessage(socket, m)
-                } catch (e) {
-                    console.error(rgbTag('ERROR', e?.message || e, COLORS.error))
-                }
-            })
+            for (const rawMsg of messages) {
+                setImmediate(async () => {
+                    try {
+                        if (!rawMsg?.message) return
+                        if (rawMsg.key?.remoteJid === 'status@broadcast') return
+                        if (rawMsg.key?.remoteJid?.includes('@newsletter')) return
+                        const m = await smsg(socket, rawMsg)
+                        if (m) await handleMessage(socket, m)
+                    } catch (e) {
+                        console.error(rgbTag('ERROR', e?.message || e, COLORS.error))
+                    }
+                })
+            }
         })
 
         socket.ev.on('connection.update', async ({ connection, lastDisconnect }) => {
@@ -264,7 +299,7 @@ async function start() {
 
                 if (statusCode === DisconnectReason.loggedOut) {
                     console.log(rgbTag('LOGOUT', 'Bot logout, hapus auth & restart...', COLORS.warn))
-                    fs.rmSync('./auth', { recursive: true, force: true })
+                    try { fs.rmSync('./auth', { recursive: true, force: true }) } catch {}
                     restartBot(3000)
                     return
                 }
@@ -282,10 +317,12 @@ async function start() {
         })
 
         // Keep alive
-        setInterval(() => {
-            if (socket?.user && socket?.ws?.readyState === 1) {
-                socket.sendPresenceUpdate('available')
-            }
+        keepAliveTimer = setInterval(() => {
+            try {
+                if (socket?.user && socket?.ws?.readyState === 1) {
+                    socket.sendPresenceUpdate('available')
+                }
+            } catch {}
         }, 30000)
     } catch (e) {
         isConnecting = false

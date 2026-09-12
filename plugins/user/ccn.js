@@ -1,9 +1,8 @@
 import { rgbTag, COLORS } from '../../lib/rgb.js'
 import {
     getCecanChina, getCecanHijaber, getCecanIndonesia,
-    getCecanJapan, getCecanJiso, getCecanJustinaxie,
-    getCecanKorea, getCecanMalaysia, getCecanRose,
-    getCecanRyujin, getCecanThailand, getCecanVietnam
+    getCecanJapan, getCecanKorea,
+    getCecanMalaysia, getCecanThailand, getCecanVietnam
 } from '../../lib/kyzz/cecan.js'
 import { requireKyzzKey } from '../../lib/kyzz/client.js'
 import { saveImage } from '../../lib/autosave.js'
@@ -29,6 +28,7 @@ let handler = async (m, { conn }) => {
 
         const res = await src.fn()
         const buffer = Buffer.from(await res.arrayBuffer())
+        if (!buffer.length) throw new Error('Respons kosong dari sumber cecan')
         await saveImage(buffer)
 
         await conn.sendMessage(m.chat, {

@@ -3,14 +3,15 @@ let handler = async (m, { conn, text }) => {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         return m.reply('❌ Fitur ini khusus grup!')
     }
-    if (!text) {
+    const name = (text || '').trim()
+    if (!name) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         return m.reply('⚠️ Masukkan nama grup!\n\nContoh: .setnm Nama Grup Baru')
     }
 
     await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
-        await conn.groupUpdateSubject(m.chat, text)
+        await conn.groupUpdateSubject(m.chat, name.slice(0, 25))
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })

@@ -20,7 +20,20 @@ const pluginDir = path.join(__dirname, 'plugins')
 export const plugins = new Map()
 const summary = { owner: [], user: [] }
 
-const readJSON = file => JSON.parse(fs.readFileSync(file, 'utf-8'))
+const jsonCache = new Map()
+function readJSON(file) {
+    try {
+        const stat = fs.statSync(file)
+        const hit = jsonCache.get(file)
+        if (hit && hit.mtimeMs === stat.mtimeMs) return hit.data
+        const data = JSON.parse(fs.readFileSync(file, 'utf-8'))
+        jsonCache.set(file, { mtimeMs: stat.mtimeMs, data })
+        return data
+    } catch {
+        return null
+    }
+}
+
 const writeJSON = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2))
 
 // ==================== NORMALISASI NOMOR ====================
@@ -32,16 +45,18 @@ export function normalizeNumber(raw = '') {
 }
 
 export function loadOwners() {
+    const db = readJSON('./database/owner.json')
     try {
-        return (readJSON('./database/owner.json').owner || []).map(n => normalizeNumber(n))
+        return (db?.owner || []).map(n => normalizeNumber(n))
     } catch {
         return []
     }
 }
 
 export function loadPremium() {
+    const db = readJSON('./database/premium.json')
     try {
-        return (readJSON('./database/premium.json').premium || []).map(n => normalizeNumber(n))
+        return (db?.premium || []).map(n => normalizeNumber(n))
     } catch {
         return []
     }
@@ -150,26 +165,39 @@ export default async function handleMessage(conn, m) {
         const { body, isButtonResponse } = extractCommandFromMessage(m)
         if (!body) return
 
-        const monitor = readJSON('./database/monitor.json')
+        const monitor = readJSON('./database/monitor.json') || { groups: [], waiting: false }
         const number = normalizeNumber(m.sender.split('@')[0])
-        m.isOwner = loadOwners().includes(number)
-        m.isPremium = m.isOwner || loadPremium().includes(number)
+        const owners = loadOwners()
+        const premium = loadPremium()
+        m.isOwner = owners.includes(number)
+        m.isPremium = m.isOwner || premium.includes(number)
 
-        // Parsing command
-        const raw = isButtonResponse ? stripPrefix(body) : body.trim()
+        // Parsing command (stripPrefix hanya SEKALI)
+        const raw = isButtonResponse ? body : body.trim()
         const cleaned = stripPrefix(raw)
         if (!cleaned) return
         const args = cleaned.split(/\s+/)
         const command = args.shift().toLowerCase()
         m.command = command
 
+        // Cache untuk plugin lain
+        if (!conn.__data) conn.__data = {}
+        conn.__data.owners = owners
+
         // ============ PEMILIHAN GRUP (balas nomor: "2,5") ============
         if (/^[\d,\s]+$/.test(cleaned) && !isButtonResponse) {
             if (!m.isGroup && m.isOwner && monitor.waiting) {
                 const nums = cleaned.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
                 if (!nums.length || nums.length > 5) return
-                const groups = await conn.groupFetchAllParticipating()
-                const list = Object.values(groups)
+                let groups = []
+                try {
+                    const fetched = await conn.groupFetchAllParticipating()
+                    groups = Object.values(fetched || {})
+                } catch (e) {
+                    console.error(rgbTag('HANDLER', 'Gagal ambil daftar grup: ' + (e?.message || e), COLORS.error))
+                    return
+                }
+                const list = groups
                 const selected = nums.map(n => list[n - 1]).filter(Boolean)
                 if (!selected.length || selected.length > 5) return
                 monitor.groups = selected.map(g => g.id)

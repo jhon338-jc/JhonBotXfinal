@@ -28,6 +28,7 @@ let handler = async (m, { conn }) => {
 
         const res = await src.fn()
         const buffer = Buffer.from(await res.arrayBuffer())
+        if (!buffer.length) throw new Error('Respons kosong dari sumber asupan')
         await saveVideo(buffer)
 
         await conn.sendMessage(m.chat, {
