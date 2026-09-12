@@ -7,8 +7,9 @@ import { rgbTag, COLORS } from '../../lib/rgb.js'
 //  .web / .webview  —  Web HTML di dalam pesan WhatsApp
 //  - Paste kode HTML  -> upload ke pastehtml.dev -> live URL
 //  - Atau kasih URL    -> langsung dipakai
-//  - Kirim tombol cta_url dengan webview_interaction, sehingga
-//    halaman dibuka di webview internal WhatsApp.
+//  - Kirim tombol cta_url + webview_interaction, sehingga
+//    halaman dibuka di webview internal WhatsApp bila didukung
+//    (jika tidak, fallback ke browser biasa).
 // ============================================================
 
 const TMP_DIR = './tmp'
@@ -40,13 +41,12 @@ async function uploadHtml(html) {
 function sendWeb(conn, m, url, label) {
     return conn.sendMessage(m.chat, {
         interactiveButtons: [{
-            name: 'open_webview',
+            name: 'cta_url',
             buttonParamsJson: JSON.stringify({
-                title: '🌐 Jhon338 Web',
-                link: {
-                    in_app_webview: true,
-                    url
-                }
+                display_text: '🌐 BUKA WEB',
+                url,
+                webview_interaction: 'initiated',
+                webview_share: 'forwarded'
             })
         }],
         text: `${label}\n\n` +

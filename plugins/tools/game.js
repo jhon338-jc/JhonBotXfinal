@@ -3,8 +3,8 @@ import { rgbTag, COLORS } from '../../lib/rgb.js'
 
 // ============================================================
 //  .game  —  Game webview ala-Flows di dalam pesan WhatsApp
-//  - Hosting HTML game di pastehtml.dev (open_webview in-app)
-//  - Ketuk tombol -> webview penuh terbuka di dalam WhatsApp
+//  - Hosting HTML game di pastehtml.dev (tombol cta_url webview)
+//  - Ketuk tombol -> webview terbuka di dalam WhatsApp
 //  Game aktif: Tic-Tac-Toe (kamu X vs bot O, minimax)
 // ============================================================
 
@@ -13,13 +13,12 @@ const GAME_URL = 'https://xo7m93hedk8fsz59u6h1aawjd1b7krjx.pastehtml.dev/'
 function sendGame(conn, m) {
     return conn.sendMessage(m.chat, {
         interactiveButtons: [{
-            name: 'open_webview',
+            name: 'cta_url',
             buttonParamsJson: JSON.stringify({
-                title: '🎮 Jhon338 Tic-Tac-Toe',
-                link: {
-                    in_app_webview: true,
-                    url: GAME_URL
-                }
+                display_text: '🎮 BUKA GAME',
+                url: GAME_URL,
+                webview_interaction: 'initiated',
+                webview_share: 'forwarded'
             })
         }],
         text: '🎮 *Jhon338 Tic-Tac-Toe*\n\n' +
