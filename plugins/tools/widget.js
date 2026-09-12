@@ -5,7 +5,7 @@ let handler = async (m, { conn }) => {
     const {
         proto,
         generateWAMessageFromContent,
-        generateMessageIDV2
+        generateMessageID
     } = await import('@whiskeysockets/baileys')
 
     const WS_URL = 'wss://theaters-screen-montana-workers.trycloudflare.com/test'
@@ -675,7 +675,7 @@ body {
                 Buffer.from(
                     JSON.stringify({
                         response_id:
-                            generateMessageIDV2(),
+                            generateMessageID(),
 
                         sections: [
                             {
@@ -747,7 +747,7 @@ body {
                 isi,
                 {
                     messageId:
-                        generateMessageIDV2()
+                        generateMessageID()
                 }
             )
 
