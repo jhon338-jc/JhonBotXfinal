@@ -198,24 +198,118 @@ let handler = async (m, { conn, text }) => {
         }
     ]
 
+    let featureSections = [
+        {
+            title: '🧠 AI',
+            rows: [
+                { id: '.editimage', title: '🖌️ Edit Image', description: 'Reply gambar + .editimage prompt' },
+                { id: '.aiimage', title: '🎨 Generate Image', description: '.aiimage deskripsi' }
+            ]
+        },
+        {
+            title: '🍭 Anime',
+            rows: [
+                { id: '.hanime', title: '🌸 Hanime', description: '.hanime judul' },
+                { id: '.hentaigenres', title: '🔞 Hentai Genres', description: '.hentaigenres <genre>' },
+                { id: '.hentaitrending', title: '🔥 Hentai Trending', description: '.hentaitrending' }
+            ]
+        },
+        {
+            title: '🎀 Asupan',
+            rows: [
+                { id: '.asupanbocil', title: '🎀 Asupan Bocil', description: '.asupanbocil' },
+                { id: '.asupangheayubi', title: '🎀 Asupan Gheayubi', description: '.asupangheayubi' },
+                { id: '.asupankayes', title: '🎀 Asupan Kayes', description: '.asupankayes' },
+                { id: '.asupannotnot', title: '🎀 Asupan Notnot', description: '.asupannotnot' },
+                { id: '.asupanpanrika', title: '🎀 Asupan Panrika', description: '.asupanpanrika' },
+                { id: '.asupansantuy', title: '🎀 Asupan Santuy', description: '.asupansantuy' },
+                { id: '.asupantiktokgirl', title: '🎀 Asupan Tiktok Girl', description: '.asupantiktokgirl' },
+                { id: '.asupanukhty', title: '🎀 Asupan Ukhty', description: '.asupanukhty' }
+            ]
+        },
+        {
+            title: '🖼️ Logo & Canvas',
+            rows: [
+                { id: '.ffduo', title: '🦅 FF Duo', description: '.ffduo user1 user2' },
+                { id: '.ffgirl', title: '🦅 FF Girl', description: '.ffgirl username' },
+                { id: '.fflobby', title: '🦅 FF Lobby', description: '.fflobby username' },
+                { id: '.fakeml', title: '🤖 Fake ML', description: '.fakeml avatar username rank border' },
+                { id: '.fakengl', title: '💬 Fake NGL', description: '.fakengl teks' },
+                { id: '.gopay', title: '💸 Gopay', description: '.gopay saldo [koin]' },
+                { id: '.fakeovo', title: '💸 Fake OVO', description: '.fakeovo saldo' },
+                { id: '.ustadz', title: '🕌 Ustadz', description: '.ustadz teks' },
+                { id: '.goodbye', title: '👋 Goodbye', description: '.goodbye Nama | Grup | Member (reply gambar)' },
+                { id: '.qcwa', title: '💬 Quote WA', description: '.qcwa teks (reply gambar)' }
+            ]
+        },
+        {
+            title: '📷 Cecan',
+            rows: [
+                { id: '.cecanchina', title: '🇨🇳 Cecan China', description: '.cecanchina' },
+                { id: '.cecanhijaber', title: '🧕 Cecan Hijaber', description: '.cecanhijaber' },
+                { id: '.cecanindonesia', title: '🇮🇩 Cecan Indonesia', description: '.cecanindonesia' },
+                { id: '.cecanjapan', title: '🇯🇵 Cecan Japan', description: '.cecanjapan' },
+                { id: '.cecanjiso', title: '🎀 Cecan Jiso', description: '.cecanjiso' },
+                { id: '.cecanjustinaxie', title: '🎀 Cecan Justinaxie', description: '.cecanjustinaxie' },
+                { id: '.cecankorea', title: '🇰🇷 Cecan Korea', description: '.cecankorea' },
+                { id: '.cecanmalaysia', title: '🇲🇾 Cecan Malaysia', description: '.cecanmalaysia' },
+                { id: '.cecanrose', title: '🌹 Cecan Rose', description: '.cecanrose' },
+                { id: '.cecanryujin', title: '🌟 Cecan Ryujin', description: '.cecanryujin' },
+                { id: '.cecanthailand', title: '🇹🇭 Cecan Thailand', description: '.cecanthailand' },
+                { id: '.cecanvietnam', title: '🇻🇳 Cecan Vietnam', description: '.cecanvietnam' }
+            ]
+        },
+        {
+            title: '⬇️ Download',
+            rows: [
+                { id: '.kyzzfb', title: '📘 Facebook DL', description: '.kyzzfb url facebook' },
+                { id: '.kyzzig', title: '📷 Instagram DL', description: '.kyzzig url instagram' },
+                { id: '.kyzztt', title: '🎵 TikTok DL', description: '.kyzztt url tiktok' },
+                { id: '.kyzzgit', title: '🐙 GitHub Repo', description: '.kyzzgit url repo' }
+            ]
+        },
+        {
+            title: '🕌 Islamic',
+            rows: [
+                { id: '.asmaulhusna', title: '📿 Asmaul Husna', description: '.asmaulhusna [nomor]' },
+                { id: '.ayatkursi', title: '🕋 Ayat Kursi', description: '.ayatkursi' },
+                { id: '.bacaansholat', title: '🕌 Bacaan Sholat', description: '.bacaansholat' },
+                { id: '.jadwalsholat', title: '🕐 Jadwal Sholat', description: '.jadwalsholat wilayah' },
+                { id: '.kisahnabi', title: '📖 Kisah Nabi', description: '.kisahnabi nama' },
+                { id: '.niatsholat', title: '🤲 Niat Sholat', description: '.niatsholat waktu' },
+                { id: '.tafsir', title: '📜 Tafsir', description: '.tafsir query' }
+            ]
+        },
+        {
+            title: '🎲 Random',
+            rows: [
+                { id: '.andin', title: '🎀 Andin', description: '.andin' },
+                { id: '.seegore', title: '🔞 See Gore', description: '.seegore' },
+                { id: '.tobrut', title: '🔥 Tobrut', description: '.tobrut' }
+            ]
+        },
+        {
+            title: '👤 User Kyzz',
+            rows: [
+                { id: '.kyzzprofile', title: '🪪 Profil Kyzz', description: '.kyzzprofile' },
+                { id: '.kyzzstats', title: '📊 Statistik Kyzz', description: '.kyzzstats' },
+                { id: '.kyzzrenew', title: '♻️ Renew Kyzz', description: '.kyzzrenew role days coupon (owner)' }
+            ]
+        }
+    ]
+
     let finalList = m.isOwner ? listMenu : listMenuUser
     let sectionTitle = m.isOwner ? '👑 Menu Owner' : '📋 Menu User'
+
+    let sections = [{ title: sectionTitle, rows: finalList.map(item => ({ id: item.command, title: item.title, description: item.description })) }]
+    for (const s of featureSections) sections.push(s)
 
     await conn.sendMessage(m.chat, {
         interactiveButtons: [{
             name: 'single_select',
             buttonParamsJson: JSON.stringify({
                 title: '☰ BUKA MENU',
-                sections: [
-                    {
-                        title: sectionTitle,
-                        rows: finalList.map(item => ({
-                            id: item.command,
-                            title: item.title,
-                            description: item.description
-                        }))
-                    }
-                ]
+                sections
             })
         }],
         title: `👋 Halo ${m.pushName || 'User'}!`,

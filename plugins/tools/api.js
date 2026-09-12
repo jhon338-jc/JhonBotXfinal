@@ -7,6 +7,11 @@ let handler = async (m) => {
 │
 │  💳 *AI*
 │  ├ .editimage <prompt> -> reply gambar
+│  ├ .aiimage <deskripsi>
+│
+│  🍭 *Anime*
+│  ├ .hanime judul | .hentaigenres <genre>
+│  └ .hentaitrending
 │
 │  👻 *Asupan*
 │  ├ .asupanbocil | .asupangheayubi
