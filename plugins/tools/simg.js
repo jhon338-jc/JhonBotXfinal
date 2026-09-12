@@ -60,9 +60,15 @@ let handler = async (m, { conn }) => {
 
             fs.writeFileSync(mp4Path, buffer)
 
-            execFileSync(FFMPEG, ['-i', mp4Path, '-vf', 'fps=15,scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2', '-c:v', 'libwebp', '-lossless', '0', '-preset', 'default', '-loop', '0', webpPath], { timeout: 60000 })
+            execFileSync(FFMPEG, ['-i', mp4Path, '-t', '10', '-an', '-vf', 'fps=10,scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2', '-c:v', 'libwebp', '-lossless', '0', '-preset', 'default', '-loop', '0', '-b:v', '350k', '-maxrate', '450k', '-bufsize', '800k', webpPath], { timeout: 90000 })
 
             let stickerBuffer = fs.readFileSync(webpPath)
+            if (stickerBuffer.length > 650000) {
+                const webpPath2 = path.join(os.tmpdir(), `tmp_v_${Date.now()}_2.webp`)
+                execFileSync(FFMPEG, ['-i', mp4Path, '-t', '10', '-an', '-vf', 'fps=8,scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2', '-c:v', 'libwebp', '-lossless', '0', '-preset', 'default', '-loop', '0', '-b:v', '250k', '-maxrate', '300k', '-bufsize', '600k', webpPath2], { timeout: 90000 })
+                stickerBuffer = fs.readFileSync(webpPath2)
+                try { fs.unlinkSync(webpPath2) } catch {}
+            }
             await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
 
             try { fs.unlinkSync(mp4Path) } catch {}
