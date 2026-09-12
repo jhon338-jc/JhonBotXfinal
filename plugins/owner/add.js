@@ -1,18 +1,29 @@
 import { normalizeNumber } from '../../handler.js'
 
 let handler = async (m, { conn, args }) => {
-    if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
+    if (!m.isGroup) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❌ Fitur ini khusus grup!')
+    }
 
     const num = normalizeNumber(args[0])
-    if (!num) return m.reply('⚠️ Masukkan nomor!\n\nContoh: .add 628xxx atau .add 08xxx')
+    if (!num) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('⚠️ Masukkan nomor!\n\nContoh: .add 628xxx atau .add 08xxx')
+    }
 
     const who = num + '@s.whatsapp.net'
-    if (who === conn.user?.id) return m.reply('❌ Tidak bisa menambahkan bot sendiri!')
+    if (who === conn.user?.id) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❌ Tidak bisa menambahkan bot sendiri!')
+    }
 
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         await conn.groupParticipantsUpdate(m.chat, [who], 'add')
-        m.reply(`✅ Berhasil tambah @${who.split('@')[0]}`, null, { mentions: [who] })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         m.reply('❌ Gagal menambahkan user! Pastikan bot admin & nomor valid.')
     }
 }

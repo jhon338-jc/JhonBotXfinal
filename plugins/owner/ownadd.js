@@ -1,17 +1,23 @@
 import fs from 'fs'
 import { normalizeNumber } from '../../handler.js'
 
-let handler = async (m, { args }) => {
+let handler = async (m, { conn, args }) => {
     const num = normalizeNumber(args[0])
-    if (!num) return m.reply('⚠️ Masukkan nomor!\n\nContoh: .ownadd 628xxx atau .ownadd 08xxx')
+    if (!num) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('⚠️ Masukkan nomor!\n\nContoh: .ownadd 628xxx atau .ownadd 08xxx')
+    }
 
     const db = JSON.parse(fs.readFileSync('./database/owner.json', 'utf-8'))
     db.owner ??= []
-    if (db.owner.includes(num)) return m.reply('✅ Nomor tersebut sudah menjadi Owner.')
+    if (db.owner.includes(num)) {
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+        return
+    }
 
     db.owner.push(num)
     fs.writeFileSync('./database/owner.json', JSON.stringify(db, null, 2))
-    m.reply(`✅ Berhasil menambahkan Owner:\n\n${num}`)
+    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 
 handler.command = ['ownadd', 'addowner']

@@ -13,12 +13,18 @@ const FFMPEG = process.env.FFMPEG_PATH || (() => {
 })()
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
-    if (!m.quoted) return m.reply('⚠️ Reply stiker! Contoh: Reply stiker + .toimg')
+    if (!m.quoted) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('⚠️ Reply stiker! Contoh: Reply stiker + .toimg')
+    }
 
     const buffer = await m.quoted.download()
-    if (!buffer) return m.reply('❌ Gagal mengunduh stiker!')
+    if (!buffer) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❌ Gagal mengunduh stiker!')
+    }
 
     let isAnimated = false
     try {
@@ -45,7 +51,6 @@ let handler = async (m, { conn }) => {
                 await saveVideo(vidBuf)
                 await conn.sendMessage(m.chat, {
                     video: vidBuf,
-                    caption: '✅ Stiker video → MP4',
                     mimetype: 'video/mp4'
                 }, { quoted: m })
                 sent = true
@@ -57,7 +62,7 @@ let handler = async (m, { conn }) => {
                 execFileSync(FFMPEG, ['-v', 'error', '-i', webpPath, '-frames:v', '1', pngPath], { timeout: 60000 })
                 const imgBuf = fs.readFileSync(pngPath)
                 await saveImage(imgBuf)
-                await conn.sendMessage(m.chat, { image: imgBuf, caption: '✅ Frame pertama dari stiker animasi' }, { quoted: m })
+                await conn.sendMessage(m.chat, { image: imgBuf }, { quoted: m })
                 try { fs.unlinkSync(pngPath) } catch {}
             }
 
@@ -66,14 +71,13 @@ let handler = async (m, { conn }) => {
         } else {
             const imgBuffer = await sharp(buffer).png().toBuffer()
             await saveImage(imgBuffer)
-            await conn.sendMessage(m.chat, { image: imgBuffer, caption: '✅ Stiker → Gambar (PNG)' }, { quoted: m })
+            await conn.sendMessage(m.chat, { image: imgBuffer }, { quoted: m })
         }
 
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(rgbTag('TOIMG', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        m.reply('❌ Gagal mengonversi stiker!')
     }
 }
 

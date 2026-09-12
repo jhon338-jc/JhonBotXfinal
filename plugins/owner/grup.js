@@ -1,10 +1,14 @@
 import fs from 'fs'
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     const groups = await conn.groupFetchAllParticipating()
     const groupList = Object.values(groups)
 
-    if (!groupList.length) return m.reply('❌ Bot tidak ada di grup manapun!')
+    if (!groupList.length) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❌ Bot tidak ada di grup manapun!')
+    }
 
     let text = `┌─────────────────────────────────────┐\n│  📋 *DAFTAR GRUP*\n│\n`
     text += `│  Total Grup: ${groupList.length}\n│\n`
@@ -18,6 +22,7 @@ let handler = async (m, { conn }) => {
     fs.writeFileSync('./database/monitor.json', JSON.stringify(monitor, null, 2))
 
     await m.reply(text)
+    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 
 handler.command = ['grup', 'daftargrup']

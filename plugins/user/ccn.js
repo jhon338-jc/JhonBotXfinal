@@ -20,7 +20,7 @@ const SOURCES = {
 }
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         requireKyzzKey()
         const keys = Object.keys(SOURCES)
@@ -32,15 +32,13 @@ let handler = async (m, { conn }) => {
         await saveImage(buffer)
 
         await conn.sendMessage(m.chat, {
-            image: buffer,
-            caption: `📷 *CCN ${src.label.toUpperCase()}*`
+            image: buffer
         }, { quoted: m })
 
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(rgbTag('CCN', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        m.reply('❌ ' + (e?.message || 'Gagal mengambil cecan.'))
     }
 }
 

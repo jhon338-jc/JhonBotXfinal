@@ -1,6 +1,7 @@
 import { getPluginSummary } from '../../handler.js'
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     const { owner, user } = getPluginSummary()
     const runtime = process.uptime()
     const days = Math.floor(runtime / 86400)
@@ -9,7 +10,7 @@ let handler = async (m, { conn }) => {
     const total = [...new Set([...owner, ...user])].length
 
     let text = `ℹ️ *INFO BOT*\n\n`
-    text += `机器人 Nama       : JhonBot\n`
+    text += `🤖 Nama       : JhonBot\n`
     text += `👑 Developer  : Jhon338\n`
     text += `📦 Plugins    : ${total}\n`
     text += `⚡ Uptime     : ${days}d ${hours}h ${minutes}m\n`
@@ -19,6 +20,7 @@ let handler = async (m, { conn }) => {
     text += `*DEVELOPER BY JHON338 • v3.3.8*`
 
     m.reply(text)
+    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 
 handler.command = ['info']

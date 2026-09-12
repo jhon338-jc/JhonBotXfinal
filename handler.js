@@ -221,5 +221,8 @@ export default async function handleMessage(conn, m) {
         await handler(m, { conn, args, text: args.join(' '), command })
     } catch (e) {
         console.error(rgbTag('HANDLER', e?.message || e, COLORS.error))
+        try {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        } catch {}
     }
 }

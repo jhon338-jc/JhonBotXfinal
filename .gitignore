@@ -17,6 +17,3 @@ Thumbs.db
 
 # Kredensial
 .env
-
-# Gambar PAP lokal (tidak di-commit)
-src/IMAGE_PAP/

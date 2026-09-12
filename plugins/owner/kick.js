@@ -1,21 +1,32 @@
 import { normalizeNumber } from '../../handler.js'
 
 let handler = async (m, { conn, args }) => {
-    if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
+    if (!m.isGroup) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❌ Fitur ini khusus grup!')
+    }
 
     let who = m.mentionedJid?.[0]
     if (!who) {
         const num = normalizeNumber(args[0])
         if (num) who = num + '@s.whatsapp.net'
     }
-    if (!who) return m.reply('⚠️ Tag user atau masukkan nomor!\n\nContoh: .kick @user atau .kick 628xxx')
+    if (!who) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('⚠️ Tag user atau masukkan nomor!\n\nContoh: .kick @user atau .kick 628xxx')
+    }
 
-    if (who === conn.user?.id) return m.reply('❌ Tidak bisa kick bot sendiri!')
+    if (who === conn.user?.id) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❌ Tidak bisa kick bot sendiri!')
+    }
 
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         await conn.groupParticipantsUpdate(m.chat, [who], 'remove')
-        m.reply(`✅ Berhasil kick @${who.split('@')[0]}`, null, { mentions: [who] })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         m.reply('❌ Gagal kick user! Pastikan bot admin.')
     }
 }

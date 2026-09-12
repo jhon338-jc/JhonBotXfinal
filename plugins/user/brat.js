@@ -5,7 +5,7 @@ import { saveSticker } from '../../lib/autosave.js'
 let handler = async (m, { conn, text }) => {
     const teks = text || m.pushName || 'JhonBot'
 
-    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     try {
         const res = await fetch('https://api.azbry.com/api/maker/brat?text=' + encodeURIComponent(teks))
@@ -18,7 +18,6 @@ let handler = async (m, { conn, text }) => {
     } catch (e) {
         console.error(rgbTag('BRAT', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        m.reply('❌ Gagal membuat stiker BRAT!')
     }
 }
 

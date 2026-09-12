@@ -99,8 +99,13 @@ let handler = async (m, { conn, args }) => {
         let status = '👤 User'
         if (m.isOwner) status = '👑 Owner'
         else if (m.isPremium) status = '👑 Premium'
-        return m.reply(`👤 *PROFIL KAMU*\n\n• Nama     : ${m.pushName || '-'}\n• Nomor    : +${number}\n• Status   : ${status}`)
+        await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
+        m.reply(`👤 *PROFIL KAMU*\n\n• Nama     : ${m.pushName || '-'}\n• Nomor    : +${number}\n• Status   : ${status}`)
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+        return
     }
+
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     // ============ MENU UTAMA ============
     let thumb = getThumb()
@@ -137,13 +142,15 @@ let handler = async (m, { conn, args }) => {
     ]
 
     try {
-        return await conn.sendMessage(m.chat, {
+        await conn.sendMessage(m.chat, {
             interactiveButtons: native,
             text: menuBox,
             title: '🤖 JhonBot v3.3.8',
             footer: 'Developer: Jhon338 • Powered by Baileys',
             contextInfo: adReply(thumb, 'JhonBot v3.3.8', 'DEVELOPER BY JHON338')
         }, { quoted: m })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+        return
     } catch (e) {
         console.error(rgbTag('MENU', e?.message || e, COLORS.warn))
     }
@@ -159,7 +166,8 @@ let handler = async (m, { conn, args }) => {
         cmdRows(OWNER_CMDS).forEach(r => { plainText += `│    ${r.title} — ${r.description}\n` })
     }
     plainText += `│\n╰──────────────────────────────`
-    return m.reply(plainText)
+    await m.reply(plainText)
+    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 
 handler.command = ['menu', 'help', 'profil']

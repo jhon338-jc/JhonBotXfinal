@@ -1,23 +1,26 @@
 import { rgbTag, COLORS } from '../../lib/rgb.js'
 
 let handler = async (m, { conn }) => {
-    if (!m.quoted) return m.reply('❗ Reply pesan view-once!')
+    if (!m.quoted) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❗ Reply pesan view-once!')
+    }
 
-    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         const buffer = await m.quoted.download()
         if (!buffer || !buffer.length) {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
             return m.reply('❌ Gagal mengunduh! Media sudah expired / pernah dibuka.')
         }
 
         const msg = m.quoted.msg || m.quoted
         const mimetype = msg?.mimetype || 'image/jpeg'
-        const caption = '🔓 *View Once Dibuka*'
 
         if (mimetype.startsWith('image/')) {
-            await conn.sendMessage(m.chat, { image: buffer, caption }, { quoted: m })
+            await conn.sendMessage(m.chat, { image: buffer }, { quoted: m })
         } else if (mimetype.startsWith('video/')) {
-            await conn.sendMessage(m.chat, { video: buffer, caption }, { quoted: m })
+            await conn.sendMessage(m.chat, { video: buffer }, { quoted: m })
         } else if (mimetype.startsWith('audio/')) {
             await conn.sendMessage(m.chat, {
                 audio: buffer,
@@ -35,11 +38,6 @@ let handler = async (m, { conn }) => {
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(rgbTag('RVO', e?.message || e, COLORS.error))
-        let errorMsg = '❌ Error! Reply pesan view-once.'
-        if (e.message && e.message.includes('media key')) {
-            errorMsg = '❌ View once sudah pernah dibuka / expired!\nMedia key sudah dihapus server WhatsApp.'
-        }
-        m.reply(errorMsg)
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

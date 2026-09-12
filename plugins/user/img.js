@@ -13,7 +13,7 @@ const FFMPEG = process.env.FFMPEG_PATH || (() => {
 })()
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     try {
         let buffer
@@ -76,7 +76,6 @@ let handler = async (m, { conn }) => {
     } catch (e) {
         console.error(rgbTag('IMG', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        m.reply('❌ Gagal membuat stiker!')
     }
 }
 

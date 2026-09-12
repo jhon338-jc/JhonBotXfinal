@@ -19,7 +19,7 @@ const SOURCES = {
 }
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         requireKyzzKey()
         const keys = Object.keys(SOURCES)
@@ -32,7 +32,6 @@ let handler = async (m, { conn }) => {
 
         await conn.sendMessage(m.chat, {
             video: buffer,
-            caption: `👻 *ASP ${src.label.toUpperCase()}*`,
             mimetype: 'video/mp4'
         }, { quoted: m })
 
@@ -40,7 +39,6 @@ let handler = async (m, { conn }) => {
     } catch (e) {
         console.error(rgbTag('ASP', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        m.reply('❌ ' + (e?.message || 'Gagal mengambil asupan.'))
     }
 }
 

@@ -1,7 +1,10 @@
 let handler = async (m, { conn, text }) => {
-    if (!text) return m.reply('⚠️ Masukkan judul lagu!\n\nContoh: .lirik Hakikat Sebuah Cinta')
+    if (!text) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('⚠️ Masukkan judul lagu!\n\nContoh: .lirik Hakikat Sebuah Cinta')
+    }
 
-    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     try {
         const res = await fetch('https://api.azbry.com/api/fun/lirik?q=' + encodeURIComponent(text))
@@ -16,11 +19,9 @@ let handler = async (m, { conn, text }) => {
             await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         } else {
             await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-            m.reply('Lirik tidak ditemukan!')
         }
     } catch (e) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        m.reply('Error! Coba lagi.')
     }
 }
 
