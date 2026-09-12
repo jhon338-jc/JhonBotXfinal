@@ -40,17 +40,18 @@ async function uploadHtml(html) {
 function sendWeb(conn, m, url, label) {
     return conn.sendMessage(m.chat, {
         interactiveButtons: [{
-            name: 'cta_url',
+            name: 'open_webview',
             buttonParamsJson: JSON.stringify({
-                display_text: '🔗 BUKA WEB',
-                url,
-                merchant_url: url,
-                webview_interaction: true
+                title: '🌐 Jhon338 Web',
+                link: {
+                    in_app_webview: true,
+                    url
+                }
             })
         }],
         text: `${label}\n\n` +
             `🖥️ *Halaman sudah live:*\n${url}\n\n` +
-            `Klik tombol di bawah untuk membukanya langsung di dalam WhatsApp.`,
+            `Ketuk untuk membuka web langsung di dalam WhatsApp (tidak pergi ke browser).`,
         footer: `${config.botName} • ${config.channelLink}`,
         contextInfo: {
             externalAdReply: {
@@ -58,7 +59,8 @@ function sendWeb(conn, m, url, label) {
                 body: 'Buka web di dalam WhatsApp 👆',
                 mediaType: 1,
                 mediaUrl: url,
-                sourceUrl: url
+                sourceUrl: url,
+                renderLargerThumbnail: true
             }
         }
     }, { quoted: m })
