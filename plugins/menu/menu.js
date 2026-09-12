@@ -107,6 +107,9 @@ let handler = async (m, { conn, text }) => {
             title: '📄 File HTML', description: 'Kode HTML jadi file .html', command: '.htmlfile'
         },
         {
+            title: '🖥️ Blok Widget Viral', description: 'Kirim widget rich preview WebSocket', command: '.widget'
+        },
+        {
             title: '🧠 IQ Checker', description: '.iqc - Cek IQ', command: '.iqc'
         },
         {
