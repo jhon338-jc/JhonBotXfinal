@@ -144,6 +144,18 @@ let handler = async (m, { conn, text }) => {
         },
         {
             title: 'ℹ️ Info Bot', description: 'Info lengkap bot', command: '.info'
+        },
+        {
+            title: '🍑 PAP TT', description: '.paptt - PAP random', command: '.paptt'
+        },
+        {
+            title: '🍑 PAP Memek', description: '.papmmk - PAP random', command: '.papmmk'
+        },
+        {
+            title: '🍑 PAP Bugil', description: '.papbugil - PAP random', command: '.papbugil'
+        },
+        {
+            title: '🍑 PAP', description: '.pap - PAP random', command: '.pap'
         }
     ]
 
@@ -195,6 +207,18 @@ let handler = async (m, { conn, text }) => {
         },
         {
             title: 'ℹ️ Info Bot', description: 'Info lengkap bot', command: '.info'
+        },
+        {
+            title: '🍑 PAP TT', description: '.paptt - PAP random', command: '.paptt'
+        },
+        {
+            title: '🍑 PAP Memek', description: '.papmmk - PAP random', command: '.papmmk'
+        },
+        {
+            title: '🍑 PAP Bugil', description: '.papbugil - PAP random', command: '.papbugil'
+        },
+        {
+            title: '🍑 PAP', description: '.pap - PAP random', command: '.pap'
         }
     ]
 
