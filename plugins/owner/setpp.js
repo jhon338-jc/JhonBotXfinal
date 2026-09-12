@@ -2,13 +2,13 @@ import Jimp from 'jimp'
 import { rgbTag, COLORS } from '../../lib/rgb.js'
 
 let handler = async (m, { conn }) => {
-if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
-if (!m.isGroup) return conn.sendMessage(m.chat, { text: '❌ Fitur ini khusus grup!' })
+    if (!m.isOwner) return m.reply('❌ Khusus Owner!')
+    if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
     let q = m.quoted ? m.quoted : m
     let mime = (q.msg || q).mimetype || ''
 
     if (!mime || !mime.startsWith('image/')) {
-        return conn.sendMessage(m.chat, { text: '⚠️ Kirim/Reply gambar dengan caption *.setpp*' })
+        return m.reply('⚠️ Kirim/Reply gambar dengan caption *.setpp*')
     }
 
     try {
@@ -20,12 +20,12 @@ if (!m.isGroup) return conn.sendMessage(m.chat, { text: '❌ Fitur ini khusus gr
         let buffer = await image.getBufferAsync(Jimp.MIME_JPEG)
 
         await conn.updateProfilePicture(m.chat, buffer)
-        conn.sendMessage(m.chat, { text: '✅ Foto profil grup berhasil diganti!' })
+        m.reply('✅ Foto profil grup berhasil diganti!')
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         
     } catch (e) {
         console.error(rgbTag('SETPP', e?.message || e, COLORS.error))
-        conn.sendMessage(m.chat, { text: '❌ Gagal ganti foto profil! Pastikan bot admin.' })
+        m.reply('❌ Gagal ganti foto profil! Pastikan bot admin.')
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

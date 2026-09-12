@@ -2,7 +2,7 @@ let handler = async (m, { conn, text }) => {
     if (!text) return m.reply('Masukkan judul lagu! Contoh: .lirik Hakikat Sebuah Cinta')
 
     try {
-        await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
+        await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
 
         let url = 'https://api.azbry.com/api/fun/lirik?q=' + encodeURIComponent(text)
         let res = await fetch(url)
@@ -14,11 +14,13 @@ let handler = async (m, { conn, text }) => {
             caption += 'Artist: ' + (json.result.artist || '-') + '\n\n'
             caption += json.result.lyrics || 'Lirik tidak ditemukan'
             await conn.sendMessage(m.chat, { text: caption }, { quoted: m })
-            await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
+            await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         } else {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
             m.reply('Lirik tidak ditemukan!')
         }
     } catch (e) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         m.reply('Error! Coba lagi.')
     }
 }

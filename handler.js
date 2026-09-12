@@ -183,29 +183,36 @@ export default async function handleMessage(conn, m) {
         }
 
 
-// Auto Mod - Spam & Link Detection (khusus grup monitor, bukan owner)
+// Auto Mod - Spam & Anti-Link (anti-link hanya jika AKTIF di grup itu, default OFF)
 if (m.isGroup && !m.isOwner) {
 
     const spamCheck = autoMod(conn, m)
             if (spamCheck) {
                 if (spamCheck.type === 'warning') {
-                    await conn.sendMessage(m.chat, { text: `⚠️ *PERINGATAN SPAM*\n\n@${spamCheck.sender.split('@')[0]} jangan spam pesan yang sama!\n\nBot bakal kick kalau spam lagi.` }, { mentions: [spamCheck.sender] })
+                    await conn.sendMessage(m.chat, { text: `⚠️ *PERINGATAN SPAM*\n\n@${spamCheck.sender.split('@')[0]} jangan spam pesan yang sama!\n\nBot bakal kick kalau spam lagi.` }, { quoted: m, mentions: [spamCheck.sender] })
                 } else if (spamCheck.type === 'kick') {
                     try {
                         await conn.groupParticipantsUpdate(m.chat, [spamCheck.sender], 'remove')
-                        await conn.sendMessage(m.chat, { text: `👢 *USER DIKICK*\n\n@${spamCheck.sender.split('@')[0]} dikick karena spam!` }, { mentions: [spamCheck.sender] })
+                        await conn.sendMessage(m.chat, { text: `👢 *USER DIKICK*\n\n@${spamCheck.sender.split('@')[0]} dikick karena spam!` }, { quoted: m, mentions: [spamCheck.sender] })
                     } catch (e) {}
                 }
                 return
             }
 
-            const linkCheck = linkDetector(conn, m)
-            if (linkCheck) {
-                try {
-                    await conn.sendMessage(m.chat, { delete: m.key })
-                    await conn.sendMessage(m.chat, { text: `🔒 *LINK DIHAPUS*\n\n@${linkCheck.sender.split('@')[0]} jangan kirim link di grup!` }, { mentions: [linkCheck.sender] })
-                } catch (e) {}
-                return
+            const isCommandMsg = (config.prefix || ['.']).some(p => m.text.startsWith(p))
+            let settings = { antiLink: {} }
+            try { settings = JSON.parse(fs.readFileSync('./database/settings.json')) } catch (e) {}
+            const antiLinkOn = (settings.antiLink || {})[m.chat] === true
+
+            if (antiLinkOn && !isCommandMsg) {
+                const linkCheck = linkDetector(conn, m)
+                if (linkCheck) {
+                    try {
+                        await conn.sendMessage(m.chat, { delete: m.key })
+                        await conn.sendMessage(m.chat, { text: `🔒 *LINK DIHAPUS*\n\n@${linkCheck.sender.split('@')[0]} jangan kirim link di grup!`, mentions: [linkCheck.sender] })
+                    } catch (e) {}
+                    return
+                }
             }
         }
 

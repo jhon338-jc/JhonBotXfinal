@@ -1,13 +1,13 @@
 import fs from 'fs'
 
 let handler = async (m, { conn }) => {
-    if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
+    if (!m.isOwner) return m.reply('❌ Khusus Owner!')
 
     const groups = await conn.groupFetchAllParticipating()
     const groupList = Object.values(groups)
 
     if (groupList.length === 0) {
-        return conn.sendMessage(m.chat, { text: '❌ Bot tidak ada di grup manapun!' })
+        return m.reply('❌ Bot tidak ada di grup manapun!')
     }
 
     let text = `╭─── *「 PILIH GRUP 」* ───\n│\n│  📊 *Total Grup:* ${groupList.length}\n│\n`
@@ -26,7 +26,7 @@ let handler = async (m, { conn }) => {
     monitor.waiting = true
     fs.writeFileSync('./database/monitor.json', JSON.stringify(monitor, null, 2))
 
-    await conn.sendMessage(m.chat, { text: text })
+    await m.reply(text)
 }
 
 handler.command = ['selectgroup', 'sg', 'pilihgrup', 'pg']

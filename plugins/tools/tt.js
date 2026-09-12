@@ -2,7 +2,7 @@ let handler = async (m, { conn, text }) => {
     if (!text) return m.reply('Masukkan URL TikTok! Contoh: .tt url')
 
     try {
-        await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
+        await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
 
         let url = 'https://api.azbry.com/api/download/tiktokv2?url=' + encodeURIComponent(text)
         let res = await fetch(url)
@@ -15,11 +15,13 @@ let handler = async (m, { conn, text }) => {
             if (video) await conn.sendMessage(m.chat, { video: { url: video.url }, mimetype: 'video/mp4' }, { quoted: m })
             if (audio) await conn.sendMessage(m.chat, { audio: { url: audio.url }, mimetype: 'audio/mp3' }, { quoted: m })
 
-            await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
+            await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         } else {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
             m.reply('Gagal Download!')
         }
     } catch (e) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         m.reply('Error! Coba lagi.')
     }
 }

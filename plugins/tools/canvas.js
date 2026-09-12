@@ -58,16 +58,14 @@ async function capture(html) {
 let handler = async (m, { conn, text }) => {
     const raw = text || m.quoted?.text
     if (!raw) {
-        return conn.sendMessage(m.chat, {
-            text: '⚠️ *Cara pakai generate HTML:*\n\n1. Ketik kode langsung:\n   .canvas <html>...</html>\n\n2. Atau reply pesan berisi kode HTML:\n   .canvas\n\nFitur bisa render: `landing page`, `game JS`, `animasi CSS`, `video/audio embedded`, `gambar`.\n\nContoh mini:\n.canvas <h1 style="color:blue">Hello World</h1><p>Ini dihasilkan bot!</p>'
-        })
+        return m.reply('⚠️ *Cara pakai generate HTML:*\n\n1. Ketik kode langsung:\n   .canvas <html>...</html>\n\n2. Atau reply pesan berisi kode HTML:\n   .canvas\n\nFitur bisa render: `landing page`, `game JS`, `animasi CSS`, `video/audio embedded`, `gambar`.\n\nContoh mini:\n.canvas <h1 style="color:blue">Hello World</h1><p>Ini dihasilkan bot!</p>')
     }
 
     let html = cleanHtml(raw)
     await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
 
     try {
-const png = await capture(html)
+        let png = await capture(html)
         await conn.sendMessage(m.chat, {
             image: png,
             caption: '✅ Hasil render HTML\n\n💡 Mau file .html? Gunakan .htmlfile\n🔗 ' + config.channelLink
@@ -75,7 +73,7 @@ const png = await capture(html)
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(rgbTag('CANVAS', e.message, COLORS.error))
-        await conn.sendMessage(m.chat, { text: '❌ Gagal render HTML!' })
+        m.reply('❌ Gagal render HTML! Chrome/Chromium tidak ditemukan atau terjadi error.')
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

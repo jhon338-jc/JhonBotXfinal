@@ -17,9 +17,7 @@ function cleanHtml(raw) {
 let handler = async (m, { conn, text }) => {
     const raw = text || m.quoted?.text
     if (!raw) {
-        return conn.sendMessage(m.chat, {
-            text: '⚠️ *Cara pakai .htmlfile:*\n\nKetik kode HTML langsung, atau reply pesan berisi kode:\n\n.htmlfile <html>...</html>'
-        })
+        return m.reply('⚠️ *Cara pakai .htmlfile:*\n\nKetik kode HTML langsung, atau reply pesan berisi kode:\n\n.htmlfile <html>...</html>')
     }
 
     const html = cleanHtml(raw)
@@ -39,7 +37,7 @@ let handler = async (m, { conn, text }) => {
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(rgbTag('HTMLFILE', e.message, COLORS.error))
-        await conn.sendMessage(m.chat, { text: '❌ Gagal mengirim file HTML!' })
+        m.reply('❌ Gagal mengirim file HTML!')
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     } finally {
         try { fs.unlinkSync(file) } catch {}

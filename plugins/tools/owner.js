@@ -14,7 +14,7 @@ let handler = async (m, { conn }) => {
     text += `─━─━─━─━─━─━─━─\n`
     text += `DEVELOPER BY ${(config.developer || 'JHON338').toUpperCase()} v${config.version || '3.4.0'}`
     
-    conn.sendMessage(m.chat, { text })
+    m.reply(text)
 }
 handler.command = ['owner', 'dev']
 export default handler

@@ -1,6 +1,6 @@
 let handler = async (m, { conn }) => {
     try {
-        await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
+        await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
 
         let url = 'https://api.azbry.com/api/news/detik'
         let res = await fetch(url)
@@ -13,11 +13,13 @@ let handler = async (m, { conn }) => {
                 text += json.result.data.headline[i].link + '\n\n'
             }
             await conn.sendMessage(m.chat, { text: text }, { quoted: m })
-            await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
+            await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         } else {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
             m.reply('Gagal ambil berita!')
         }
     } catch (e) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         m.reply('Error!')
     }
 }

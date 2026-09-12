@@ -13,7 +13,7 @@ async function webpSticker(buffer) {
 }
 
 let handler = async (m, { conn, text }) => {
-    if (!text) return conn.sendMessage(m.chat, { text: '⚠️ Masukkan teks!\n\nContoh: .stiker Jhon338' })
+    if (!text) return m.reply('⚠️ Masukkan teks!\n\nContoh: .stiker Jhon338')
     
     try {
         await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
@@ -26,12 +26,9 @@ let handler = async (m, { conn, text }) => {
         
         await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-        
-        setTimeout(async () => { await conn.sendMessage(m.chat, { delete: m.key }) }, 1000)
-        
     } catch (e) {
         console.error(rgbTag('STIKER', e?.message || e, COLORS.error))
-        conn.sendMessage(m.chat, { text: '❌ Gagal membuat stiker!' })
+        m.reply('❌ Gagal membuat stiker!')
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

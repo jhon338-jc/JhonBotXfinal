@@ -17,7 +17,7 @@ let handler = async (m, { conn }) => {
     text += `▧ Mode : ${config.botMode.toUpperCase()}\n`
     text += `▧ Plugin : ${totalPlugin}\n`
     text += `▧ RAM : ${ram} GB\n`
-    text += `▧ Uptime : ${days}h ${hours}m ${minutes}s\n\n`
+    text += `▧ Uptime : ${days}d ${hours}h ${minutes}m\n\n`
     text += `━─━─━─━─━─━─━─━\n`
     text += `📌 *INFO BOT:*\n`
     text += `▧ GitHub : ${config.githubRepo || '-'}\n`
@@ -25,7 +25,7 @@ let handler = async (m, { conn }) => {
     text += `─━─━─━─━─━─━─━─\n`
     text += `DEVELOPER BY ${(config.developer || 'JHON338').toUpperCase()} v${config.version || '3.4.0'}`
     
-    conn.sendMessage(m.chat, { text })
+    m.reply(text)
 }
 handler.command = ['info', 'botinfo']
 export default handler

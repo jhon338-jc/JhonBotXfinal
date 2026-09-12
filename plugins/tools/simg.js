@@ -1,9 +1,15 @@
 import sharp from 'sharp'
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
+import { createRequire } from 'module'
 import { rgbTag, COLORS } from '../../lib/rgb.js'
+
+const require = createRequire(import.meta.url)
+const FFMPEG = process.env.FFMPEG_PATH || (() => {
+    try { return require('ffmpeg-static') } catch (e) { return 'ffmpeg' }
+})()
 
 async function webpSticker(buffer) {
     return await sharp(buffer)
@@ -18,9 +24,9 @@ async function webpSticker(buffer) {
 
 let handler = async (m, { conn }) => {
     try {
-        await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
+        await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
 
-                let buffer
+        let buffer
         let isVideo = false
         let mime = ''
 
@@ -32,7 +38,6 @@ let handler = async (m, { conn }) => {
             buffer = await m.download()
         }
 
-        // Kalau ga ada buffer, coba dari m.message
         if (!buffer && m.message?.imageMessage) {
             buffer = await conn.downloadM(m, 'image')
             mime = 'image/jpeg'
@@ -42,31 +47,37 @@ let handler = async (m, { conn }) => {
             mime = 'video/mp4'
         }
 
+        isVideo = mime.startsWith('video/')
+
+        if (!buffer || !buffer.length) {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+            return m.reply('Gagal mengunduh media!')
+        }
+
         if (isVideo) {
             let mp4Path = path.join(os.tmpdir(), `tmp_v_${Date.now()}.mp4`)
             let webpPath = path.join(os.tmpdir(), `tmp_v_${Date.now()}.webp`)
-            
+
             fs.writeFileSync(mp4Path, buffer)
-            
-            execSync(`ffmpeg -i "${mp4Path}" -vf "fps=15,scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2" -c:v libwebp -lossless 0 -preset default -loop 0 "${webpPath}"`)
-            
+
+            execFileSync(FFMPEG, ['-i', mp4Path, '-vf', 'fps=15,scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2', '-c:v', 'libwebp', '-lossless', '0', '-preset', 'default', '-loop', '0', webpPath], { timeout: 60000 })
+
             let stickerBuffer = fs.readFileSync(webpPath)
             await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
-            
-            fs.unlinkSync(mp4Path)
-            fs.unlinkSync(webpPath)
+
+            try { fs.unlinkSync(mp4Path) } catch {}
+            try { fs.unlinkSync(webpPath) } catch {}
         } else {
             let stickerBuffer = await webpSticker(buffer)
             await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
         }
 
-        await conn.sendMessage(m.chat, { react: { text: 'OK', key: m.key } })
-        setTimeout(async () => { await conn.sendMessage(m.chat, { delete: m.key }) }, 1000)
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 
     } catch (e) {
         console.error(rgbTag('SIMG', e?.message || e, COLORS.error))
-        m.reply('Gagal membuat stiker!')
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        m.reply('Gagal membuat stiker!')
     }
 }
 

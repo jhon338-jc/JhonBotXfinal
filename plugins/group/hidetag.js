@@ -2,7 +2,7 @@ import { rgbTag, COLORS } from '../../lib/rgb.js'
 
 let handler = async (m, { conn, text }) => {
     if (!m.isGroup) return m.reply('❌ Fitur ini khusus grup!')
-    if (!m.isOwner) return conn.sendMessage(m.chat, { text: '❌ Khusus Owner!' })
+    if (!m.isOwner) return m.reply('❌ Khusus Owner!')
     
     try {
         let meta = await conn.groupMetadata(m.chat)
@@ -10,7 +10,6 @@ let handler = async (m, { conn, text }) => {
         let mentions = members.map(v => v.id)
         let teks = '\u200e' + (text || ' ')
         
-        // Edit pesan .hidetag jadi tag item asli
         await conn.sendMessage(m.chat, { 
             text: teks, 
             mentions: mentions,
@@ -19,7 +18,7 @@ let handler = async (m, { conn, text }) => {
         
     } catch (e) {
         console.error(rgbTag('HIDETAG', e?.message || e, COLORS.error))
-        conn.sendMessage(m.chat, { text: '❌ Gagal! Pastikan bot admin.' })
+        m.reply('❌ Gagal! Pastikan bot admin.')
     }
 }
 
