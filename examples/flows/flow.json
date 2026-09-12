@@ -1,0 +1,98 @@
+{
+  "version": "3.0",
+  "data_api_version": "3.0",
+  "routing_model": {
+    "version": "1.0",
+    "root_key": "GAME",
+    "inline_routing": false,
+    "data_channel": {
+      "routing_model": {
+        "GAME": {
+          "transitions": ["GAMEOVER"],
+          "on_error": { "action": "complete", "payload": { "type": "OP_ENGINE_ERROR" } }
+        },
+        "GAMEOVER": {
+          "transitions": ["GAME"],
+          "on_error": { "action": "complete", "payload": { "type": "OP_ENGINE_ERROR" } }
+        }
+      }
+    }
+  },
+  "screens": [
+    {
+      "id": "GAME",
+      "title": "Tic-Tac-Toe",
+      "terminal": false,
+      "data": {
+        "row_1": { "type": "string", "__example__": "X | - | O" },
+        "row_2": { "type": "string", "__example__": "- | X | -" },
+        "row_3": { "type": "string", "__example__": "O | - | -" },
+        "score": { "type": "string", "__example__": "X:1 | O:0" },
+        "status": { "type": "string", "__example__": "Giliran kamu (X)" }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          { "type": "TextHeading", "text": "🎮 Jhon338 Tic-Tac-Toe" },
+          {
+            "type": "TextBody",
+            "text": "👑 Papan:\n${data.row_1}\n${data.row_2}\n${data.row_3}\n\n${data.score}\n${data.status}"
+          },
+          {
+            "type": "Form",
+            "name": "move_form",
+            "children": [
+              {
+                "type": "TextInput",
+                "name": "cell",
+                "label": "Kotak (1-9)",
+                "required": true
+              }
+            ]
+          },
+          {
+            "type": "Footer",
+            "label": "⚔️ Langkah",
+            "on-click-action": {
+              "name": "data_exchange",
+              "payload": { "action": "move", "cell": "${form.cell}" }
+            }
+          },
+          {
+            "type": "Footer",
+            "label": "🔁 Ulang dari awal",
+            "on-click-action": {
+              "name": "data_exchange",
+              "payload": { "action": "restart" }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "GAMEOVER",
+      "title": "Permainan Selesai",
+      "terminal": true,
+      "success": true,
+      "data": {
+        "result": { "type": "string", "__example__": "🎉 Kamu menang!" },
+        "score": { "type": "string", "__example__": "X:2 | O:1" }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          { "type": "TextHeading", "text": "🏁 Permainan Selesai" },
+          { "type": "TextBody", "text": "${data.result}\n\nSkor: ${data.score}" },
+          {
+            "type": "Footer",
+            "label": "✔ Tutup",
+            "on-click-action": {
+              "name": "complete",
+              "payload": { "status": "done" }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
