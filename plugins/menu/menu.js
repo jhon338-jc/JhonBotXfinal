@@ -5,10 +5,14 @@ import { plugins } from '../../handler.js'
 
 // ============================================================
 //  HYBRID MENU + NATIVE FLOW BUTTON (JHON338)
-//  Menu utama = tombol kategori (single_select native flow)
-//  Tiap kategori = submenu berisi command existing yang valid
-//  Support teks: .menu <kategori>  (atau .help)
+//  Menu utama  = ringkasan info + tombol native flow:
+//    ⚡ POPULER  : command paling sering dipakai (langsung jalan)
+//    🗂️ KATEGORI: daftar kategori → .menu <kategori> → submenu
+//  Submenu      = command existing (valid) + tombol kembali
+//  Support teks : .menu / .help / .menu <kategori>
 // ============================================================
+
+const POPULAR = ['stiker', 'simg', 'toimg', 'tt', 'ig', 'fb', 'mp3', 'qcwa', 'canvas', 'daily', 'adventure', 'profile']
 
 const CATALOG = [
     {
@@ -39,7 +43,7 @@ const CATALOG = [
             { name: 'grouplist', title: '📊 Monitor', desc: '.grouplist / .monitor' },
             { name: 'addowner', title: '➕ Add Owner', desc: '.addowner 628xx' },
             { name: 'delowner', title: '➖ Del Owner', desc: '.delowner 628xx' },
-            { name: 'addpremium', title: '👑 Add Premium', desc: '.addpremium 628xx' },
+            { name: 'addpremium', title: '👑 Add Premium', desc: '.addpremium 628xx hari' },
             { name: 'delpremium', title: '📉 Del Premium', desc: '.delpremium 628xx' },
             { name: 'self', title: '🔒 Mode Self', desc: '.self' },
             { name: 'public', title: '🔓 Mode Public', desc: '.public' },
@@ -79,7 +83,7 @@ const CATALOG = [
         emoji: '🧰',
         label: 'Tools & Sticker',
         cmds: [
-            { name: 'stiker', title: '🎨 Stiker Tekst', desc: '.stiker teks' },
+            { name: 'stiker', title: '🎨 Stiker Teks', desc: '.stiker teks' },
             { name: 'simg', title: '🖼️ Stiker Gambar', desc: 'reply gambar + .simg' },
             { name: 'toimg', title: '🔄 Stiker ke Gambar', desc: 'reply stiker + .toimg' },
             { name: 'rvo', title: '👁️ Read View Once', desc: 'reply VO + .rvo' },
@@ -247,6 +251,10 @@ function catRows(cat) {
     })).filter(row => exists(row.id.slice(1)))
 }
 
+function htmlEscape(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
 let handler = async (m, { conn, text, args }) => {
     const start = Date.now()
     const wanted = String(text || args?.[0] || '').trim().toLowerCase()
@@ -257,18 +265,20 @@ let handler = async (m, { conn, text, args }) => {
     let cat = wanted ? getCat(wanted) || null : null
 
     if (wanted && !cat) {
-        const list = CATALOG.map(c => `${c.emoji} *${c.label}* — .menu ${c.key}`).join('\n')
+        const list = CATALOG.map(c => `${c.emoji} *${c.label}* → .menu ${c.key}`).join('\n')
         return conn.sendMessage(m.chat, {
             text: `❌ Kategori *"${wanted}"* tidak ditemukan.\n\nKategori tersedia:\n${list}`
         }, { quoted: m })
     }
 
-    // ===== SUBMENU KATEGORI (dipanggil via tombol / teks .menu <kategori>) =====
+    // ==================== SUBMENU KATEGORI ====================
     if (cat) {
+        if (cat.owner && !m.isOwner) return m.reply('❌ Kategori ini khusus Owner.')
         const rows = catRows(cat)
         if (rows.length === 0) return m.reply(`❌ Kategori *${cat.label}* belum punya command aktif.`)
+        rows.push({ id: '.menu', header: '', title: '🔙 Kembali ke Menu Utama', description: '' })
         const sections = [{ title: `${cat.emoji} ${cat.label}`, highlight_label: '', rows }]
-        const sectionsText = rows.map(r => `${r.title}\n   ${r.description}`).join('\n')
+        const listText = rows.map(r => `${r.title}\n   ${r.description}`).join('\n')
         return conn.sendMessage(m.chat, {
             interactiveButtons: [{
                 name: 'single_select',
@@ -278,7 +288,7 @@ let handler = async (m, { conn, text, args }) => {
                 })
             }],
             title: `${cat.emoji} MENU ${cat.label.toUpperCase()}`,
-            text: `${sectionsText}`,
+            text: `${listText}`,
             footer: `Ketik .menu untuk kembali • ${config.botName}`,
             contextInfo: {
                 externalAdReply: {
@@ -291,7 +301,7 @@ let handler = async (m, { conn, text, args }) => {
         }, { quoted: m })
     }
 
-    // ===== MENU UTAMA (default) =====
+    // ==================== MENU UTAMA ====================
     const ping = Date.now() - start
     const runtime = process.uptime()
     const days = Math.floor(runtime / 86400)
@@ -301,10 +311,14 @@ let handler = async (m, { conn, text, args }) => {
     const totalPlugins = [...new Set(plugins.values())].length
     const number = m.sender.split('@')[0]
 
-    const cats = CATALOG.filter(c => {
-        if (c.owner) return m.isOwner
-        return true
-    })
+    const cats = CATALOG.filter(c => !c.owner || m.isOwner)
+
+    const popRows = POPULAR.map(cmd => ({
+        id: '.' + cmd,
+        header: '',
+        title: `${cmd}`,
+        description: exists(cmd) ? (toolsDesc(cmd)) : null
+    })).filter(r => r.description)
 
     const catRowsAll = cats.map(c => ({
         id: '.menu ' + c.key,
@@ -312,38 +326,35 @@ let handler = async (m, { conn, text, args }) => {
         title: `${c.emoji} ${c.label}`,
         description: `${catRows(c).length} command`
     }))
-    const sections = [{
-        title: '🗂️ KATEGORI MENU',
-        highlight_label: '',
-        rows: catRowsAll
-    }]
-    const sectionsText = cats.map(c => `${c.emoji} *${c.label}* → .menu ${c.key}`).join('\n')
 
-    const menuText = `╭───『 *${config.botName}* 』───⬣
-│
+    const sections = [
+        { title: '⚡ POPULER', highlight_label: '', rows: popRows.slice(0, 10) },
+        { title: '🗂️ KATEGORI MENU', highlight_label: '', rows: catRowsAll }
+    ]
+
+    const navHint = cats.map(c => c.emoji).join(' · ')
+    const menuBox = `╭───『 *${config.botName}* 』───⬣
 │  🤖 *Bot Information*
-│  ├ Nama : ${config.botName}
-│  ├ Dev : ${config.developer || config.ownerName}
-│  ├ Versi : ${config.version || '-'}
-│  ├ Mode : ${config.botMode.toUpperCase()}
-│  ├ Plugins : ${totalPlugins}
-│  ├ Ping : ${ping}ms
-│  ├ RAM : ${ramUsed}MB
-│  └ Uptime : ${days}d ${hours}h ${minutes}m
+│  • Nama         : ${config.botName}
+│  • Developer    : ${config.developer || config.ownerName}
+│  • Versi        : ${config.version || '-'}
+│  • Mode         : ${config.botMode.toUpperCase()}
+│  • Plugins      : ${totalPlugins}
+│  • Ping         : ${ping}ms
+│  • RAM          : ${ramUsed}MB
+│  • Uptime       : ${days}d ${hours}h ${minutes}m
 │
 │  👤 *User Information*
-│  ├ Nama : ${m.pushName || '-'}
-│  ├ Nomor : +${number}
-│  └ Status : ${m.isOwner ? '👑 Owner' : m.isPremium ? '👑 Premium' : '👤 User'}
-│
-│  🗂️ *Kategori*:
-${sectionsText}
-│
-│  💡 *Cara pakai*:
-│  Ketik .menu <kategori> ATAU
-│  tap tombol di bawah buat buka menu
-│
-╰──────────────────⬣`
+│  • Nama         : ${m.pushName || '-'}
+│  • Nomor        : +${number}
+│  • Status       : ${m.isOwner ? '👑 Owner' : m.isPremium ? '👑 Premium' : '👤 User'}
+╰════════════════════⬣
+
+🗂️ *KATEGORI* : ${navHint}
+
+💡 *Cara pakai*:
+• Ketik *.menu <kategori>* — contoh : *.menu download*
+• Atau tap tombol *☰ BUKA MENU* di bawah`
 
     await conn.sendMessage(m.chat, {
         interactiveButtons: [{
@@ -353,9 +364,9 @@ ${sectionsText}
                 sections
             })
         }],
-        title: `👋 Halo ${m.pushName || 'User'}!`,
-        text: menuText,
-        footer: `🔗 ${config.channelLink}\n💻 ${config.githubRepo}`,
+        title: `👋 Halo ${htmlEscape(m.pushName || 'User')}!`,
+        text: menuBox,
+        footer: `🔗 ${config.channelLink}  •  💻 ${config.githubRepo}`,
         contextInfo: {
             externalAdReply: {
                 title: `${config.botName} • v${config.version}`,
@@ -368,6 +379,25 @@ ${sectionsText}
             }
         }
     }, { quoted: m })
+}
+
+// deskripsi cepat untuk command populer (biar tombol ⚡ POPULER rapi)
+function toolsDesc(cmd) {
+    const map = {
+        stiker: '.stiker teks → stiker brat',
+        simg: 'reply gambar → stiker',
+        toimg: 'reply stiker → gambar',
+        tt: '.tt url tiktok',
+        ig: '.ig url instagram',
+        fb: '.fb url facebook',
+        mp3: '.mp3 url youtube',
+        qcwa: '.qcwa teks',
+        canvas: '.canvas kode html',
+        daily: '.daily → klaim hadiah',
+        adventure: '.adventure → main RPG',
+        profile: '.profile → profil kamu'
+    }
+    return map[cmd] || ''
 }
 
 handler.command = ['menu', 'help']
