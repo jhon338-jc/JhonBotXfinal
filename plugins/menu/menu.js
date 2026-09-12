@@ -94,6 +94,7 @@ const CATALOG = [
         label: 'Tools & Sticker',
         role: 'user',
         cmds: [
+            { name: 'game', title: '🎮 Tic-Tac-Toe (di WA)', desc: '.game' },
             { name: 'web', title: '🌐 Web HTML (di WA)', desc: '.web kode html/url' },
             { name: 'stiker', title: '🎨 Stiker Teks', desc: '.stiker teks' },
             { name: 'simg', title: '🖼️ Stiker Gambar', desc: 'reply gambar + .simg' },

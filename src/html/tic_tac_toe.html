@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Jhon338 Tic-Tac-Toe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(160deg, #0b141a 0%, #111b21 100%);
+    color: #e9edef;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .card {
+    width: 100%;
+    max-width: 380px;
+    background: #202c33;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.55);
+    animation: pop .3s ease;
+  }
+  @keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .logo {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  h1 { font-size: 17px; font-weight: 700; }
+  .sub { color: #8696a0; font-size: 12px; }
+  .status {
+    margin: 12px 0;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #182229;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid #2a3942;
+  }
+  .status.win { background: rgba(37,211,102,.15); border-color: #25d366; color: #25d366; }
+  .status.lose { background: rgba(255,75,75,.12); border-color: #ff4b4b; color: #ff7a7a; }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 8px 0;
+  }
+  .cell {
+    aspect-ratio: 1;
+    background: #111b21;
+    border: 1px solid #2a3942;
+    border-radius: 14px;
+    font-size: 34px;
+    font-weight: 800;
+    color: #fff;
+    cursor: pointer;
+    transition: background .15s, transform .08s;
+    user-select: none;
+  }
+  .cell:active { transform: scale(.95); }
+  .cell.x { color: #25d366; }
+  .cell.o { color: #ffc107; }
+  .cell:disabled { cursor: default; }
+  .score {
+    display: flex; justify-content: space-around;
+    margin: 12px 0;
+    font-size: 13px;
+    color: #8696a0;
+  }
+  .score b { color: #e9edef; font-size: 16px; }
+  .btn {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 14px;
+    background: #00a884;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .btn.secondary { background: #333f47; margin-top: 0; }
+  .row { display: flex; gap: 8px; }
+  .row .btn { flex: 1; }
+  .note { text-align: center; color: #667781; font-size: 11px; margin-top: 10px; }
+  @media (prefers-color-scheme: light) {
+    body { background: #e5ddd5; color: #111b21; }
+    .card { background: #fff; box-shadow: 0 15px 45px rgba(0,0,0,.25); }
+    .status { background: #f0f2f5; border-color: #dfe5e7; }
+    .cell { background: #f0f2f5; border-color: #dfe5e7; }
+    .note { color: #8a8f94; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="head">
+    <div class="logo">🎮</div>
+    <div>
+      <h1>Jhon338 Tic-Tac-Toe</h1>
+      <div class="sub">Kamu ✖ vs Bot ◯</div>
+    </div>
+  </div>
+
+  <div class="status" id="status">Giliran kamu (✖)</div>
+
+  <div class="board" id="board"></div>
+
+  <div class="score">
+    <div>Kamu (✖): <b id="scoreX">0</b></div>
+    <div>Bot (◯): <b id="scoreO">0</b></div>
+  </div>
+
+  <div class="btn" id="newGame">🔄 Main Lagi</div>
+  <div class="note">Jhon338 Flow • dibuka di dalam WhatsApp</div>
+</div>
+
+<script>
+const board = document.getElementById('board');
+const statusEl = document.getElementById('status');
+const scoreXEl = document.getElementById('scoreX');
+const scoreOEl = document.getElementById('scoreO');
+const newGameBtn = document.getElementById('newGame');
+
+let grid = Array(9).fill('');
+let scoreX = 0;
+let scoreO = 0;
+let blocking = false;
+
+const winLines = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
+
+function checkWin(g) {
+  for (const [a,b,c] of winLines) {
+    if (g[a] && g[a] === g[b] && g[b] === g[c]) return g[a];
+  }
+  return g.every(Boolean) ? 'draw' : null;
+}
+
+function available(g) {
+  return g.map((v,i) => v === '' ? i : null).filter(v => v !== null);
+}
+
+function minimax(g, player) {
+  const w = checkWin(g);
+  if (w === 'X') return -10;
+  if (w === 'O') return 10;
+  if (w === 'draw') return 0;
+  const moves = [];
+  for (const i of available(g)) {
+    g[i] = player;
+    moves.push({ i, score: minimax(g, player === 'O' ? 'X' : 'O') });
+    g[i] = '';
+  }
+  if (player === 'O') return Math.max(...moves.map(m => m.score));
+  return Math.min(...moves.map(m => m.score));
+}
+
+function botMove() {
+  let best = null;
+  let bestScore = -Infinity;
+  for (const i of available(grid)) {
+    grid[i] = 'O';
+    let score = minimax(grid, 'X');
+    grid[i] = '';
+    if (score > bestScore) { bestScore = score; best = i; }
+  }
+  grid[best] = 'O';
+}
+
+function render() {
+  board.innerHTML = '';
+  grid.forEach((v, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'cell ' + (v.toLowerCase() || '');
+    btn.textContent = v === 'X' ? '✖' : v === 'O' ? '◯' : '';
+    btn.disabled = !!v || !!checkWin(grid) || blocking;
+    btn.addEventListener('click', () => userMove(i));
+    board.appendChild(btn);
+  });
+  const w = checkWin(grid);
+  statusEl.className = 'status';
+  if (w === 'X') {
+    statusEl.textContent = '🎉 Kamu menang!';
+    statusEl.classList.add('win');
+  } else if (w === 'O') {
+    statusEl.textContent = '🤖 Bot menang!';
+    statusEl.classList.add('lose');
+  } else if (w === 'draw') {
+    statusEl.textContent = '🤝 Seri!';
+  } else {
+    statusEl.textContent = 'Giliran kamu (✖)';
+  }
+}
+
+function userMove(i) {
+  grid[i] = 'X';
+  render();
+  if (checkWin(grid)) return;
+  blocking = true;
+  setTimeout(() => {
+    botMove();
+    blocking = false;
+    render();
+  }, 350);
+}
+
+function newGame() {
+  grid = Array(9).fill('');
+  blocking = false;
+  render();
+}
+
+render();
+newGameBtn.addEventListener('click', newGame);
+</script>
+</body>
+</html>
