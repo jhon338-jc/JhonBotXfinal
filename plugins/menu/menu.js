@@ -3,333 +3,347 @@ import Jimp from 'jimp'
 import config from '../../config.json' with { type: 'json' }
 import { plugins } from '../../handler.js'
 
-let handler = async (m, { conn, text }) => {
-    const start = Date.now()
+// ============================================================
+//  HYBRID MENU + NATIVE FLOW BUTTON (JHON338)
+//  Menu utama = tombol kategori (single_select native flow)
+//  Tiap kategori = submenu berisi command existing yang valid
+//  Support teks: .menu <kategori>  (atau .help)
+// ============================================================
 
+const CATALOG = [
+    {
+        key: 'group',
+        emoji: '👥',
+        label: 'Group & Admin',
+        cmds: [
+            { name: 'add', title: '➕ Add User', desc: '.add 628xx' },
+            { name: 'kick', title: '👢 Kick Member', desc: '.kick @user' },
+            { name: 'addadmin', title: '👑 Promote', desc: '.addadmin @user' },
+            { name: 'deladmin', title: '⬇️ Demote', desc: '.deladmin @user' },
+            { name: 'setname', title: '✏️ Set Nama', desc: '.setname teks' },
+            { name: 'setdesc', title: '📝 Set Deskripsi', desc: '.setdesc teks' },
+            { name: 'setpp', title: '🖼️ Set PP Grup', desc: 'reply gambar + .setpp' },
+            { name: 'totag', title: '📢 Tag All', desc: '.totag teks' },
+            { name: 'hidetag', title: '👻 Hide Tag', desc: '.hidetag teks' },
+            { name: 'grouplist', title: '📊 List Grup', desc: '.grouplist' },
+            { name: 'leave', title: '🚪 Leave', desc: '.leave' }
+        ]
+    },
+    {
+        key: 'owner',
+        emoji: '👑',
+        label: 'Owner / Settings',
+        owner: true,
+        cmds: [
+            { name: 'selectgroup', title: '🔄 Pilih Grup', desc: '.sg' },
+            { name: 'grouplist', title: '📊 Monitor', desc: '.grouplist / .monitor' },
+            { name: 'addowner', title: '➕ Add Owner', desc: '.addowner 628xx' },
+            { name: 'delowner', title: '➖ Del Owner', desc: '.delowner 628xx' },
+            { name: 'addpremium', title: '👑 Add Premium', desc: '.addpremium 628xx' },
+            { name: 'delpremium', title: '📉 Del Premium', desc: '.delpremium 628xx' },
+            { name: 'self', title: '🔒 Mode Self', desc: '.self' },
+            { name: 'public', title: '🔓 Mode Public', desc: '.public' },
+            { name: 'setbio', title: '📝 Set Bio', desc: '.setbio teks' },
+            { name: 'setnamebot', title: '🏷️ Set Nama Bot', desc: '.setnamebot teks' },
+            { name: 'widget', title: '🖥️ Widget', desc: '.widget' }
+        ]
+    },
+    {
+        key: 'ai',
+        emoji: '🤖',
+        label: 'Artificial Intelligence',
+        cmds: [
+            { name: 'editimage', title: '🖌️ Edit Image', desc: 'reply gambar + .editimage prompt' },
+            { name: 'aiimage', title: '🎨 Generate Image', desc: '.aiimage deskripsi' }
+        ]
+    },
+    {
+        key: 'download',
+        emoji: '⬇️',
+        label: 'Downloader',
+        cmds: [
+            { name: 'tt', title: '🎵 TikTok DL', desc: '.tt url' },
+            { name: 'ig', title: '📷 Instagram DL', desc: '.ig url' },
+            { name: 'fb', title: '📘 Facebook DL', desc: '.fb url' },
+            { name: 'yt', title: '▶️ YouTube DL', desc: '.yt url' },
+            { name: 'mp3', title: '🎶 YouTube MP3', desc: '.mp3 url' },
+            { name: 'mediafie', title: '📦 MediaFire DL', desc: '.mediafie url' },
+            { name: 'kyzzfb', title: '📘 Kyzz FB', desc: '.kyzzfb url' },
+            { name: 'kyzzig', title: '📷 Kyzz IG', desc: '.kyzzig url' },
+            { name: 'kyzztt', title: '🎵 Kyzz TikTok', desc: '.kyzztt url' },
+            { name: 'kyzzgit', title: '🐙 Kyzz GitHub', desc: '.kyzzgit url' }
+        ]
+    },
+    {
+        key: 'tools',
+        emoji: '🧰',
+        label: 'Tools & Sticker',
+        cmds: [
+            { name: 'stiker', title: '🎨 Stiker Tekst', desc: '.stiker teks' },
+            { name: 'simg', title: '🖼️ Stiker Gambar', desc: 'reply gambar + .simg' },
+            { name: 'toimg', title: '🔄 Stiker ke Gambar', desc: 'reply stiker + .toimg' },
+            { name: 'rvo', title: '👁️ Read View Once', desc: 'reply VO + .rvo' },
+            { name: 'canvas', title: '🖼️ HTML Screenshot', desc: '.canvas kode html' },
+            { name: 'htmlfile', title: '📄 HTML File', desc: '.htmlfile kode html' },
+            { name: 'iqc', title: '🧠 IQ Check', desc: '.iqc' },
+            { name: 'fakedana', title: '💸 Fake Dana', desc: '.fakedana jumlah' },
+            { name: 'fakeff', title: '🎮 Fake FF', desc: '.fakeff nama' },
+            { name: 'lirik', title: '🎼 Lirik', desc: '.lirik judul' },
+            { name: 'detik', title: '📰 Detik News', desc: '.detik' },
+            { name: 'ping', title: '🏓 Ping', desc: '.ping' }
+        ]
+    },
+    {
+        key: 'logo',
+        emoji: '🎨',
+        label: 'Logo & Canvas',
+        cmds: [
+            { name: 'ffduo', title: '🦅 FF Duo', desc: '.ffduo user1 user2' },
+            { name: 'ffgirl', title: '🦅 FF Girl', desc: '.ffgirl username' },
+            { name: 'fflobby', title: '🦅 FF Lobby', desc: '.fflobby username' },
+            { name: 'fakeml', title: '🤖 Fake ML', desc: '.fakeml avatar user rank' },
+            { name: 'fakengl', title: '💬 Fake NGL', desc: '.fakengl teks' },
+            { name: 'gopay', title: '💸 Gopay', desc: '.gopay saldo [koin]' },
+            { name: 'fakeovo', title: '💸 Fake OVO', desc: '.fakeovo saldo' },
+            { name: 'ustadz', title: '🕌 Ustadz', desc: '.ustadz teks' },
+            { name: 'goodbye', title: '👋 Goodbye Card', desc: '.goodbye nama | grup | member' },
+            { name: 'qcwa', title: '💬 Quote WA', desc: '.qcwa teks' }
+        ]
+    },
+    {
+        key: 'anime',
+        emoji: '🍭',
+        label: 'Anime & Asupan',
+        cmds: [
+            { name: 'hanime', title: '🌸 Hanime', desc: '.hanime judul' },
+            { name: 'hentaigenres', title: '🔞 Hentai Genres', desc: '.hentaigenres genre' },
+            { name: 'hentaitrending', title: '🔥 Hentai Trending', desc: '.hentaitrending' },
+            { name: 'asupanbocil', title: '🎀 Asupan Bocil', desc: '.asupanbocil' },
+            { name: 'asupangheayubi', title: '🎀 Asupan Gheayubi', desc: '.asupangheayubi' },
+            { name: 'asupankayes', title: '🎀 Asupan Kayes', desc: '.asupankayes' },
+            { name: 'asupannotnot', title: '🎀 Asupan Notnot', desc: '.asupannotnot' },
+            { name: 'asupantiktokgirl', title: '🎀 Asupan TikTok Girl', desc: '.asupantiktokgirl' }
+        ]
+    },
+    {
+        key: 'cecan',
+        emoji: '📷',
+        label: 'Cecan',
+        cmds: [
+            { name: 'cecanchina', title: '🇨🇳 China', desc: '.cecanchina' },
+            { name: 'cecanhijaber', title: '🧕 Hijaber', desc: '.cecanhijaber' },
+            { name: 'cecanindonesia', title: '🇮🇩 Indonesia', desc: '.cecanindonesia' },
+            { name: 'cecanjapan', title: '🇯🇵 Japan', desc: '.cecanjapan' },
+            { name: 'cecankorea', title: '🇰🇷 Korea', desc: '.cecankorea' },
+            { name: 'cecanmalaysia', title: '🇲🇾 Malaysia', desc: '.cecanmalaysia' },
+            { name: 'cecanthailand', title: '🇹🇭 Thailand', desc: '.cecanthailand' },
+            { name: 'cecanvietnam', title: '🇻🇳 Vietnam', desc: '.cecanvietnam' }
+        ]
+    },
+    {
+        key: 'islamic',
+        emoji: '🕌',
+        label: 'Islamic',
+        cmds: [
+            { name: 'asmaulhusna', title: '📿 Asmaul Husna', desc: '.asmaulhusna [no]' },
+            { name: 'ayatkursi', title: '🕋 Ayat Kursi', desc: '.ayatkursi' },
+            { name: 'bacaansholat', title: '🕌 Bacaan Sholat', desc: '.bacaansholat' },
+            { name: 'jadwalsholat', title: '🕐 Jadwal Sholat', desc: '.jadwalsholat wilayah' },
+            { name: 'kisahnabi', title: '📖 Kisah Nabi', desc: '.kisahnabi nama' },
+            { name: 'niatsholat', title: '🤲 Niat Sholat', desc: '.niatsholat waktu' },
+            { name: 'tafsir', title: '📜 Tafsir', desc: '.tafsir query' }
+        ]
+    },
+    {
+        key: 'random',
+        emoji: '🎲',
+        label: 'Random',
+        cmds: [
+            { name: 'andin', title: '🎀 Andin', desc: '.andin' },
+            { name: 'seegore', title: '🔞 See Gore', desc: '.seegore' },
+            { name: 'tobrut', title: '🔥 Tobrut', desc: '.tobrut' }
+        ]
+    },
+    {
+        key: 'rpg',
+        emoji: '🎮',
+        label: 'Games / RPG',
+        cmds: [
+            { name: 'adventure', title: '⚔️ Adventure', desc: '.adventure' },
+            { name: 'explore', title: '🗺️ Explore', desc: '.explore' },
+            { name: 'hunt', title: '🏹 Hunt', desc: '.hunt' },
+            { name: 'mine', title: '⛏️ Mine', desc: '.mine' },
+            { name: 'sell', title: '💰 Jual Item', desc: '.sell' }
+        ]
+    },
+    {
+        key: 'economy',
+        emoji: '💰',
+        label: 'Economy & Store',
+        cmds: [
+            { name: 'balance', title: '💵 Balance', desc: '.balance' },
+            { name: 'daily', title: '🎁 Hadiah Harian', desc: '.daily' },
+            { name: 'transfer', title: '🔁 Transfer', desc: '.transfer 628xx jumlah' },
+            { name: 'work', title: '💼 Kerja', desc: '.work' },
+            { name: 'topmoney', title: '🏆 Top Terkaya', desc: '.topmoney' },
+            { name: 'shop', title: '🏪 Store', desc: '.shop' },
+            { name: 'buy', title: '🛒 Buy', desc: '.buy item [jumlah]' },
+            { name: 'inventory', title: '🎒 Inventory', desc: '.inventory' }
+        ]
+    },
+    {
+        key: 'profile',
+        emoji: '📊',
+        label: 'XP & Level',
+        cmds: [
+            { name: 'profile', title: '🧑‍🚀 Profile', desc: '.profile' },
+            { name: 'level', title: '🏅 Level & XP', desc: '.level' },
+            { name: 'rank', title: '🏆 Top XP', desc: '.rank' },
+            { name: 'limit', title: '🎟️ Cek Limit', desc: '.limit' },
+            { name: 'dailylimit', title: '🔁 Reset Limit', desc: '.dailylimit' },
+            { name: 'stats', title: '📊 Statistik', desc: '.stats' }
+        ]
+    },
+    {
+        key: 'premium',
+        emoji: '👑',
+        label: 'Premium',
+        cmds: [
+            { name: 'premium', title: '👑 Cek Premium', desc: '.premium' },
+            { name: 'premiumcheck', title: '🔍 Cek Pengguna', desc: '.premiumcheck 628xx' }
+        ]
+    },
+    {
+        key: 'info',
+        emoji: 'ℹ️',
+        label: 'Info & Lainnya',
+        cmds: [
+            { name: 'info', title: 'ℹ️ Info Bot', desc: '.info' },
+            { name: 'owner', title: '👤 Owner', desc: '.owner' },
+            { name: 'ping', title: '🏓 Ping', desc: '.ping' },
+            { name: 'kyzz', title: '🔑 Kyzz Help', desc: '.kyzz' },
+            { name: 'kyzzprofile', title: '🪪 Profil Kyzz', desc: '.kyzzprofile' },
+            { name: 'kyzzstats', title: '📊 Stats Kyzz', desc: '.kyzzstats' },
+            { name: 'kyzzrenew', title: '♻️ Renew Kyzz', desc: '.kyzzrenew role hari' },
+            { name: 'widget', title: '🖥️ Widget Viral', desc: '.widget' }
+        ]
+    }
+]
+
+function exists(cmd) {
+    return plugins.has(String(cmd).toLowerCase())
+}
+
+function getCat(cat) {
+    return CATALOG.find(c => c.key === cat) || null
+}
+
+function catRows(cat) {
+    return (cat.cmds || []).map(c => ({
+        id: '.' + c.name,
+        header: '',
+        title: c.title,
+        description: c.desc
+    })).filter(row => exists(row.id.slice(1)))
+}
+
+let handler = async (m, { conn, text, args }) => {
+    const start = Date.now()
+    const wanted = String(text || args?.[0] || '').trim().toLowerCase()
     const image = await Jimp.read(fs.readFileSync('./src/img/menu.jpg'))
     image.resize(640, 640)
     const thumb = await image.getBufferAsync(Jimp.MIME_JPEG)
 
+    let cat = wanted ? getCat(wanted) || null : null
+
+    if (wanted && !cat) {
+        const list = CATALOG.map(c => `${c.emoji} *${c.label}* — .menu ${c.key}`).join('\n')
+        return conn.sendMessage(m.chat, {
+            text: `❌ Kategori *"${wanted}"* tidak ditemukan.\n\nKategori tersedia:\n${list}`
+        }, { quoted: m })
+    }
+
+    // ===== SUBMENU KATEGORI (dipanggil via tombol / teks .menu <kategori>) =====
+    if (cat) {
+        const rows = catRows(cat)
+        if (rows.length === 0) return m.reply(`❌ Kategori *${cat.label}* belum punya command aktif.`)
+        const sections = [{ title: `${cat.emoji} ${cat.label}`, highlight_label: '', rows }]
+        const sectionsText = rows.map(r => `${r.title}\n   ${r.description}`).join('\n')
+        return conn.sendMessage(m.chat, {
+            interactiveButtons: [{
+                name: 'single_select',
+                buttonParamsJson: JSON.stringify({
+                    title: `${cat.emoji} ${cat.label}`,
+                    sections
+                })
+            }],
+            title: `${cat.emoji} MENU ${cat.label.toUpperCase()}`,
+            text: `${sectionsText}`,
+            footer: `Ketik .menu untuk kembali • ${config.botName}`,
+            contextInfo: {
+                externalAdReply: {
+                    title: `${config.botName} • ${config.version || ''}`,
+                    body: `${cat.label}`,
+                    mediaType: 1,
+                    thumbnail: thumb
+                }
+            }
+        }, { quoted: m })
+    }
+
+    // ===== MENU UTAMA (default) =====
     const ping = Date.now() - start
     const runtime = process.uptime()
     const days = Math.floor(runtime / 86400)
     const hours = Math.floor((runtime % 86400) / 3600)
     const minutes = Math.floor((runtime % 3600) / 60)
-    const seconds = Math.floor(runtime % 60)
     const ramUsed = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(1)
-    const totalPlugin = [...new Set(plugins.values())].length
+    const totalPlugins = [...new Set(plugins.values())].length
     const number = m.sender.split('@')[0]
 
-    let menuText = `╭───『 *${config.botName}* 』───⬣
+    const cats = CATALOG.filter(c => {
+        if (c.owner) return m.isOwner
+        return true
+    })
+
+    const catRowsAll = cats.map(c => ({
+        id: '.menu ' + c.key,
+        header: '',
+        title: `${c.emoji} ${c.label}`,
+        description: `${catRows(c).length} command`
+    }))
+    const sections = [{
+        title: '🗂️ KATEGORI MENU',
+        highlight_label: '',
+        rows: catRowsAll
+    }]
+    const sectionsText = cats.map(c => `${c.emoji} *${c.label}* → .menu ${c.key}`).join('\n')
+
+    const menuText = `╭───『 *${config.botName}* 』───⬣
 │
 │  🤖 *Bot Information*
 │  ├ Nama : ${config.botName}
 │  ├ Dev : ${config.developer || config.ownerName}
 │  ├ Versi : ${config.version || '-'}
 │  ├ Mode : ${config.botMode.toUpperCase()}
-│  ├ Plugins : ${totalPlugin}
+│  ├ Plugins : ${totalPlugins}
 │  ├ Ping : ${ping}ms
 │  ├ RAM : ${ramUsed}MB
-│  └ Uptime : ${days}d ${hours}h ${minutes}m ${seconds}s
+│  └ Uptime : ${days}d ${hours}h ${minutes}m
 │
 │  👤 *User Information*
 │  ├ Nama : ${m.pushName || '-'}
 │  ├ Nomor : +${number}
-│  └ Status : ${m.isOwner ? '👑 Owner' : '👤 User'}
+│  └ Status : ${m.isOwner ? '👑 Owner' : m.isPremium ? '👑 Premium' : '👤 User'}
+│
+│  🗂️ *Kategori*:
+${sectionsText}
+│
+│  💡 *Cara pakai*:
+│  Ketik .menu <kategori> ATAU
+│  tap tombol di bawah buat buka menu
 │
 ╰──────────────────⬣`
-
-    let listMenu = [
-        {
-            title: '🔄 Pilih Grup', description: 'Pilih grup untuk dipantau', command: '.sg'
-        },
-        {
-            title: '📊 Semua Grup', description: 'Lihat semua grup & anggota', command: '.grouplist'
-        },
-        {
-            title: '👤 Kick', description: 'Keluarkan anggota .kick @user', command: '.kick'
-        },
-        {
-            title: '➕ Add User', description: 'Tambah anggota .add 628xx', command: '.add'
-        },
-        {
-            title: '👑 Add Admin', description: 'Jadikan admin .addadmin @user', command: '.addadmin'
-        },
-        {
-            title: '👑 Del Admin', description: 'Copot admin .deladmin @user', command: '.deladmin'
-        },
-        {
-            title: '✏️ Ganti Nama Grup', description: '.setname Nama Baru', command: '.setname'
-        },
-        {
-            title: '📝 Ganti Deskripsi', description: '.setdesc Deskripsi Baru', command: '.setdesc'
-        },
-        {
-            title: '🖼️ Ganti PP Grup', description: 'Reply gambar + .setpp', command: '.setpp'
-        },
-        {
-            title: '📝 Ganti Bio Bot', description: '.setbio Bio keren', command: '.setbio'
-        },
-        {
-            title: '🏷️ Ganti Nama Bot', description: '.setnamebot Nama baru', command: '.setnamebot'
-        },
-        {
-            title: '📢 Tag All', description: 'Tag semua anggota', command: '.totag'
-        },
-        {
-            title: '👻 Hide Tag', description: 'Tag semua (sembunyi)', command: '.hidetag'
-        },
-        {
-            title: '🚪 Leave Grup', description: 'Bot keluar dari grup', command: '.leave'
-        },
-        {
-            title: '➕ Add Owner', description: '.addowner 628xx', command: '.addowner'
-        },
-        {
-            title: '➖ Del Owner', description: '.delowner 628xx', command: '.delowner'
-        },
-        {
-            title: '🎨 Stiker Brat', description: '.stiker teks', command: '.stiker'
-        },
-        {
-            title: '🖼️ Stiker Gambar', description: 'Reply gambar + .simg', command: '.simg'
-        },
-        {
-            title: '🎬 Stiker Video', description: 'Reply video + .simg', command: '.simg'
-        },
-        {
-            title: '🔄 Stiker ke Gambar', description: 'Reply stiker + .toimg', command: '.toimg'
-        },
-        {
-            title: '🖼️ Generate HTML', description: 'Kode HTML jadi screenshot', command: '.canvas'
-        },
-        {
-            title: '📄 File HTML', description: 'Kode HTML jadi file .html', command: '.htmlfile'
-        },
-        {
-            title: '🖥️ Blok Widget Viral', description: 'Kirim widget rich preview WebSocket', command: '.widget'
-        },
-        {
-            title: '🧠 IQ Checker', description: '.iqc - Cek IQ', command: '.iqc'
-        },
-        {
-            title: '💸 Fake Dana', description: '.fakedana jumlah', command: '.fakedana'
-        },
-        {
-            title: '🎮 Fake FF', description: '.fakeff nama', command: '.fakeff'
-        },
-        {
-            title: '🎵 TikTok DL', description: '.tt url tiktok', command: '.tt'
-        },
-        {
-            title: '📷 Instagram DL', description: '.ig url instagram', command: '.ig'
-        },
-        {
-            title: '📘 Facebook DL', description: '.fb url facebook', command: '.fb'
-        },
-        {
-            title: '🎶 YouTube MP3', description: '.mp3 url youtube', command: '.mp3'
-        },
-        {
-            title: '📦 MediaFire DL', description: '.mediafie url mediafire', command: '.mediafie'
-        },
-        {
-            title: '📜 Lirik Lagu', description: '.lirik judul lagu', command: '.lirik'
-        },
-        {
-            title: '📰 Berita Detik', description: '.detik - berita terbaru', command: '.detik'
-        },
-        {
-            title: '👁️ Read View Once', description: 'Reply pesan VO + .rvo', command: '.rvo'
-        },
-        {
-            title: '🏓 Ping', description: 'Cek kecepatan bot', command: '.ping'
-        },
-        {
-            title: 'ℹ️ Info Bot', description: 'Info lengkap bot', command: '.info'
-        },
-        {
-            title: '🍑 PAP TT', description: '.paptt - PAP random', command: '.paptt'
-        },
-        {
-            title: '🍑 PAP Memek', description: '.papmmk - PAP random', command: '.papmmk'
-        },
-        {
-            title: '🍑 PAP Bugil', description: '.papbugil - PAP random', command: '.papbugil'
-        },
-        {
-            title: '🍑 PAP', description: '.pap - PAP random', command: '.pap'
-        }
-    ]
-
-    let listMenuUser = [
-        {
-            title: '🎨 Stiker Brat', description: '.stiker teks', command: '.stiker'
-        },
-        {
-            title: '🖼️ Stiker Gambar', description: 'Reply gambar + .simg', command: '.simg'
-        },
-        {
-            title: '🎬 Stiker Video', description: 'Reply video + .simg', command: '.simg'
-        },
-        {
-            title: '🔄 Stiker ke Gambar', description: 'Reply stiker + .toimg', command: '.toimg'
-        },
-        {
-            title: '🖼️ Generate HTML', description: 'Kode HTML jadi screenshot', command: '.canvas'
-        },
-        {
-            title: '📄 File HTML', description: 'Kode HTML jadi file .html', command: '.htmlfile'
-        },
-        {
-            title: '🎵 TikTok DL', description: '.tt url tiktok', command: '.tt'
-        },
-        {
-            title: '📷 Instagram DL', description: '.ig url instagram', command: '.ig'
-        },
-        {
-            title: '📘 Facebook DL', description: '.fb url facebook', command: '.fb'
-        },
-        {
-            title: '🎶 YouTube MP3', description: '.mp3 url youtube', command: '.mp3'
-        },
-        {
-            title: '📦 MediaFire DL', description: '.mediafie url mediafire', command: '.mediafie'
-        },
-        {
-            title: '📜 Lirik Lagu', description: '.lirik judul lagu', command: '.lirik'
-        },
-        {
-            title: '📰 Berita Detik', description: '.detik - berita terbaru', command: '.detik'
-        },
-        {
-            title: '👁️ Read View Once', description: 'Reply pesan VO + .rvo', command: '.rvo'
-        },
-        {
-            title: '🏓 Ping', description: 'Cek kecepatan bot', command: '.ping'
-        },
-        {
-            title: 'ℹ️ Info Bot', description: 'Info lengkap bot', command: '.info'
-        },
-        {
-            title: '🍑 PAP TT', description: '.paptt - PAP random', command: '.paptt'
-        },
-        {
-            title: '🍑 PAP Memek', description: '.papmmk - PAP random', command: '.papmmk'
-        },
-        {
-            title: '🍑 PAP Bugil', description: '.papbugil - PAP random', command: '.papbugil'
-        },
-        {
-            title: '🍑 PAP', description: '.pap - PAP random', command: '.pap'
-        }
-    ]
-
-    let featureSections = [
-        {
-            title: '🧠 AI',
-            rows: [
-                { id: '.editimage', title: '🖌️ Edit Image', description: 'Reply gambar + .editimage prompt' },
-                { id: '.aiimage', title: '🎨 Generate Image', description: '.aiimage deskripsi' }
-            ]
-        },
-        {
-            title: '🍭 Anime',
-            rows: [
-                { id: '.hanime', title: '🌸 Hanime', description: '.hanime judul' },
-                { id: '.hentaigenres', title: '🔞 Hentai Genres', description: '.hentaigenres <genre>' },
-                { id: '.hentaitrending', title: '🔥 Hentai Trending', description: '.hentaitrending' }
-            ]
-        },
-        {
-            title: '🎀 Asupan',
-            rows: [
-                { id: '.asupanbocil', title: '🎀 Asupan Bocil', description: '.asupanbocil' },
-                { id: '.asupangheayubi', title: '🎀 Asupan Gheayubi', description: '.asupangheayubi' },
-                { id: '.asupankayes', title: '🎀 Asupan Kayes', description: '.asupankayes' },
-                { id: '.asupannotnot', title: '🎀 Asupan Notnot', description: '.asupannotnot' },
-                { id: '.asupanpanrika', title: '🎀 Asupan Panrika', description: '.asupanpanrika' },
-                { id: '.asupansantuy', title: '🎀 Asupan Santuy', description: '.asupansantuy' },
-                { id: '.asupantiktokgirl', title: '🎀 Asupan Tiktok Girl', description: '.asupantiktokgirl' },
-                { id: '.asupanukhty', title: '🎀 Asupan Ukhty', description: '.asupanukhty' }
-            ]
-        },
-        {
-            title: '🖼️ Logo & Canvas',
-            rows: [
-                { id: '.ffduo', title: '🦅 FF Duo', description: '.ffduo user1 user2' },
-                { id: '.ffgirl', title: '🦅 FF Girl', description: '.ffgirl username' },
-                { id: '.fflobby', title: '🦅 FF Lobby', description: '.fflobby username' },
-                { id: '.fakeml', title: '🤖 Fake ML', description: '.fakeml avatar username rank border' },
-                { id: '.fakengl', title: '💬 Fake NGL', description: '.fakengl teks' },
-                { id: '.gopay', title: '💸 Gopay', description: '.gopay saldo [koin]' },
-                { id: '.fakeovo', title: '💸 Fake OVO', description: '.fakeovo saldo' },
-                { id: '.ustadz', title: '🕌 Ustadz', description: '.ustadz teks' },
-                { id: '.goodbye', title: '👋 Goodbye', description: '.goodbye Nama | Grup | Member (reply gambar)' },
-                { id: '.qcwa', title: '💬 Quote WA', description: '.qcwa teks (reply gambar)' }
-            ]
-        },
-        {
-            title: '📷 Cecan',
-            rows: [
-                { id: '.cecanchina', title: '🇨🇳 Cecan China', description: '.cecanchina' },
-                { id: '.cecanhijaber', title: '🧕 Cecan Hijaber', description: '.cecanhijaber' },
-                { id: '.cecanindonesia', title: '🇮🇩 Cecan Indonesia', description: '.cecanindonesia' },
-                { id: '.cecanjapan', title: '🇯🇵 Cecan Japan', description: '.cecanjapan' },
-                { id: '.cecanjiso', title: '🎀 Cecan Jiso', description: '.cecanjiso' },
-                { id: '.cecanjustinaxie', title: '🎀 Cecan Justinaxie', description: '.cecanjustinaxie' },
-                { id: '.cecankorea', title: '🇰🇷 Cecan Korea', description: '.cecankorea' },
-                { id: '.cecanmalaysia', title: '🇲🇾 Cecan Malaysia', description: '.cecanmalaysia' },
-                { id: '.cecanrose', title: '🌹 Cecan Rose', description: '.cecanrose' },
-                { id: '.cecanryujin', title: '🌟 Cecan Ryujin', description: '.cecanryujin' },
-                { id: '.cecanthailand', title: '🇹🇭 Cecan Thailand', description: '.cecanthailand' },
-                { id: '.cecanvietnam', title: '🇻🇳 Cecan Vietnam', description: '.cecanvietnam' }
-            ]
-        },
-        {
-            title: '⬇️ Download',
-            rows: [
-                { id: '.kyzzfb', title: '📘 Facebook DL', description: '.kyzzfb url facebook' },
-                { id: '.kyzzig', title: '📷 Instagram DL', description: '.kyzzig url instagram' },
-                { id: '.kyzztt', title: '🎵 TikTok DL', description: '.kyzztt url tiktok' },
-                { id: '.kyzzgit', title: '🐙 GitHub Repo', description: '.kyzzgit url repo' }
-            ]
-        },
-        {
-            title: '🕌 Islamic',
-            rows: [
-                { id: '.asmaulhusna', title: '📿 Asmaul Husna', description: '.asmaulhusna [nomor]' },
-                { id: '.ayatkursi', title: '🕋 Ayat Kursi', description: '.ayatkursi' },
-                { id: '.bacaansholat', title: '🕌 Bacaan Sholat', description: '.bacaansholat' },
-                { id: '.jadwalsholat', title: '🕐 Jadwal Sholat', description: '.jadwalsholat wilayah' },
-                { id: '.kisahnabi', title: '📖 Kisah Nabi', description: '.kisahnabi nama' },
-                { id: '.niatsholat', title: '🤲 Niat Sholat', description: '.niatsholat waktu' },
-                { id: '.tafsir', title: '📜 Tafsir', description: '.tafsir query' }
-            ]
-        },
-        {
-            title: '🎲 Random',
-            rows: [
-                { id: '.andin', title: '🎀 Andin', description: '.andin' },
-                { id: '.seegore', title: '🔞 See Gore', description: '.seegore' },
-                { id: '.tobrut', title: '🔥 Tobrut', description: '.tobrut' }
-            ]
-        },
-        {
-            title: '👤 User Kyzz',
-            rows: [
-                { id: '.kyzzprofile', title: '🪪 Profil Kyzz', description: '.kyzzprofile' },
-                { id: '.kyzzstats', title: '📊 Statistik Kyzz', description: '.kyzzstats' },
-                { id: '.kyzzrenew', title: '♻️ Renew Kyzz', description: '.kyzzrenew role days coupon (owner)' }
-            ]
-        }
-    ]
-
-    let finalList = m.isOwner ? listMenu : listMenuUser
-    let sectionTitle = m.isOwner ? '👑 Menu Owner' : '📋 Menu User'
-
-    let sections = [{ title: sectionTitle, rows: finalList.map(item => ({ id: item.command, title: item.title, description: item.description })) }]
-    for (const s of featureSections) sections.push(s)
 
     await conn.sendMessage(m.chat, {
         interactiveButtons: [{
@@ -341,7 +355,7 @@ let handler = async (m, { conn, text }) => {
         }],
         title: `👋 Halo ${m.pushName || 'User'}!`,
         text: menuText,
-        footer: `🔗 Linktree: ${config.channelLink}\n💻 GitHub: ${config.githubRepo}`,
+        footer: `🔗 ${config.channelLink}\n💻 ${config.githubRepo}`,
         contextInfo: {
             externalAdReply: {
                 title: `${config.botName} • v${config.version}`,

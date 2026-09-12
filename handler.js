@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { sendNotification } from './lib/myFunction.js'
+import { trackUser } from './lib/system.js'
 import { rgbTag, COLORS } from './lib/rgb.js'
 
 // ============================================================
@@ -251,6 +252,16 @@ if (m.isGroup && !m.isOwner) {
             if (!monitor.waiting && !monitor.groups.includes(m.chat)) return
         }
 
+        // Sistem user (XP) - murni tambahan, tidak mengubah logic existing
+        if (m.isGroup && !m.isOwner) {
+            try {
+                const res = trackUser(conn, m)
+                if (res?.leveledUp) {
+                    await conn.sendMessage(m.chat, { text: `🎉 *LEVEL UP!*\n\n@${m.sender.split('@')[0]} naik ke level *${res.level}*`, mentions: [m.sender] })
+                }
+            } catch (e) {}
+        }
+
         const notifReply = async (text, title = 'Notification') => {
             await sendNotification(conn, m, title, text)
         }
@@ -261,6 +272,22 @@ if (m.isGroup && !m.isOwner) {
             }
             if (handler.owner && !m.isOwner) {
                 notifReply(config.accessDenied.owner, 'Access Denied')
+                return true
+            }
+            if (handler.premium && !m.isPremium) {
+                notifReply(config.accessDenied.premium || 'Fitur ini khusus Premium.', 'Access Denied')
+                return true
+            }
+            if (handler.group && !m.isGroup) {
+                notifReply('❌ Fitur ini khusus grup!', 'Access Denied')
+                return true
+            }
+            if (handler.admin && m.isGroup && !m.isAdmin) {
+                notifReply('❌ Fitur ini khusus Admin Grup!', 'Access Denied')
+                return true
+            }
+            if (handler.botAdmin && m.isGroup && !m.isBotAdmin) {
+                notifReply('❌ Bot harus menjadi Admin Grup!', 'Access Denied')
                 return true
             }
             return false
