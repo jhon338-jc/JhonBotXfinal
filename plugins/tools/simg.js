@@ -1,26 +1,15 @@
-import sharp from 'sharp'
 import { execFileSync } from 'child_process'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import { createRequire } from 'module'
 import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { makeSticker, makeWatermarkPng, videoStickerArgs } from '../../lib/sticker.js'
 
 const require = createRequire(import.meta.url)
 const FFMPEG = process.env.FFMPEG_PATH || (() => {
     try { return require('ffmpeg-static') } catch (e) { return 'ffmpeg' }
 })()
-
-async function webpSticker(buffer) {
-    return await sharp(buffer)
-        .resize(512, 512, {
-            fit: 'contain',
-            withoutEnlargement: true,
-            background: { r: 0, g: 0, b: 0, alpha: 0 }
-        })
-        .webp({ lossless: true })
-        .toBuffer()
-}
 
 let handler = async (m, { conn }) => {
     try {
@@ -57,15 +46,17 @@ let handler = async (m, { conn }) => {
         if (isVideo) {
             let mp4Path = path.join(os.tmpdir(), `tmp_v_${Date.now()}.mp4`)
             let webpPath = path.join(os.tmpdir(), `tmp_v_${Date.now()}.webp`)
+            let wmPath = path.join(os.tmpdir(), `tmp_v_${Date.now()}_wm.png`)
 
             fs.writeFileSync(mp4Path, buffer)
+            fs.writeFileSync(wmPath, await makeWatermarkPng())
 
-            execFileSync(FFMPEG, ['-i', mp4Path, '-t', '10', '-an', '-vf', 'fps=10,scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2', '-c:v', 'libwebp', '-lossless', '0', '-preset', 'default', '-loop', '0', '-b:v', '350k', '-maxrate', '450k', '-bufsize', '800k', webpPath], { timeout: 90000 })
+            execFileSync(FFMPEG, videoStickerArgs(mp4Path, wmPath, webpPath), { timeout: 90000 })
 
             let stickerBuffer = fs.readFileSync(webpPath)
             if (stickerBuffer.length > 650000) {
                 const webpPath2 = path.join(os.tmpdir(), `tmp_v_${Date.now()}_2.webp`)
-                execFileSync(FFMPEG, ['-i', mp4Path, '-t', '10', '-an', '-vf', 'fps=8,scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2', '-c:v', 'libwebp', '-lossless', '0', '-preset', 'default', '-loop', '0', '-b:v', '250k', '-maxrate', '300k', '-bufsize', '600k', webpPath2], { timeout: 90000 })
+                execFileSync(FFMPEG, videoStickerArgs(mp4Path, wmPath, webpPath2, 512, { fps: 8, bitrate: '250k', maxrate: '300k', bufsize: '600k' }), { timeout: 90000 })
                 stickerBuffer = fs.readFileSync(webpPath2)
                 try { fs.unlinkSync(webpPath2) } catch {}
             }
@@ -73,8 +64,9 @@ let handler = async (m, { conn }) => {
 
             try { fs.unlinkSync(mp4Path) } catch {}
             try { fs.unlinkSync(webpPath) } catch {}
+            try { fs.unlinkSync(wmPath) } catch {}
         } else {
-            let stickerBuffer = await webpSticker(buffer)
+            let stickerBuffer = await makeSticker(buffer)
             await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
         }
 

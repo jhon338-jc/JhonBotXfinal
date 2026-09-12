@@ -1,16 +1,5 @@
-import sharp from 'sharp'
 import { rgbTag, COLORS } from '../../lib/rgb.js'
-
-async function webpSticker(buffer) {
-    return await sharp(buffer)
-        .resize(512, 512, {
-            fit: 'contain',
-            withoutEnlargement: true,
-            background: { r: 0, g: 0, b: 0, alpha: 0 }
-        })
-        .webp({ lossless: true })
-        .toBuffer()
-}
+import { makeSticker } from '../../lib/sticker.js'
 
 let handler = async (m, { conn, text }) => {
     if (!text) return m.reply('⚠️ Masukkan teks!\n\nContoh: .stiker Jhon338')
@@ -22,7 +11,7 @@ let handler = async (m, { conn, text }) => {
         let res = await fetch(url)
         let buffer = Buffer.from(await res.arrayBuffer())
         
-        let stickerBuffer = await webpSticker(buffer)
+        let stickerBuffer = await makeSticker(buffer)
         
         await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
