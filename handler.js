@@ -1,34 +1,53 @@
-import { autoMod, linkDetector } from './lib/autoMod.js'
-import { antiSpam } from './lib/antiSpam.js'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
-import { sendNotification } from './lib/myFunction.js'
-import { trackUser } from './lib/system.js'
 import { rgbTag, COLORS } from './lib/rgb.js'
 
 // ============================================================
-//  JHON338 - BOT BRAIN (OTAK BOT)
-//  DEVELOPER BY JHON338  |  VERSION 3.3.8
-//  PC TERMINAL COMPATIBLE (Windows / Linux)
+//  JHONBOT v3.3.8 - BRAIN (OTAK BOT)
+//  Role: OWNER & USER SAJA (tidak ada admin)
 // ============================================================
-export const DEVELOPER = 'Jhon338'
-export const VERSION = '3.4.0'
+
+export const BOT_NAME = 'JhonBot'
+export const BOT_VERSION = '3.3.8'
+
+// Command publik yang BOLEH dipakai di DM (selain itu DM tidak dilayani)
+const DM_PUBLIC = new Set(['rvo', 'brat', 'img', 'toimg', 'iqc', 'lirik'])
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginDir = path.join(__dirname, 'plugins')
 
 export const plugins = new Map()
-export const beforeHooks = new Map()
+const summary = { owner: [], user: [] }
 
-const pluginCache = new Map()
-const watchers = new Map()
-const pendingReloads = new Map()
+const readJSON = file => JSON.parse(fs.readFileSync(file, 'utf-8'))
+const writeJSON = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2))
 
-const MONITOR_FILE = './database/monitor.json'
+// ==================== NORMALISASI NOMOR ====================
+// Mendukung format 628xxx / 08xxx / +628xxx → 628xxx
+export function normalizeNumber(raw = '') {
+    let n = String(raw).replace(/[^\d]/g, '')
+    if (n.startsWith('0')) n = '62' + n.slice(1)
+    return n
+}
 
-const readJSON = file => JSON.parse(fs.readFileSync(file))
+export function loadOwners() {
+    try {
+        return (readJSON('./database/owner.json').owner || []).map(n => normalizeNumber(n))
+    } catch {
+        return []
+    }
+}
 
+export function loadPremium() {
+    try {
+        return (readJSON('./database/premium.json').premium || []).map(n => normalizeNumber(n))
+    } catch {
+        return []
+    }
+}
+
+// ==================== LOAD PLUGIN ====================
 function getPluginFiles(dir) {
     let files = []
     if (!fs.existsSync(dir)) return files
@@ -45,68 +64,36 @@ async function loadPlugin(file) {
         const module = await import(`${pathToFileURL(file).href}?update=${Date.now()}`)
         const handler = module.default
         if (!handler) return
-        if (pluginCache.has(file)) {
-            for (const key of pluginCache.get(file)) plugins.delete(key)
-        }
-        const keys = []
-        if (handler.command && !(handler.command instanceof RegExp)) {
-            const commands = Array.isArray(handler.command) ? handler.command : [handler.command]
-            for (const cmd of commands) {
-                const key = String(cmd).toLowerCase()
-                plugins.set(key, handler)
-                keys.push(key)
-            }
-        }
-        if (handler.customPrefix) {
-            const key = Symbol(file)
+        const category = path.relative(pluginDir, file).split(path.sep)[0]
+        if (category !== 'owner' && category !== 'user') return
+
+        const cmds = Array.isArray(handler.command) ? handler.command : handler.command ? [handler.command] : []
+        for (const cmd of cmds) {
+            const key = String(cmd).toLowerCase()
             plugins.set(key, handler)
-            keys.push(key)
+            if (!summary[category].includes(key)) summary[category].push(key)
         }
-        if (module.before) {
-            beforeHooks.set(file, module.before)
-        }
-        pluginCache.set(file, keys)
         console.log(rgbTag('PLUGIN', 'Loaded ' + path.relative(pluginDir, file), COLORS.plugin))
     } catch (e) {
-        console.error(rgbTag('PLUGIN', 'Failed ' + file, COLORS.error))
-        console.error(rgbTag('PLUGIN', e?.message || e, COLORS.error))
+        console.error(rgbTag('PLUGIN', 'Failed ' + file + ' : ' + (e?.message || e), COLORS.error))
     }
-}
-
-async function unloadPlugin(file) {
-    if (!pluginCache.has(file)) return
-    for (const key of pluginCache.get(file)) plugins.delete(key)
-    pluginCache.delete(file)
-    beforeHooks.delete(file)
-    console.log(rgbTag('PLUGIN', 'Unloaded ' + path.relative(pluginDir, file), COLORS.warn))
 }
 
 export async function initPlugins() {
-    console.log(rgbTag(`${DEVELOPER} v${VERSION}`, 'Memuat plugin...', COLORS.start))
     for (const file of getPluginFiles(pluginDir)) {
         await loadPlugin(file)
     }
-    watch(pluginDir)
-    console.log(rgbTag(`${DEVELOPER} v${VERSION}`, `Brain siap - Total ${plugins.size} command terdaftar`, COLORS.success))
+    return plugins.size
 }
 
-function watch(dir) {
-    if (watchers.has(dir)) return
-    watchers.set(dir, fs.watch(dir, (_, filename) => {
-        if (!filename || !filename.endsWith('.js')) return
-        const file = path.join(dir, filename)
-        if (pendingReloads.has(file)) clearTimeout(pendingReloads.get(file))
-        pendingReloads.set(file, setTimeout(async () => {
-            pendingReloads.delete(file)
-            if (fs.existsSync(file)) await loadPlugin(file)
-            else await unloadPlugin(file)
-        }, 200))
-    }))
-    for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
-        if (item.isDirectory()) watch(path.join(dir, item.name))
+export function getPluginSummary() {
+    return {
+        owner: [...summary.owner].sort(),
+        user: [...summary.user].sort()
     }
 }
 
+// ==================== PARSE PESAN (TEKS + BUTTON) ====================
 function extractCommandFromMessage(m) {
     let body = ''
     let isButtonResponse = false
@@ -119,215 +106,119 @@ function extractCommandFromMessage(m) {
             else if (m.message.documentMessage?.caption) body = m.message.documentMessage.caption
             else if (m.message.interactiveResponseMessage) {
                 const inter = m.message.interactiveResponseMessage
-                if (inter.nativeFlowResponseMessage) {
-                    const flow = inter.nativeFlowResponseMessage
-                    if (flow.paramsJson) {
-                        try {
-                            const params = JSON.parse(flow.paramsJson)
-                            body = params.id || params.buttonId || params.rowId || params.index || ''
-                        } catch { body = flow.name || '' }
-                    } else body = flow.name || ''
-                    isButtonResponse = true
+                if (inter.nativeFlowResponseMessage?.paramsJson) {
+                    try {
+                        const params = JSON.parse(inter.nativeFlowResponseMessage.paramsJson)
+                        body = params.id || params.buttonId || params.rowId || ''
+                    } catch {
+                        body = inter.nativeFlowResponseMessage.name || ''
+                    }
                 } else if (inter.buttonReply) {
                     body = inter.buttonReply.selectedButtonId || ''
-                    isButtonResponse = true
                 } else if (inter.singleSelectReply) {
                     body = inter.singleSelectReply.selectedRowId || ''
-                    isButtonResponse = true
                 }
+                isButtonResponse = true
             } else if (m.message.templateButtonReplyMessage) {
                 body = m.message.templateButtonReplyMessage.selectedId || ''
                 isButtonResponse = true
             } else if (m.message.buttonsResponseMessage) {
                 body = m.message.buttonsResponseMessage.selectedButtonId || ''
                 isButtonResponse = true
+            } else if (m.message.listResponseMessage) {
+                body = m.message.listResponseMessage.title || m.message.listResponseMessage.description || ''
+                isButtonResponse = true
             }
         }
-    } catch (error) {
-        console.error(rgbTag('PARSE', 'Error parsing message: ' + (error?.message || error), COLORS.error))
-    }
+    } catch {}
     return { body, isButtonResponse }
 }
 
+function stripPrefix(txt) {
+    for (const p of ['.', '#', '!', '/', '\\']) {
+        if (txt.startsWith(p)) return txt.slice(p.length)
+    }
+    return txt
+}
+
+// ==================== HANDLER UTAMA ====================
 export default async function handleMessage(conn, m) {
     try {
-        if (m.chat?.includes('@newsletter')) return
-        if (m.sender?.includes('@newsletter')) return
-
-        if (m.isGroup && m.messageStubType !== undefined && beforeHooks.size > 0) {
-            for (const before of beforeHooks.values()) {
-                try {
-                    await before(m, { conn })
-                } catch (e) {
-                    console.error(rgbTag('BEFORE', e?.message || e, COLORS.error))
-                }
-            }
-        }
+        if (!m?.chat) return
+        if (m.chat.includes('@newsletter') || m.chat === 'status@broadcast') return
 
         const { body, isButtonResponse } = extractCommandFromMessage(m)
         if (!body) return
-        m.text = body
-        m.isButtonResponse = isButtonResponse
 
-        const config = readJSON('./config.json')
-        const role = readJSON('./database/role.json')
-        const number = m.sender.split('@')[0]
-        m.isCreator = config.creator.includes(number)
-        m.isOwner = m.isCreator || role.owner.includes(number)
-        m.isPremium = m.isOwner || role.premium.includes(number)
+        const monitor = readJSON('./database/monitor.json')
+        const number = normalizeNumber(m.sender.split('@')[0])
+        m.isOwner = loadOwners().includes(number)
+        m.isPremium = m.isOwner || loadPremium().includes(number)
 
-        // Cek grup monitor dulu
-        if (m.isGroup) {
-            const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
-            if (monitor.waiting && !m.isOwner) return
-            if (!monitor.waiting && !monitor.groups.includes(m.chat)) return
-        }
-
-
-// Auto Mod - Spam & Anti-Link (anti-link hanya jika AKTIF di grup itu, default OFF)
-if (m.isGroup && !m.isOwner) {
-
-    const spamCheck = autoMod(conn, m)
-            if (spamCheck) {
-                if (spamCheck.type === 'warning') {
-                    await conn.sendMessage(m.chat, { text: `⚠️ *PERINGATAN SPAM*\n\n@${spamCheck.sender.split('@')[0]} jangan spam pesan yang sama!\n\nBot bakal kick kalau spam lagi.` }, { quoted: m, mentions: [spamCheck.sender] })
-                } else if (spamCheck.type === 'kick') {
-                    try {
-                        await conn.groupParticipantsUpdate(m.chat, [spamCheck.sender], 'remove')
-                        await conn.sendMessage(m.chat, { text: `👢 *USER DIKICK*\n\n@${spamCheck.sender.split('@')[0]} dikick karena spam!` }, { quoted: m, mentions: [spamCheck.sender] })
-                    } catch (e) {}
-                }
-                return
-            }
-
-            const isCommandMsg = (config.prefix || ['.']).some(p => m.text.startsWith(p))
-            let settings = { antiLink: {} }
-            try { settings = JSON.parse(fs.readFileSync('./database/settings.json')) } catch (e) {}
-            const antiLinkOn = (settings.antiLink || {})[m.chat] === true
-
-            if (antiLinkOn && !isCommandMsg) {
-                const linkCheck = linkDetector(conn, m)
-                if (linkCheck) {
-                    try {
-                        await conn.sendMessage(m.chat, { delete: m.key })
-                        await conn.sendMessage(m.chat, { text: `🔒 *LINK DIHAPUS*\n\n@${linkCheck.sender.split('@')[0]} jangan kirim link di grup!`, mentions: [linkCheck.sender] })
-                    } catch (e) {}
-                    return
-                }
-            }
-        }
-
-        // Anti-spam command
-        if (!m.isOwner && antiSpam(m, 5, 10)) {
-            return await conn.sendMessage(m.chat, { text: '⚠️ *Anti-Spam*\n\nLu kebanyakan command! Tunggu 10 detik.' })
-        }
-
-        if (config.botMode === 'self' && !m.isOwner) return
-
-        if (!m.isGroup && m.isOwner) {
-            const rawInput = body.trim()
-            if (/^[\d,\s]+$/.test(rawInput)) {
-                const numbers = rawInput.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
-                if (numbers.length < 1 || numbers.length > 5) return
-                const groups = await conn.groupFetchAllParticipating()
-                const groupList = Object.values(groups)
-                const invalidNumbers = numbers.filter(n => n < 1 || n > groupList.length)
-                if (invalidNumbers.length > 0) return
-                const selectedGroups = numbers.map(n => groupList[n - 1])
-                const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
-                monitor.groups = selectedGroups.map(g => g.id)
-                monitor.waiting = false
-                fs.writeFileSync(MONITOR_FILE, JSON.stringify(monitor, null, 2))
-                console.log(rgbTag('MONITOR', `${selectedGroups.length} grup terpilih di DM: ${selectedGroups.map(g => g.subject).join(', ')}`, COLORS.success))
-                return
-            }
-        }
-
-        // DM: hanya owner yang boleh pakai command lain, non-owner tetap sepi
-        if (!m.isGroup && !m.isOwner) return
-
-        if (m.isGroup) {
-            const monitor = JSON.parse(fs.readFileSync(MONITOR_FILE))
-            if (monitor.waiting && !m.isOwner) return
-            if (!monitor.waiting && !monitor.groups.includes(m.chat)) return
-        }
-
-        // Sistem user (XP) - murni tambahan, tidak mengubah logic existing
-        if (m.isGroup && !m.isOwner) {
-            try {
-                const res = trackUser(conn, m)
-                if (res?.leveledUp) {
-                    await conn.sendMessage(m.chat, { text: `🎉 *LEVEL UP!*\n\n@${m.sender.split('@')[0]} naik ke level *${res.level}*`, mentions: [m.sender] })
-                }
-            } catch (e) {}
-        }
-
-        const notifReply = async (text, title = 'Notification') => {
-            await sendNotification(conn, m, title, text)
-        }
-        const checkAccess = handler => {
-            if (handler.creator && !m.isCreator) {
-                notifReply('❌ Khusus Creator!', 'Access Denied')
-                return true
-            }
-            if (handler.owner && !m.isOwner) {
-                notifReply(config.accessDenied.owner, 'Access Denied')
-                return true
-            }
-            if (handler.premium && !m.isPremium) {
-                notifReply(config.accessDenied.premium || 'Fitur ini khusus Premium.', 'Access Denied')
-                return true
-            }
-            if (handler.group && !m.isGroup) {
-                notifReply('❌ Fitur ini khusus grup!', 'Access Denied')
-                return true
-            }
-            if (handler.admin && m.isGroup && !m.isAdmin) {
-                notifReply('❌ Fitur ini khusus Admin Grup!', 'Access Denied')
-                return true
-            }
-            if (handler.botAdmin && m.isGroup && !m.isBotAdmin) {
-                notifReply('❌ Bot harus menjadi Admin Grup!', 'Access Denied')
-                return true
-            }
-            return false
-        }
-
-        if (isButtonResponse) {
-            let bodyText = body
-            const prefixes = config.prefix || ['.']
-            for (const p of prefixes) {
-                if (bodyText.startsWith(p)) { bodyText = bodyText.slice(p.length); break }
-            }
-            const args = bodyText.trim().split(/\s+/)
-            const command = args.shift().toLowerCase()
-            const handler = plugins.get(command)
-            if (!handler) return
-            const denied = checkAccess(handler)
-            if (denied) return
-            return await handler(m, { conn, args, text: args.join(' '), command, prefix: '', notifReply })
-        }
-
-        for (const handler of plugins.values()) {
-            if (!handler.customPrefix) continue
-            if (!handler.customPrefix.test(m.text)) continue
-            const denied = checkAccess(handler)
-            if (denied) return
-            const text = m.text.replace(handler.customPrefix, '').trim()
-            return await handler(m, { conn, args: text ? text.split(/\s+/) : [], text, command: '', prefix: '', notifReply })
-        }
-
-        const prefix = (config.prefix || ['.']).find(p => m.text.startsWith(p))
-        if (!prefix) return
-        const body2 = m.text.slice(prefix.length).trim()
-        if (!body2) return
-        const args = body2.split(/\s+/)
+        // Parsing command
+        const raw = isButtonResponse ? stripPrefix(body) : body.trim()
+        const cleaned = stripPrefix(raw)
+        if (!cleaned) return
+        const args = cleaned.split(/\s+/)
         const command = args.shift().toLowerCase()
+        m.command = command
+
+        // ============ PEMILIHAN GRUP (balas nomor: "2,5") ============
+        if (/^[\d,\s]+$/.test(cleaned) && !isButtonResponse) {
+            if (!m.isGroup && m.isOwner && monitor.waiting) {
+                const nums = cleaned.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
+                if (!nums.length || nums.length > 5) return
+                const groups = await conn.groupFetchAllParticipating()
+                const list = Object.values(groups)
+                const selected = nums.map(n => list[n - 1]).filter(Boolean)
+                if (!selected.length || selected.length > 5) return
+                monitor.groups = selected.map(g => g.id)
+                monitor.waiting = false
+                writeJSON('./database/monitor.json', monitor)
+                let txt = '✅ *GRUP TERPILIH:*\n\n'
+                txt += selected.map((g, i) => `${i + 1}. ${g.subject}\n   👥 ${g.participants?.length || 0} member`).join('\n\n')
+                return await conn.sendMessage(m.chat, { text: txt }, { quoted: m })
+            }
+            return
+        }
+
+        // ============ ATURAN DM ============
+        // DM: owner bebas, USER hanya fitur publik tertentu
+        if (!m.isGroup && !m.isOwner) {
+            if (!DM_PUBLIC.has(command)) return
+        }
+
+        // ============ ATURAN GRUP (monitor) ============
+        if (m.isGroup) {
+            if (monitor.waiting) {
+                if (!m.isOwner) return
+            } else if (!monitor.groups.includes(m.chat)) {
+                return
+            }
+        }
+
+        // ============ CARI PLUGIN ============
         const handler = plugins.get(command)
         if (!handler) return
-        const denied = checkAccess(handler)
-        if (denied) return
-        await handler(m, { conn, args, text: args.join(' '), command, prefix, notifReply })
+
+        // ============ ACCESS CONTROL ============
+        if (handler.owner && !m.isOwner) {
+            return m.reply('❌ Fitur ini khusus 👑 *Owner*!')
+        }
+        if (handler.premium && !m.isPremium) {
+            return m.reply('❌ Fitur ini khusus 👑 *Premium*!')
+        }
+        if (handler.group && !m.isGroup) {
+            return m.reply('❌ Fitur ini hanya bisa dipakai di grup!')
+        }
+        if (handler.botAdmin && m.isGroup && !m.isBotAdmin) {
+            return m.reply('❌ Bot harus menjadi *admin grup* untuk fitur ini!')
+        }
+        if (handler.admin && m.isGroup && !m.isAdmin && !m.isOwner) {
+            return m.reply('❌ Fitur ini khusus *admin grup*!')
+        }
+
+        await handler(m, { conn, args, text: args.join(' '), command })
     } catch (e) {
         console.error(rgbTag('HANDLER', e?.message || e, COLORS.error))
     }

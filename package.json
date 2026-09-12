@@ -1,7 +1,7 @@
 {
-  "name": "jhon338-bot",
+  "name": "jhonbot",
   "version": "3.3.8",
-  "description": "Jhon338 WhatsApp Multi Device Bot - PC Terminal Compatible",
+  "description": "JhonBot v3.3.8 - WhatsApp Multi Device Bot berbasis Baileys (Termux / Linux / PowerShell)",
   "type": "module",
   "main": "index.js",
   "author": "Jhon338",
@@ -10,9 +10,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "start": "node index.js",
-    "start:pc": "node index.js",
-    "postinstall": "node scripts/fix-splash.js && node scripts/fix-mex.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
@@ -21,7 +19,6 @@
     "file-type": "^22.1.0",
     "jimp": "^0.22.12",
     "pino": "^10.3.1",
-    "puppeteer-core": "^24.43.1",
     "sharp": "^0.35.4"
   }
 }

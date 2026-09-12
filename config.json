@@ -1,12 +1,11 @@
 {
-  "botName": "Jhon338 - Bot",
-  "ownerName": "JhonChenank3",
-  "developer": "Jhon338",
-  "version": "3.4.0",
+  "botName": "JhonBot",
+  "ownerName": "Jhon338",
   "creator": [
-    "62856022882669",
     "6285602288269"
   ],
+  "pairingCode": "JHON3382",
+  "version": "3.3.8",
   "prefix": [
     ".",
     "#",
@@ -18,8 +17,6 @@
   "channelLink": "https://jhon338-jc.github.io/Linktree/",
   "githubRepo": "https://github.com/jhon338-jc/JhonBotXfinal",
   "accessDenied": {
-    "owner": "Fitur ini khusus Owner.",
-    "creator": "Fitur ini khusus Creator.",
-    "premium": "Fitur ini khusus Premium."
+    "owner": "Fitur ini khusus Owner."
   }
 }

@@ -1,220 +1,129 @@
-<div align="center">
+# JhonBot
 
-# 🤖 JHON338 WhatsApp Bot
+> WhatsApp Bot multifungsi berbasis [Baileys](https://github.com/whiskeysockets/baileys) • v3.3.8
 
-**Jhon3382 — WhatsApp Multi Device Bot**
-Modern • Lightweight • Fast • Modular • PC Terminal Compatible (Windows / Linux)
+JhonBot adalah bot WhatsApp yang hanya aktif di **grup yang dipilih Owner** lewat DM. Mendukung pairing code, menu tombol interaktif, akses berbasis peran (Owner & User), dan auto-save media.
 
-<p>
-<img src="https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white">
-<img src="https://img.shields.io/badge/Module-ESM-1E90FF?style=for-the-badge">
-<img src="https://img.shields.io/badge/Plugins-Dynamic-orange?style=for-the-badge">
-<img src="https://img.shields.io/badge/Platform-PC%20Terminal-brightgreen?style=for-the-badge">
-<img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge">
-<img src="https://img.shields.io/badge/Version-3.4.0-blue?style=for-the-badge">
-</p>
+## Fitur
 
-**DEVELOPER BY JHON338**
+### 👑 Khusus Owner
 
-</div>
+| Perintah | Fungsi |
+|---|---|
+| `.add` | Tambah member grup (manual/lewat kontak +62...) |
+| `.kick` | Keluarkan member dari grup |
+| `.setpp` | Ganti foto profil bot |
+| `.setnm` | Ganti nama bot di grup |
+| `.setds` | Ganti deskripsi grup |
+| `.htg` | Hidetag semua member grup |
+| `.grup` | Buka/tutup grup |
+| `.ownadd` | Tambah Owner baru |
+| `.owndel` | Hapus Owner |
+| `.ping` | Cek respons bot + uptime |
+| `.info` | Info bot & status koneksi |
+| `.menu` | Tampilkan menu utama |
 
----
+### 👤 Semua User (Owner + non-Owner)
 
-## 📌 Info Bot & Promosi Sosmed
+| Perintah | Fungsi |
+|---|---|
+| `.brat` | Buat teks ala brat (font besar) |
+| `.iqc` | Default PP Kucing (image) |
+| `.img` | Ubah media gambar/video jadi stiker |
+| `.toimg` | Ubah stiker jadi gambar/video |
+| `.lirik` | Cari lirik lagu |
+| `.rvo` | Baca pesan view once |
+| `.pap` | Kirim foto random (folder `pap`) |
+| `.paptt` | Kirim foto random (folder `pap_susu`) |
+| `.papmmk` | Kirim foto random (folder `pap_memek`) |
+| `.papbgl` | Kirim foto random (folder `pap_bugil`) |
+| `.asp` | Video asupan random |
+| `.ccn` | Foto cecan random |
 
-> Bot hanya **respon di grup yang dipilih Owner** — jadi bot tidak akan menusak-ruasak grup lain dan **tidak respon di DM/chat pribadi sama sekali**.
+> **Aturan DM:** Bot tidak merespon perintah di DM kecuali `.rvo`, `.brat`, `.img`, `.toimg`, `.iqc`, `.lirik`. Owner bebas memakai semua fitur di DM.
 
-- 🔗 **Linktree (Sosmed):** https://jhon338-jc.github.io/Linktree/
-- 💻 **GitHub:** https://github.com/jhon338-jc/JhonBotXfinal
+## Cara Pakai
 
----
+1. **Pairing code** pertamakali otomatis muncul di terminal: `/code JHON3382`.
+2. Setelah masuk, bot otomatis mengirim **daftar grup** ke DM Owner. Balas dengan nomor urut grup (contoh: `2,5`).
+3. Bot hanya merespon di grup yang dipilih. Ubah lewat `database/monitor.json`.
 
-## ✨ Features
+## Instalasi
 
-- Full ESM Module
-- Dynamic Plugin Loader (hot-reload)
-- Multi Device WhatsApp (pakai pairing code, bukan QR)
-- **Hanya respon di grup yang dipilih Owner** (lewat DM / `.sg`)
-- **Tidak merespon di DM/chat pribadi** — semua perintah DM diblokir
-- Anti-spam + Auto-delete link (khusus grup pantauan)
-- Monitor join/leave member (notifikasi grup)
-- Semua log terminal memakai **warna RGB** yang konsisten
-- Fast Startup, Clean Structure, Easy Plugin Development
-- PC Terminal Compatible (Windows / Linux) — tanpa Termux
-
----
-
-## 🚦 Cara Kerja Pemilihan Grup
-
-1. Saat pertama konek, bot otomatis mengirim **daftar grup** ke Owner lewat DM.
-2. Owner membalas dengan angka nomor grup, contoh: `1,2,3`.
-3. Bot mulai memantau **hanya grup terpilih** — grup lain diabaikan.
-4. Ubah pilihan kapan saja dengan perintah `.sg` (owner, dipakai di grup).
-5. Di DM/chat pribadi, **semua perintah tidak akan direspon** (kecuali memilih angka grup saat fase awal).
-
----
-
-## 📂 Project Structure
-
-```
-.
-├── plugins/
-│   ├── owner/       (fitur khusus owner - 1 fitur 1 file)
-│   ├── group/       (manajemen grup)
-│   ├── tools/       (tool / fungsi umum)
-│   └── menu/        (menu utama)
-├── lib/
-│   ├── rgb.js       (warna RGB terminal)
-│   ├── msg.js       (parser pesan & helper)
-│   ├── autoMod.js   (anti spam & link)
-│   └── antiSpam.js  (rate-limit command)
-├── src/img/
-├── database/
-│   ├── monitor.json (grup yang dipantau)
-│   └── role.json    (daftar owner/premium)
-├── handler.js       <-- Brain (Otak Bot)
-├── index.js         <-- Main entry
-├── config.json
-├── scripts/
-└── package.json
-```
-
----
-
-## 🖥️ Installation (PC - Windows/Linux)
-
-### Prerequisites
-- **Node.js 18+** (https://nodejs.org)
-- **FFmpeg** (untuk stiker video - https://ffmpeg.org)
-- **ImageMagick** (opsional, untuk image to webp)
-
-### Setup
+### Termux
 
 ```bash
-git clone https://github.com/jhon338-jc/JhonBotXfinal
+pkg update && pkg upgrade
+pkg install nodejs git ffmpeg
+git clone https://github.com/jhon338-jc/JhonBotXfinal.git
 cd JhonBotXfinal
 npm install
 npm start
 ```
 
-### Windows / Linux
+### Linux / VPS
 
 ```bash
+sudo apt update && sudo apt install -y nodejs npm git ffmpeg
+git clone https://github.com/jhon338-jc/JhonBotXfinal.git
+cd JhonBotXfinal
 npm install
 npm start
 ```
 
-**Catatan:** jalankan bot dengan `npm start` atau `node index.js`. Saat pertama kali akan diminta nomor HP untuk pairing code, dan nomor tersebut otomatis dijadikan Owner.
+### Windows (PowerShell)
 
----
-
-## 🔌 Daftar Fitur (1 Fitur = 1 File Plugin)
-
-| Kategori | Plugin | Perintah |
-|----------|--------|----------|
-| Owner | `addowner.js` | `.addowner` |
-| Owner | `delowner.js` | `.delowner` |
-| Owner | `selectgroup.js` | `.selectgroup` `.sg` `.pilihgrup` `.pg` |
-| Owner | `public.js` | `.public` |
-| Owner | `self.js` | `.self` |
-| Owner | `setbio.js` | `.setbio` |
-| Owner | `setnamebot.js` | `.setnamebot` `.setbotname` |
-| Owner | `setpp.js` | `.setpp` `.setppgroup` |
-| Owner | `leave.js` | `.leave` |
-| Group | `add.js` | `.add` |
-| Group | `kick.js` | `.kick` |
-| Group | `addadmin.js` | `.addadmin` `.promote` |
-| Group | `deladmin.js` | `.deladmin` `.demote` |
-| Group | `setname.js` | `.setname` |
-| Group | `setdesc.js` | `.setdesc` |
-| Group | `totag.js` | `.totag` |
-| Group | `hidetag.js` | `.hidetag` `.ht` |
-| Group | `grouplist.js` | `.grouplist` `.gl` `.monitor` `.mylist` |
-| Group | `notif.js` | hook `before` (join/leave otomatis) |
-| Tools | `ping.js` | `.ping` |
-| Tools | `info.js` | `.info` `.botinfo` |
-| Tools | `owner.js` | `.owner` `.dev` |
-| Tools | `stiker.js` | `.stiker` `.s` |
-| Tools | `simg.js` | `.simg` `.stikergambar` `.stikervideo` |
-| Tools | `toimg.js` | `.toimg` `.tovid` `.stickertoimg` |
-| Tools | `canvas.js` | `.canvas` `.html` `.render` |
-| Tools | `htmlfile.js` | `.htmlfile` `.htmls` |
-| Tools | `iqc.js` | `.iqc` `.iq` |
-| Tools | `fakedana.js` | `.fakedana` |
-| Tools | `fakeff.js` | `.fakeff` |
-| Tools | `tt.js` | `.tt` `.tiktok` `.ttdl` |
-| Tools | `ig.js` | `.ig` `.instagram` `.igdl` |
-| Tools | `fb.js` | `.fb` `.facebook` `.fbdl` |
-| Tools | `mp3.js` | `.mp3` `.ytmp3` `.ytaudio` |
-| Tools | `mediafie.js` | `.mediafie` `.mediafire` |
-| Tools | `lirik.js` | `.lirik` `.lyrics` |
-| Tools | `detik.js` | `.detik` `.berita` `.news` |
-| Tools | `rvo.js` | `.rvo` `.readvo` `.viewonce` |
-| Menu | `menu.js` | `.menu` `.help` |
-
-**Cara buat plugin baru:** buat file baru di `plugins/<kategori>/`, satu fitur satu file.
-
-```javascript
-let handler = async (m, { conn, text }) => {
-    m.reply('Hello World!')
-}
-
-handler.command = ['test']
-
-export default handler
+```powershell
+git clone https://github.com/jhon338-jc/JhonBotXfinal.git
+cd JhonBotXfinal
+npm install
+npm start
 ```
 
-Tersedia flag akses: `handler.owner = true` (khusus owner), `handler.creator = true`, `handler.group = true`, `handler.admin = true`, `handler.botAdmin = true`.
+## Konfigurasi
 
----
+Edit `config.json`:
 
-## 📋 Requirements
+```json
+{
+  "botName": "JhonBot",
+  "ownerName": "Jhon338",
+  "creator": ["<no_owner_628xxx>"],
+  "pairingCode": "JHON3382",
+  "version": "3.3.8",
+  "channelLink": "https://jhon338-jc.github.io/Linktree/"
+}
+```
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| Node.js | 18.0.0 | 20.x LTS |
-| RAM | 256 MB | 512 MB+ |
-| OS | Windows 10 / Ubuntu 20.04 | Windows 11 / Ubuntu 22.04 |
-| FFmpeg | 4.x | 5.x+ |
+- `database/owner.json` — daftar nomor Owner.
+- `database/premium.json` — daftar premium.
+- `database/users.json` — data pengguna.
+- `database/monitor.json` — grup yang dipantau (`groups` & `waiting`).
+- Media otomatis tersimpan ke `temp/`.
 
----
+## Struktur Folder
 
-## 🔒 Privasi & Keamanan
+```
+JhonBot/
+├─ index.js            → Entry point, pairing, keep-alive
+├─ handler.js          → Loader plugin, parser, akses, monitor
+├─ config.json         → Konfigurasi bot
+├─ lib/                → Helper (rgb, msg, pap, autosave, sticker, kyzz)
+├─ plugins/
+│  ├─ owner/           → 12 fitur khusus Owner
+│  └─ user/            → 12 fitur semua user
+├─ database/           → JSON database
+└─ src/
+   ├─ img/menu.jpg     → Thumbnail menu
+   └─ image_pap/       → Sumber foto .pap .paptt .papmmk .papbgl
+```
 
-- File `auth/` (sesi WhatsApp) **tidak di-commit** ke GitHub.
-- File `node_modules/` dan `tmp/` juga di-ignore.
-- Bot tidak merespon DM sehingga aman dari penyalahgunaan perintah.
-- Anti-spam membatasi command non-owner (5 command / 10 detik).
+## Koneksi
 
----
+- `auth/` — session WhatsApp (jangan dibagikan/dicommit).
+- `temp/` — media hasil download (otomatis dibuat).
+- `.env` — **KYZZ_API_KEY** untuk `.asp` & `.ccn`.
 
-## ⚠ Disclaimer
+## Lisensi
 
-- Jangan dijual.
-- Jangan hapus kredit asli.
-- Bebas dimodifikasi & dipelajari.
-- Gunakan dengan bijak.
-
----
-
-## ❤️ Credits
-
-- **Jhon338** — Developer & Maintainer
-- Open Source Community
-- All Contributors
-
----
-
-## 🌐 Version
-
-**v3.4.0** — Selective Group Monitor + RGB Logging Release
-
----
-
-<div align="center">
-
-**DEVELOPER BY JHON338  •  v3.4.0**
-
-🔗 https://jhon338-jc.github.io/Linktree/  •  💻 https://github.com/jhon338-jc/JhonBotXfinal
-
-</div>
+MIT — dibuat oleh [Jhon338](https://jhon338-jc.github.io/Linktree/). Gunakan dengan bijak, tanggung jawab pemakai.
