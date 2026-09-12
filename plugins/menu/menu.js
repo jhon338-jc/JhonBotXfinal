@@ -2,15 +2,26 @@ import fs from 'fs'
 import Jimp from 'jimp'
 import config from '../../config.json' with { type: 'json' }
 import { plugins } from '../../handler.js'
+import { rgbTag, COLORS } from '../../lib/rgb.js'
 
 // ============================================================
-//  HYBRID MENU + NATIVE FLOW BUTTON (JHON338)
-//  Satu tombol ☰, sections dikelompokkan sesuai role user:
-//    👤 USER  → kategori fitur grup (submenu .menu <key>)
-//    🛡️ ADMIN → command khusus admin grup (langsung)
-//    👑 OWNER → manajemen grup + settings owner (langsung)
-//  Setiap command muncul di SATU kategori saja (no double).
-//  Support teks : .menu / .help / .menu <kategori>
+//  HYBRID MENU + SEMUA JENIS TOMBOL INTERAKTIF (JHON338)
+//  Komponen native flow (interactiveButtons):
+//    • single_select  ☰  dropdown utama navigasi kategori
+//    • quick_reply    ⚡ tombol cepat (maks 3 per pesan)
+//    • cta_url        🔗 buka link        → halaman Channel
+//    • cta_call       📞 telepon Owner    → di submenu kategori
+//    • cta_copy       📋 copy nomor Owner → di submenu kategori
+//  Komponen legacy (fallback otomatis bila native ditolak):
+//    • listMessage      → dropdown klasik (sections)
+//    • templateButtons  → campuran hydrated button (mix)
+//    • buttons          → tombol respons klasik
+//    • plain text       → paling bontot bila semua gagal
+//
+//  Navigasi:
+//    .menu                       → menu utama (dropdown ☰ + tombol cepat)
+//    .menu <kategori>            → submenu command kategori tsb
+//    .menu user | admin | owner  → halaman role cepat
 // ============================================================
 
 const CATALOG = [
@@ -254,6 +265,21 @@ const CATALOG = [
     }
 ]
 
+const USER_CATS = CATALOG.filter(c => c.role === 'user')
+const ADMIN_CATS = CATALOG.filter(c => c.role === 'admin')
+const OWNER_CATS = CATALOG.filter(c => c.role === 'owner')
+
+const ROLE_META = {
+    user:  { emoji: '👤', title: 'Menu User',  label: 'Kategori untuk semua member' },
+    admin: { emoji: '🛡️', title: 'Menu Admin', label: 'Khusus admin grup' },
+    owner: { emoji: '👑', title: 'Menu Owner', label: 'Khusus owner / creator' }
+}
+
+const BUTTON_TEXT = '☰ BUKA MENU'
+const OWNER_NUMBER = String(config.creator?.[0] || '').replace(/\D+/g, '')
+
+// ==================== HELPERS ====================
+
 function exists(cmd) {
     return plugins.has(String(cmd).toLowerCase())
 }
@@ -262,29 +288,196 @@ function getCat(cat) {
     return CATALOG.find(c => c.key === cat) || null
 }
 
-function catRows(cat) {
-    return (cat.cmds || []).map(c => ({
-        id: '.' + c.name,
-        header: '',
-        title: c.title,
-        description: c.desc
-    })).filter(row => exists(row.id.slice(1)))
-}
-
 function catTitle(cat) {
     return `${cat.emoji} ${cat.label}`
+}
+
+function catRows(cat) {
+    return (cat.cmds || []).map(c => {
+        const id = '.' + c.name
+        return {
+            id,
+            rowId: id,
+            header: '',
+            title: c.title,
+            description: c.desc
+        }
+    }).filter(row => exists(row.id.slice(1)))
 }
 
 function textRows(cat) {
     return (cat.cmds || []).filter(c => exists(c.name)).map(c => `  ${c.title}\n  ${c.desc}`)
 }
 
+function catSection(cat) {
+    return {
+        title: catTitle(cat),
+        highlight_label: '',
+        rows: catRows(cat)
+    }
+}
+
+// Bangun komponen native flow (interactiveButtons)
+function btn(name, params) {
+    return { name, buttonParamsJson: JSON.stringify(params) }
+}
+const single_select = (title, sections) => btn('single_select', { title, sections })
+const quick_reply = (display_text, id) => btn('quick_reply', { display_text, id })
+const cta_url = (display_text, url) => btn('cta_url', { display_text, url })
+const cta_call = (display_text, phone_number) => btn('cta_call', { display_text, phone_number })
+const cta_copy = (display_text, copy_code) => btn('cta_copy', { display_text, copy_code })
+
+function backRow() {
+    return { id: '.menu', rowId: '.menu', header: '', title: '🔙 Kembali ke Menu Utama', description: '' }
+}
+
+function defaultTemplate() {
+    return [
+        { index: 1, quickReplyButton: { displayText: '👤 Menu User', id: '.menu user' } },
+        { index: 2, quickReplyButton: { displayText: '👑 Menu Owner', id: '.menu owner' } },
+        { index: 3, urlButton: { displayText: '🔗 Channel', url: config.channelLink } }
+    ]
+}
+
+function defaultLegacy() {
+    return [
+        { buttonId: '.menu user', buttonText: { displayText: '👤 Menu User' }, type: 1 },
+        { buttonId: '.menu owner', buttonText: { displayText: '👑 Menu Owner' }, type: 1 },
+        { buttonId: '.menu', buttonText: { displayText: '🔙 Menu Utama' }, type: 1 }
+    ]
+}
+
+function adReply(thumb, title, body) {
+    if (!thumb) return null
+    return {
+        externalAdReply: {
+            title,
+            body,
+            mediaType: 1,
+            thumbnail: thumb,
+            sourceUrl: config.channelLink,
+            mediaUrl: config.channelLink,
+            renderLargerThumbnail: true
+        }
+    }
+}
+
+// ==================== PENGIRIM GANDA (MODERN + LEGACY FALLBACK) ====================
+// 1) interactiveButtons → native flow (single_select + quick_reply + cta_*)
+// 2) sections           → listMessage (dropdown legacy)
+// 3) templateButtons    → templateMessage hydrated (campuran)
+// 4) buttons            → buttonsMessage (tombol respons klasik)
+// 5) text               → paling bontot
+async function sendMenu(conn, m, o) {
+    const opts = { quoted: m }
+    const modern = {
+        interactiveButtons: o.native,
+        text: o.text,
+        ...(o.title && { title: o.title }),
+        ...(o.footer && { footer: o.footer }),
+        ...(o.contextInfo && { contextInfo: o.contextInfo })
+    }
+    try {
+        return await conn.sendMessage(m.chat, modern, opts)
+    } catch (e) {
+        console.error(rgbTag('MENU', `[${o.title}] native: ${e?.message || e}`, COLORS.warn))
+    }
+
+    try {
+        return await conn.sendMessage(m.chat, {
+            title: o.title || 'MENU',
+            text: o.text,
+            ...(o.footer && { footer: o.footer }),
+            buttonText: BUTTON_TEXT,
+            sections: o.sections,
+            ...(o.contextInfo && { contextInfo: o.contextInfo })
+        }, opts)
+    } catch (e) {
+        console.error(rgbTag('MENU', `[${o.title}] listMessage: ${e?.message || e}`, COLORS.warn))
+    }
+
+    try {
+        return await conn.sendMessage(m.chat, {
+            text: o.text,
+            ...(o.footer && { footer: o.footer }),
+            templateButtons: o.template
+        }, opts)
+    } catch (e) {
+        console.error(rgbTag('MENU', `[${o.title}] templateButtons: ${e?.message || e}`, COLORS.warn))
+    }
+
+    try {
+        return await conn.sendMessage(m.chat, {
+            text: o.text,
+            ...(o.footer && { footer: o.footer }),
+            buttons: o.legacy
+        }, opts)
+    } catch (e) {
+        console.error(rgbTag('MENU', `[${o.title}] buttons: ${e?.message || e}`, COLORS.warn))
+    }
+
+    return conn.sendMessage(m.chat, { text: o.text }, opts)
+}
+
+// ==================== HALAMAN ROLE (.menu user|admin|owner) ====================
+async function sendRoleMenu(conn, m, role, thumb) {
+    const meta = ROLE_META[role]
+    if (role === 'owner' && !m.isOwner) return m.reply('❌ Menu ini khusus 👑 *Owner*.')
+    if (role === 'admin' && !m.isAdmin && !m.isOwner) return m.reply('❌ Menu ini khusus 🛡️ *Admin* grup.')
+
+    let rows = []
+    if (role === 'user') {
+        rows = USER_CATS.map(cat => {
+            const id = '.menu ' + cat.key
+            return { id, rowId: id, header: '', title: catTitle(cat), description: `${catRows(cat).length} perintah` }
+        }).filter(r => Number(r.description.split(' ')[0]) > 0)
+    } else {
+        const cats = role === 'admin' ? ADMIN_CATS : OWNER_CATS
+        rows = cats.flatMap(catRows)
+    }
+    if (!rows.length) return m.reply(`❌ Belum ada fitur untuk role *${meta.title}*.`)
+    rows.push(backRow())
+
+    const sections = [{ title: meta.title, highlight_label: '', rows }]
+    const native = [
+        single_select(meta.title, sections),
+        quick_reply('🔙 Menu Utama', '.menu'),
+        cta_url('🔗 Channel', config.channelLink)
+    ]
+    const listText = rows.slice(0, -1).map(r => `  ${r.title}\n  ${r.description || ''}`).join('\n')
+
+    return sendMenu(conn, m, {
+        title: meta.title,
+        text: `${meta.emoji} MENU *${meta.title.toUpperCase()}*\n\n${listText}`,
+        footer: `Ketik .menu untuk kembali • ${config.botName}`,
+        contextInfo: adReply(thumb, `${config.botName} • ${meta.title}`, meta.label),
+        sections,
+        native,
+        template: defaultTemplate(),
+        legacy: defaultLegacy()
+    })
+}
+
+// ==================== HANDLER ====================
 let handler = async (m, { conn, text, args }) => {
     const start = Date.now()
     const wanted = String(text || args?.[0] || '').trim().toLowerCase()
-    const image = await Jimp.read(fs.readFileSync('./src/img/menu.jpg'))
-    image.resize(640, 640)
-    const thumb = await image.getBufferAsync(Jimp.MIME_JPEG)
+    const number = m.sender.split('@')[0]
+    const isAdmin = m.isAdmin || m.isOwner
+
+    let thumb = null
+    try {
+        const image = await Jimp.read(fs.readFileSync('./src/img/menu.jpg'))
+        image.resize(640, 640)
+        thumb = await image.getBufferAsync(Jimp.MIME_JPEG)
+    } catch (e) {
+        console.error(rgbTag('MENU', 'Thumb gagal dimuat: ' + (e?.message || e), COLORS.warn))
+    }
+
+    // Halaman role cepat (quick reply → virtual category)
+    if (['user', 'admin', 'owner'].includes(wanted)) {
+        return sendRoleMenu(conn, m, wanted, thumb)
+    }
 
     let cat = wanted ? getCat(wanted) || null : null
 
@@ -301,29 +494,27 @@ let handler = async (m, { conn, text, args }) => {
         if (denied) return m.reply('❌ Kategori ini khusus role di atas kamu.')
         const rows = catRows(cat)
         if (rows.length === 0) return m.reply(`❌ Kategori *${cat.label}* belum punya command aktif.`)
-        rows.push({ id: '.menu', header: '', title: '🔙 Kembali ke Menu Utama', description: '' })
+        rows.push(backRow())
+
         const sections = [{ title: catTitle(cat), highlight_label: '', rows }]
+        const native = [
+            single_select(catTitle(cat), sections),
+            cta_url('🔗 Channel', config.channelLink),
+            cta_call('📞 Call Owner', OWNER_NUMBER),
+            cta_copy('📋 Copy Nomor', OWNER_NUMBER)
+        ]
         const listText = textRows(cat).join('\n')
-        return conn.sendMessage(m.chat, {
-            interactiveButtons: [{
-                name: 'single_select',
-                buttonParamsJson: JSON.stringify({
-                    title: catTitle(cat),
-                    sections
-                })
-            }],
-            title: `${cat.emoji} MENU ${cat.label.toUpperCase()}`,
-            text: `${listText}`,
+
+        return sendMenu(conn, m, {
+            title: catTitle(cat),
+            text: `${cat.emoji} MENU *${cat.label.toUpperCase()}*\n\n${listText}`,
             footer: `Ketik .menu untuk kembali • ${config.botName}`,
-            contextInfo: {
-                externalAdReply: {
-                    title: `${config.botName} • ${config.version || ''}`,
-                    body: `${cat.label}`,
-                    mediaType: 1,
-                    thumbnail: thumb
-                }
-            }
-        }, { quoted: m })
+            contextInfo: adReply(thumb, `${config.botName} • ${cat.label}`, `Submenu ${cat.label}`),
+            sections,
+            native,
+            template: defaultTemplate(),
+            legacy: defaultLegacy()
+        })
     }
 
     // ==================== MENU UTAMA ====================
@@ -334,51 +525,48 @@ let handler = async (m, { conn, text, args }) => {
     const minutes = Math.floor((runtime % 3600) / 60)
     const ramUsed = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(1)
     const totalPlugins = [...new Set(plugins.values())].length
-    const number = m.sender.split('@')[0]
 
-    const isAdmin = m.isAdmin || m.isOwner
-
-    const userCats = CATALOG.filter(c => c.role === 'user')
-    const adminCat = CATALOG.filter(c => c.role === 'admin')
-    const ownerCats = CATALOG.filter(c => c.role === 'owner')
-
-    // Sections dalam satu tombol ☰ — dikelompokkan sesuai role
+    // Sections dalam satu dropdown ☰ — dikelompokkan sesuai role
     const sections = []
 
-    // 1) USER: kategori → submenu (navigasi)
-    sections.push({
-        title: '👤 MENU USER',
-        highlight_label: '',
-        rows: userCats.map(cat => ({
-            id: '.menu ' + cat.key,
-            header: '',
-            title: catTitle(cat),
-            description: `${catRows(cat).length} command`
-        })).filter(r => Number(r.description.split(' ')[0]) > 0)
-    })
-
-    // 2) ADMIN: command khusus admin (langsung jalan)
-    if (isAdmin) {
-        const adminRows = adminCat.flatMap(cat => catRows(cat))
-        if (adminRows.length) sections.push({
-            title: '🛡️ MENU ADMIN',
-            highlight_label: '',
-            rows: adminRows
-        })
+    const userRows = USER_CATS.map(cat => {
+        const id = '.menu ' + cat.key
+        return { id, rowId: id, header: '', title: catTitle(cat), description: `${catRows(cat).length} perintah` }
+    }).filter(r => Number(r.description.split(' ')[0]) > 0)
+    if (userRows.length) {
+        sections.push({ title: '👤 MENU USER', highlight_label: '', rows: userRows })
     }
 
-    // 3) OWNER: manajemen grup + settings (langsung jalan)
+    if (isAdmin) {
+        const adminRows = ADMIN_CATS.flatMap(catRows)
+        if (adminRows.length) {
+            sections.push({ title: '🛡️ MENU ADMIN', highlight_label: '', rows: adminRows })
+        }
+    }
+
     if (m.isOwner) {
-        for (const cat of ownerCats) {
+        for (const cat of OWNER_CATS) {
             const rows = catRows(cat)
             if (rows.length) sections.push({ title: catTitle(cat), highlight_label: '', rows })
         }
     }
 
-    const userList = userCats.map(cat => catTitle(cat)).join('\n')
+    // Tombol cepat (quick_reply) — max 3 action button bersama dropdown
+    const quick = [quick_reply('👤 Menu User', '.menu user')]
+    if (m.isOwner) quick.push(quick_reply('👑 Menu Owner', '.menu owner'))
+    else if (isAdmin) quick.push(quick_reply('🛡️ Menu Admin', '.menu admin'))
+    else quick.push(quick_reply('🧰 Tools', '.menu tools'))
+
+    const native = [
+        single_select('☰ BUKA MENU', sections),
+        ...quick,
+        cta_url('🔗 Channel', config.channelLink)
+    ]
+
+    const userList = USER_CATS.map(cat => catTitle(cat)).join('\n')
     let ownerHint = ''
     if (m.isOwner) {
-        ownerHint = '\n\n👑 *OWNER*:\n' + ownerCats.map(cat => catTitle(cat)).join('\n')
+        ownerHint = '\n\n👑 *OWNER*:\n' + OWNER_CATS.map(cat => catTitle(cat)).join('\n')
     }
 
     const menuBox = `╭───『 *${config.botName}* 』───⬣
@@ -402,33 +590,20 @@ let handler = async (m, { conn, text, args }) => {
 ${userList}${ownerHint}
 
 💡 *Cara pakai*:
-• Tap tombol *☰ BUKA MENU* di bawah
+• Tap tombol *☰ BUKA MENU* di bawah untuk pilih kategori
 • Atau ketik *.menu <kategori>* — contoh : *.menu download*
-• .menu owner / .menu admin / .menu user`
+• *.menu user* / *.menu admin* / *.menu owner*`
 
-    await conn.sendMessage(m.chat, {
-        interactiveButtons: [{
-            name: 'single_select',
-            buttonParamsJson: JSON.stringify({
-                title: '☰ BUKA MENU',
-                sections
-            })
-        }],
+    return sendMenu(conn, m, {
         title: `👋 Halo ${m.pushName || 'User'}!`,
         text: menuBox,
         footer: `🔗 ${config.channelLink}  •  💻 ${config.githubRepo}`,
-        contextInfo: {
-            externalAdReply: {
-                title: `${config.botName} • v${config.version}`,
-                body: `DEVELOPER BY ${config.developer || 'JHON338'}`,
-                mediaType: 1,
-                thumbnail: thumb,
-                sourceUrl: 'https://jhon338-jc.github.io/Linktree/',
-                mediaUrl: 'https://jhon338-jc.github.io/Linktree/',
-                renderLargerThumbnail: true
-            }
-        }
-    }, { quoted: m })
+        contextInfo: adReply(thumb, `${config.botName} • v${config.version}`, `DEVELOPER BY ${config.developer || 'JHON338'}`),
+        sections,
+        native,
+        template: defaultTemplate(),
+        legacy: defaultLegacy()
+    })
 }
 
 handler.command = ['menu', 'help']
