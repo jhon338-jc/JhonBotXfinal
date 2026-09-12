@@ -94,6 +94,7 @@ const CATALOG = [
         label: 'Tools & Sticker',
         role: 'user',
         cmds: [
+            { name: 'web', title: '🌐 Web HTML (di WA)', desc: '.web kode html/url' },
             { name: 'stiker', title: '🎨 Stiker Teks', desc: '.stiker teks' },
             { name: 'simg', title: '🖼️ Stiker Gambar', desc: 'reply gambar + .simg' },
             { name: 'toimg', title: '🔄 Stiker ke Gambar', desc: 'reply stiker + .toimg' },
