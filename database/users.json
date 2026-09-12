@@ -1,13 +1,22 @@
 {
   "6285134895788": {
-    "xp": 55,
+    "xp": 67,
     "level": 1,
-    "money": 3,
+    "money": 157,
     "bank": 0,
-    "daily": "",
-    "limit": 24,
+    "daily": "2026-09-12",
+    "limit": 25,
     "items": {
       "bijih": 1
     }
+  },
+  "6285168112952": {
+    "xp": 8,
+    "level": 1,
+    "money": 0,
+    "bank": 0,
+    "daily": "",
+    "limit": 25,
+    "items": {}
   }
 }

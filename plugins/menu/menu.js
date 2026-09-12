@@ -5,57 +5,66 @@ import { plugins } from '../../handler.js'
 
 // ============================================================
 //  HYBRID MENU + NATIVE FLOW BUTTON (JHON338)
-//  Menu utama  = ringkasan info + tombol native flow:
-//    ⚡ POPULER  : command paling sering dipakai (langsung jalan)
-//    🗂️ KATEGORI: daftar kategori → .menu <kategori> → submenu
-//  Submenu      = command existing (valid) + tombol kembali
+//  Satu tombol ☰, sections dikelompokkan sesuai role user:
+//    👤 USER  → kategori fitur grup (submenu .menu <key>)
+//    🛡️ ADMIN → command khusus admin grup (langsung)
+//    👑 OWNER → manajemen grup + settings owner (langsung)
+//  Setiap command muncul di SATU kategori saja (no double).
 //  Support teks : .menu / .help / .menu <kategori>
 // ============================================================
-
-const POPULAR = ['stiker', 'simg', 'toimg', 'tt', 'ig', 'fb', 'mp3', 'qcwa', 'canvas', 'daily', 'adventure', 'profile']
 
 const CATALOG = [
     {
         key: 'group',
         emoji: '👥',
         label: 'Group & Admin',
+        role: 'owner',
         cmds: [
             { name: 'add', title: '➕ Add User', desc: '.add 628xx' },
             { name: 'kick', title: '👢 Kick Member', desc: '.kick @user' },
-            { name: 'addadmin', title: '👑 Promote', desc: '.addadmin @user' },
-            { name: 'deladmin', title: '⬇️ Demote', desc: '.deladmin @user' },
             { name: 'setname', title: '✏️ Set Nama', desc: '.setname teks' },
             { name: 'setdesc', title: '📝 Set Deskripsi', desc: '.setdesc teks' },
             { name: 'setpp', title: '🖼️ Set PP Grup', desc: 'reply gambar + .setpp' },
             { name: 'totag', title: '📢 Tag All', desc: '.totag teks' },
             { name: 'hidetag', title: '👻 Hide Tag', desc: '.hidetag teks' },
-            { name: 'grouplist', title: '📊 List Grup', desc: '.grouplist' },
-            { name: 'leave', title: '🚪 Leave', desc: '.leave' }
+            { name: 'leave', title: '🚪 Leave Grup', desc: '.leave' }
         ]
     },
     {
         key: 'owner',
         emoji: '👑',
         label: 'Owner / Settings',
-        owner: true,
+        role: 'owner',
         cmds: [
             { name: 'selectgroup', title: '🔄 Pilih Grup', desc: '.sg' },
-            { name: 'grouplist', title: '📊 Monitor', desc: '.grouplist / .monitor' },
+            { name: 'grouplist', title: '📊 Monitor Grup', desc: '.grouplist / .monitor' },
             { name: 'addowner', title: '➕ Add Owner', desc: '.addowner 628xx' },
             { name: 'delowner', title: '➖ Del Owner', desc: '.delowner 628xx' },
             { name: 'addpremium', title: '👑 Add Premium', desc: '.addpremium 628xx hari' },
             { name: 'delpremium', title: '📉 Del Premium', desc: '.delpremium 628xx' },
             { name: 'self', title: '🔒 Mode Self', desc: '.self' },
-            { name: 'public', title: '🔓 Mode Public', desc: '.public' },
+            { name: 'public', title: '🔓 Mode Self', desc: '.public' },
             { name: 'setbio', title: '📝 Set Bio', desc: '.setbio teks' },
             { name: 'setnamebot', title: '🏷️ Set Nama Bot', desc: '.setnamebot teks' },
-            { name: 'widget', title: '🖥️ Widget', desc: '.widget' }
+            { name: 'widget', title: '🖥️ Widget', desc: '.widget' },
+            { name: 'kyzzrenew', title: '♻️ Renew Kyzz', desc: '.kyzzrenew role hari' }
+        ]
+    },
+    {
+        key: 'admin',
+        emoji: '🛡️',
+        label: 'Khusus Admin',
+        role: 'admin',
+        cmds: [
+            { name: 'addadmin', title: '👑 Promote Admin', desc: '.addadmin @user' },
+            { name: 'deladmin', title: '⬇️ Demote Admin', desc: '.deladmin @user' }
         ]
     },
     {
         key: 'ai',
         emoji: '🤖',
         label: 'Artificial Intelligence',
+        role: 'user',
         cmds: [
             { name: 'editimage', title: '🖌️ Edit Image', desc: 'reply gambar + .editimage prompt' },
             { name: 'aiimage', title: '🎨 Generate Image', desc: '.aiimage deskripsi' }
@@ -65,6 +74,7 @@ const CATALOG = [
         key: 'download',
         emoji: '⬇️',
         label: 'Downloader',
+        role: 'user',
         cmds: [
             { name: 'tt', title: '🎵 TikTok DL', desc: '.tt url' },
             { name: 'ig', title: '📷 Instagram DL', desc: '.ig url' },
@@ -82,6 +92,7 @@ const CATALOG = [
         key: 'tools',
         emoji: '🧰',
         label: 'Tools & Sticker',
+        role: 'user',
         cmds: [
             { name: 'stiker', title: '🎨 Stiker Teks', desc: '.stiker teks' },
             { name: 'simg', title: '🖼️ Stiker Gambar', desc: 'reply gambar + .simg' },
@@ -101,6 +112,7 @@ const CATALOG = [
         key: 'logo',
         emoji: '🎨',
         label: 'Logo & Canvas',
+        role: 'user',
         cmds: [
             { name: 'ffduo', title: '🦅 FF Duo', desc: '.ffduo user1 user2' },
             { name: 'ffgirl', title: '🦅 FF Girl', desc: '.ffgirl username' },
@@ -118,6 +130,7 @@ const CATALOG = [
         key: 'anime',
         emoji: '🍭',
         label: 'Anime & Asupan',
+        role: 'user',
         cmds: [
             { name: 'hanime', title: '🌸 Hanime', desc: '.hanime judul' },
             { name: 'hentaigenres', title: '🔞 Hentai Genres', desc: '.hentaigenres genre' },
@@ -133,6 +146,7 @@ const CATALOG = [
         key: 'cecan',
         emoji: '📷',
         label: 'Cecan',
+        role: 'user',
         cmds: [
             { name: 'cecanchina', title: '🇨🇳 China', desc: '.cecanchina' },
             { name: 'cecanhijaber', title: '🧕 Hijaber', desc: '.cecanhijaber' },
@@ -148,6 +162,7 @@ const CATALOG = [
         key: 'islamic',
         emoji: '🕌',
         label: 'Islamic',
+        role: 'user',
         cmds: [
             { name: 'asmaulhusna', title: '📿 Asmaul Husna', desc: '.asmaulhusna [no]' },
             { name: 'ayatkursi', title: '🕋 Ayat Kursi', desc: '.ayatkursi' },
@@ -162,6 +177,7 @@ const CATALOG = [
         key: 'random',
         emoji: '🎲',
         label: 'Random',
+        role: 'user',
         cmds: [
             { name: 'andin', title: '🎀 Andin', desc: '.andin' },
             { name: 'seegore', title: '🔞 See Gore', desc: '.seegore' },
@@ -172,6 +188,7 @@ const CATALOG = [
         key: 'rpg',
         emoji: '🎮',
         label: 'Games / RPG',
+        role: 'user',
         cmds: [
             { name: 'adventure', title: '⚔️ Adventure', desc: '.adventure' },
             { name: 'explore', title: '🗺️ Explore', desc: '.explore' },
@@ -184,6 +201,7 @@ const CATALOG = [
         key: 'economy',
         emoji: '💰',
         label: 'Economy & Store',
+        role: 'user',
         cmds: [
             { name: 'balance', title: '💵 Balance', desc: '.balance' },
             { name: 'daily', title: '🎁 Hadiah Harian', desc: '.daily' },
@@ -199,6 +217,7 @@ const CATALOG = [
         key: 'profile',
         emoji: '📊',
         label: 'XP & Level',
+        role: 'user',
         cmds: [
             { name: 'profile', title: '🧑‍🚀 Profile', desc: '.profile' },
             { name: 'level', title: '🏅 Level & XP', desc: '.level' },
@@ -212,6 +231,7 @@ const CATALOG = [
         key: 'premium',
         emoji: '👑',
         label: 'Premium',
+        role: 'user',
         cmds: [
             { name: 'premium', title: '👑 Cek Premium', desc: '.premium' },
             { name: 'premiumcheck', title: '🔍 Cek Pengguna', desc: '.premiumcheck 628xx' }
@@ -221,15 +241,13 @@ const CATALOG = [
         key: 'info',
         emoji: 'ℹ️',
         label: 'Info & Lainnya',
+        role: 'user',
         cmds: [
             { name: 'info', title: 'ℹ️ Info Bot', desc: '.info' },
             { name: 'owner', title: '👤 Owner', desc: '.owner' },
-            { name: 'ping', title: '🏓 Ping', desc: '.ping' },
             { name: 'kyzz', title: '🔑 Kyzz Help', desc: '.kyzz' },
             { name: 'kyzzprofile', title: '🪪 Profil Kyzz', desc: '.kyzzprofile' },
-            { name: 'kyzzstats', title: '📊 Stats Kyzz', desc: '.kyzzstats' },
-            { name: 'kyzzrenew', title: '♻️ Renew Kyzz', desc: '.kyzzrenew role hari' },
-            { name: 'widget', title: '🖥️ Widget Viral', desc: '.widget' }
+            { name: 'kyzzstats', title: '📊 Stats Kyzz', desc: '.kyzzstats' }
         ]
     }
 ]
@@ -251,8 +269,12 @@ function catRows(cat) {
     })).filter(row => exists(row.id.slice(1)))
 }
 
-function htmlEscape(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+function catTitle(cat) {
+    return `${cat.emoji} ${cat.label}`
+}
+
+function textRows(cat) {
+    return (cat.cmds || []).filter(c => exists(c.name)).map(c => `  ${c.title}\n  ${c.desc}`)
 }
 
 let handler = async (m, { conn, text, args }) => {
@@ -265,7 +287,7 @@ let handler = async (m, { conn, text, args }) => {
     let cat = wanted ? getCat(wanted) || null : null
 
     if (wanted && !cat) {
-        const list = CATALOG.map(c => `${c.emoji} *${c.label}* → .menu ${c.key}`).join('\n')
+        const list = CATALOG.map(c => `${catTitle(c)} → .menu ${c.key}`).join('\n')
         return conn.sendMessage(m.chat, {
             text: `❌ Kategori *"${wanted}"* tidak ditemukan.\n\nKategori tersedia:\n${list}`
         }, { quoted: m })
@@ -273,17 +295,18 @@ let handler = async (m, { conn, text, args }) => {
 
     // ==================== SUBMENU KATEGORI ====================
     if (cat) {
-        if (cat.owner && !m.isOwner) return m.reply('❌ Kategori ini khusus Owner.')
+        const denied = (cat.role === 'owner' && !m.isOwner) || (cat.role === 'admin' && !m.isAdmin && !m.isOwner)
+        if (denied) return m.reply('❌ Kategori ini khusus role di atas kamu.')
         const rows = catRows(cat)
         if (rows.length === 0) return m.reply(`❌ Kategori *${cat.label}* belum punya command aktif.`)
         rows.push({ id: '.menu', header: '', title: '🔙 Kembali ke Menu Utama', description: '' })
-        const sections = [{ title: `${cat.emoji} ${cat.label}`, highlight_label: '', rows }]
-        const listText = rows.map(r => `${r.title}\n   ${r.description}`).join('\n')
+        const sections = [{ title: catTitle(cat), highlight_label: '', rows }]
+        const listText = textRows(cat).join('\n')
         return conn.sendMessage(m.chat, {
             interactiveButtons: [{
                 name: 'single_select',
                 buttonParamsJson: JSON.stringify({
-                    title: `${cat.emoji} ${cat.label}`,
+                    title: catTitle(cat),
                     sections
                 })
             }],
@@ -311,28 +334,51 @@ let handler = async (m, { conn, text, args }) => {
     const totalPlugins = [...new Set(plugins.values())].length
     const number = m.sender.split('@')[0]
 
-    const cats = CATALOG.filter(c => !c.owner || m.isOwner)
+    const isAdmin = m.isAdmin || m.isOwner
 
-    const popRows = POPULAR.map(cmd => ({
-        id: '.' + cmd,
-        header: '',
-        title: `${cmd}`,
-        description: exists(cmd) ? (toolsDesc(cmd)) : null
-    })).filter(r => r.description)
+    const userCats = CATALOG.filter(c => c.role === 'user')
+    const adminCat = CATALOG.filter(c => c.role === 'admin')
+    const ownerCats = CATALOG.filter(c => c.role === 'owner')
 
-    const catRowsAll = cats.map(c => ({
-        id: '.menu ' + c.key,
-        header: '',
-        title: `${c.emoji} ${c.label}`,
-        description: `${catRows(c).length} command`
-    }))
+    // Sections dalam satu tombol ☰ — dikelompokkan sesuai role
+    const sections = []
 
-    const sections = [
-        { title: '⚡ POPULER', highlight_label: '', rows: popRows.slice(0, 10) },
-        { title: '🗂️ KATEGORI MENU', highlight_label: '', rows: catRowsAll }
-    ]
+    // 1) USER: kategori → submenu (navigasi)
+    sections.push({
+        title: '👤 MENU USER',
+        highlight_label: '',
+        rows: userCats.map(cat => ({
+            id: '.menu ' + cat.key,
+            header: '',
+            title: catTitle(cat),
+            description: `${catRows(cat).length} command`
+        })).filter(r => Number(r.description.split(' ')[0]) > 0)
+    })
 
-    const navHint = cats.map(c => c.emoji).join(' · ')
+    // 2) ADMIN: command khusus admin (langsung jalan)
+    if (isAdmin) {
+        const adminRows = adminCat.flatMap(cat => catRows(cat))
+        if (adminRows.length) sections.push({
+            title: '🛡️ MENU ADMIN',
+            highlight_label: '',
+            rows: adminRows
+        })
+    }
+
+    // 3) OWNER: manajemen grup + settings (langsung jalan)
+    if (m.isOwner) {
+        for (const cat of ownerCats) {
+            const rows = catRows(cat)
+            if (rows.length) sections.push({ title: catTitle(cat), highlight_label: '', rows })
+        }
+    }
+
+    const userList = userCats.map(cat => catTitle(cat)).join('\n')
+    let ownerHint = ''
+    if (m.isOwner) {
+        ownerHint = '\n\n👑 *OWNER*:\n' + ownerCats.map(cat => catTitle(cat)).join('\n')
+    }
+
     const menuBox = `╭───『 *${config.botName}* 』───⬣
 │  🤖 *Bot Information*
 │  • Nama         : ${config.botName}
@@ -347,14 +393,16 @@ let handler = async (m, { conn, text, args }) => {
 │  👤 *User Information*
 │  • Nama         : ${m.pushName || '-'}
 │  • Nomor        : +${number}
-│  • Status       : ${m.isOwner ? '👑 Owner' : m.isPremium ? '👑 Premium' : '👤 User'}
+│  • Status       : ${m.isOwner ? '👑 Owner' : m.isPremium ? '👑 Premium' : m.isAdmin ? '🛡️ Admin' : '👤 User'}
 ╰════════════════════⬣
 
-🗂️ *KATEGORI* : ${navHint}
+🗂️ *MENU USER*:
+${userList}${ownerHint}
 
 💡 *Cara pakai*:
-• Ketik *.menu <kategori>* — contoh : *.menu download*
-• Atau tap tombol *☰ BUKA MENU* di bawah`
+• Tap tombol *☰ BUKA MENU* di bawah
+• Atau ketik *.menu <kategori>* — contoh : *.menu download*
+• .menu owner / .menu admin / .menu user`
 
     await conn.sendMessage(m.chat, {
         interactiveButtons: [{
@@ -364,7 +412,7 @@ let handler = async (m, { conn, text, args }) => {
                 sections
             })
         }],
-        title: `👋 Halo ${htmlEscape(m.pushName || 'User')}!`,
+        title: `👋 Halo ${m.pushName || 'User'}!`,
         text: menuBox,
         footer: `🔗 ${config.channelLink}  •  💻 ${config.githubRepo}`,
         contextInfo: {
@@ -379,25 +427,6 @@ let handler = async (m, { conn, text, args }) => {
             }
         }
     }, { quoted: m })
-}
-
-// deskripsi cepat untuk command populer (biar tombol ⚡ POPULER rapi)
-function toolsDesc(cmd) {
-    const map = {
-        stiker: '.stiker teks → stiker brat',
-        simg: 'reply gambar → stiker',
-        toimg: 'reply stiker → gambar',
-        tt: '.tt url tiktok',
-        ig: '.ig url instagram',
-        fb: '.fb url facebook',
-        mp3: '.mp3 url youtube',
-        qcwa: '.qcwa teks',
-        canvas: '.canvas kode html',
-        daily: '.daily → klaim hadiah',
-        adventure: '.adventure → main RPG',
-        profile: '.profile → profil kamu'
-    }
-    return map[cmd] || ''
 }
 
 handler.command = ['menu', 'help']
