@@ -13,7 +13,7 @@ export const BOT_NAME = 'JhonBot'
 export const BOT_VERSION = '3.3.8'
 
 // Command publik yang BOLEH dipakai di DM (selain itu DM tidak dilayani)
-const DM_PUBLIC = new Set(['rvo', 'brat', 'img', 'toimg', 'iqc', 'lirik', 'donlodall'])
+const DM_PUBLIC = new Set(['rvo', 'brat', 'img', 'toimg', 'iqc', 'lirik', 'donlodall', 'daftar'])
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginDir = path.join(__dirname, 'plugins')
@@ -27,7 +27,8 @@ const jsonCache = new Map()
 export const DB_FILES = {
     owner: path.join(__dirname, 'database', 'owner.json'),
     premium: path.join(__dirname, 'database', 'premium.json'),
-    monitor: path.join(__dirname, 'database', 'monitor.json')
+    monitor: path.join(__dirname, 'database', 'monitor.json'),
+    members: path.join(__dirname, 'database', 'member.json')
 }
 
 function readJSON(file) {
@@ -78,6 +79,32 @@ export function loadPremium() {
         return []
     }
 }
+
+// ==================== MEMBER BOT (wajib daftar) ====================
+export function loadMembers() {
+    const db = readJSON(DB_FILES.members)
+    return Array.isArray(db?.members) ? db.members : []
+}
+
+export function isRegisteredMember(sender = '') {
+    const jid = String(sender || '')
+    const num = normalizeNumber(jid)
+    if (!jid && !num) return false
+    return loadMembers().some(x => (x?.jid && x.jid === jid) || (num && x?.number && x.number === num))
+}
+
+export function saveMember(entry) {
+    const db = readJSON(DB_FILES.members) || {}
+    const arr = Array.isArray(db.members) ? db.members : []
+    const num = entry?.number || ''
+    const jid = entry?.jid || ''
+    if (!arr.some(x => (jid && x?.jid === jid) || (num && x?.number === num))) arr.push(entry)
+    db.members = arr
+    writeJSON(DB_FILES.members, db)
+    return arr
+}
+
+export const MEMBER_STATUS = ['pelajar', 'mahasiswa', 'singgel', 'jomblo', 'kawin']
 
 // ==================== LOAD PLUGIN ====================
 function getPluginFiles(dir) {
@@ -321,6 +348,11 @@ export default async function handleMessage(conn, m) {
         }
         if (handler.admin && m.isGroup && !m.isAdmin && !m.isOwner) {
             return m.reply('❌ Fitur ini khusus *admin grup*!')
+        }
+
+        // ============ WAJIB DAFTAR MEMBER ============
+        if (!m.isOwner && !m.isPremium && command !== 'daftar' && !isRegisteredMember(m.sender || m.chat)) {
+            return m.reply('🔒 *KAMU BELUM TERDAFTAR*\n\nUntuk memakai bot ini kamu harus daftar dulu sebagai member.\n\nCara daftar:\n`+ .daftar nama,umur,status`\n\nContoh:\n`+ .daftar Jhon,20,pelajar`\n\n📋 *Status:* pelajar / mahasiswa / singgel / jomblo / kawin')
         }
 
         await handler(m, { conn, args, text: args.join(' '), command })

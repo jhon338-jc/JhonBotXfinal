@@ -220,8 +220,20 @@ async function fetchTikTokMeta(inputUrl) {
     const r = await fetch(clean.toString(), { headers: { 'user-agent': UA }, redirect: 'follow', signal: AbortSignal.timeout(25000) })
     const html = await r.text()
     const m = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/)
-    if (!m) return null
-    return JSON.parse(m[1])?.__DEFAULT_SCOPE__?.['webapp.video-detail']?.itemInfo?.itemStruct || null
+    if (m) {
+        try {
+            const parsed = JSON.parse(m[1])?.__DEFAULT_SCOPE__?.['webapp.video-detail']?.itemInfo?.itemStruct
+            if (parsed) return parsed
+        } catch {}
+    }
+    try {
+        const sigi = html.match(/window\.SIGI_STATE\s*=\s*(\{.*?\});<\/script>/s)
+        const s = sigi ? JSON.parse(sigi[1]) : null
+        const mod = s?.ItemModule || {}
+        const first = Object.values(mod)[0]
+        if (first) return first
+    } catch {}
+    return null
 }
 
 async function fetchYtMeta(url) {
@@ -234,6 +246,7 @@ async function fetchYtMeta(url) {
     const micro = j.microformat?.playerMicroformatRenderer || {}
     return {
         author: vd.author || '',
+        shortDescription: String(vd.shortDescription || micro.description || '').trim(),
         lengthSeconds: vd.lengthSeconds,
         viewCount: vd.viewCount,
         keywords: Array.isArray(vd.keywords) ? vd.keywords.filter(Boolean).slice(0, 20) : [],
@@ -273,6 +286,10 @@ function ttInfoBlock(t = {}, r = {}) {
     if (s.collectCount) statsParts.push(`🔖 ${formatCount(s.collectCount)}`)
     if (statsParts.length) lines.push(infoLine('Statistik', statsParts.join(' · ')))
     if (aStats.followerCount) lines.push(infoLine('Followers', formatCount(aStats.followerCount)))
+    if (aStats.followingCount) lines.push(infoLine('Following', formatCount(aStats.followingCount)))
+    if (aStats.heartCount) lines.push(infoLine('Total Suka', formatCount(aStats.heartCount)))
+    if (aStats.videoCount) lines.push(infoLine('Video', formatCount(aStats.videoCount)))
+    if (a.signature) lines.push(infoLine('Bio', String(a.signature).slice(0, 200)))
     if (t.createTime && fmtDate(t.createTime)) lines.push(infoLine('Posting', fmtDate(t.createTime)))
     return lines
 }
@@ -286,6 +303,7 @@ function ytInfoBlock(r = {}, y = {}) {
     if (duration) lines.push(infoLine('Durasi', formatDuration(duration)))
     if (r.quality) lines.push(infoLine('Kualitas', r.quality))
     if (y.viewCount) lines.push(infoLine('Views', formatCount(y.viewCount)))
+    if (y.shortDescription) lines.push(infoLine('Deskripsi', String(y.shortDescription).slice(0, 400)))
     if (y.keywords?.length) lines.push(infoLine('Tag', y.keywords.slice(0, 10).map(k => '#' + k.replace(/\s+/g, '').replace(/[^#\w]/g, '')).join(' ')))
     if (y.category) lines.push(infoLine('Kategori', y.category))
     if (y.publishDate && fmtYtDate(y.publishDate)) lines.push(infoLine('Rilis', fmtYtDate(y.publishDate)))
@@ -312,6 +330,123 @@ function basicBlock(platform, json, r, url) {
         if (r.owner || r.author || r.username) lines.push(infoLine('Author', r.owner || r.author || r.username))
     }
     return lines
+}
+
+function ogMeta(html, prop) {
+    const re1 = new RegExp('<meta[^>]+property=["\']' + prop + '["\'][^>]*?content=["\']([^"\']*)["\']', 'i')
+    const re2 = new RegExp('<meta[^>]+content=["\']([^"\']*)["\'][^>]*?property=["\']' + prop + '["\']', 'i')
+    const m = html.match(re1) || html.match(re2)
+    return m ? m[1] : ''
+}
+
+function igInfoBlock(json, url, aio = {}) {
+    const lines = []
+    const cv = Array.isArray(json.videos) ? json.videos.length : 0
+    const ci = Array.isArray(json.images) ? json.images.length : 0
+    if (aio.owner) lines.push(infoLine('Author', String(aio.owner)))
+    if (aio.title && aio.title !== 'Instagram') lines.push(infoLine('Judul', String(aio.title).slice(0, 250)))
+    const isReel = /\/reel\//i.test(url)
+    if (/carousel/i.test(String(json.type || ''))) lines.push(infoLine('Jenis', 'Carousel'))
+    else lines.push(infoLine('Jenis', isReel ? 'Reels' : (cv ? 'Video' : 'Post Foto')))
+    if (cv + ci > 1) lines.push(infoLine('Jumlah Media', String(cv + ci)))
+    return lines
+}
+
+async function fetchFbMeta(inputUrl) {
+    const r = await fetch(inputUrl, { headers: { 'user-agent': UA, 'accept-language': 'id,en;q=0.8' }, redirect: 'follow', signal: AbortSignal.timeout(25000) })
+    const html = await r.text()
+    const title = String(ogMeta(html, 'og:title') || '').trim()
+    const desc = String(ogMeta(html, 'og:description') || '').trim()
+    let dur = Number((html.match(/<meta[^>]+property="og:video:duration"[^>]*content="([\d.]+)"/i) || [])[1]) || 0
+    if (!dur) dur = Number((html.match(/"video_duration":\s*([\d.]+)/) || [])[1]) || 0
+    let author = ''
+    let time = 0
+    try {
+        const pm = html.match(/<script type="application\/json" data-preloaded-cache="[^"]*">([\s\S]*?)<\/script>/)
+        if (pm) {
+            const data = JSON.parse(pm[1])
+            const walk = (o, d) => {
+                if (d > 12 || !o || typeof o !== 'object' || (author && time)) return
+                if (Array.isArray(o)) { o.forEach(v => walk(v, d + 1)); return }
+                if (!time) {
+                    const t = o.taken_at || o.creation_time || o.publish_time
+                    if (t) time = t
+                }
+                if (!author && (o.owner?.name || typeof o.owner === 'string')) author = o.owner?.name || o.owner
+                for (const k of Object.keys(o)) { try { walk(o[k], d + 1) } catch {} }
+            }
+            walk(data, 0)
+        }
+    } catch {}
+    return { title, desc, dur, author, time }
+}
+
+function fbInfoBlock(r = {}, fb = {}, aio = {}) {
+    const lines = []
+    const title = String(r.title || fb.title || aio.title || '').trim()
+    if (title && title !== 'Facebook Video') lines.push(infoLine('Judul', title.slice(0, 250)))
+    const desc = String(fb.desc || '').trim()
+    if (desc && desc !== title) lines.push(infoLine('Deskripsi', String(desc).slice(0, 500)))
+    const author = fb.author || aio.owner || ''
+    if (author) lines.push(infoLine('Author', author))
+    const duration = r.duration || fb.dur
+    if (duration) lines.push(infoLine('Durasi', formatDuration(duration)))
+    const q = (r.medias || []).map(x => x.quality).filter(Boolean)
+    if (q.length) lines.push(infoLine('Kualitas', q.join(', ')))
+    if (fb.time && fmtDate(fb.time)) lines.push(infoLine('Posting', fmtDate(fb.time)))
+    return lines
+}
+
+async function fetchAioMeta(inputUrl) {
+    const { json } = await azfetch('allinonev2', inputUrl)
+    if (isBad(json, 'other')) return null
+    const r = json.result || {}
+    return {
+        title: String(r.title || '').trim(),
+        owner: String(r.owner || r.author || r.username || '').trim(),
+        thumbnail: String(r.thumbnail || '').trim()
+    }
+}
+
+function mp4Duration(buffer) {
+    try {
+        const u = new Uint8Array(buffer)
+        const dv = new DataView(u.buffer, u.byteOffset, u.byteLength)
+        const find = (start, size, type) => {
+            let i = start
+            while (i + 8 <= size) {
+                const s = dv.getUint32(i)
+                const t = String.fromCharCode(u[i + 4], u[i + 5], u[i + 6], u[i + 7])
+                if (t === type) return { i, s }
+                const step = s >= 8 ? s : size - i
+                if (step <= 0) break
+                i += step
+            }
+            return null
+        }
+        const moov = find(0, u.length, 'moov')
+        if (!moov) return 0
+        let i = moov.i + 8
+        while (i + 8 <= moov.i + moov.s) {
+            const s = dv.getUint32(i)
+            const t = String.fromCharCode(u[i + 4], u[i + 5], u[i + 6], u[i + 7])
+            if (t === 'mvhd') {
+                const ver = dv.getUint8(i + 8)
+                const ts = ver ? dv.getUint32(i + 28) : dv.getUint32(i + 20)
+                if (!ts) return 0
+                if (ver) {
+                    const hi = dv.getUint32(i + 32)
+                    const lo = dv.getUint32(i + 36)
+                    return Math.round(((hi * 4294967296) + lo) / ts)
+                }
+                return Math.round(dv.getUint32(i + 24) / ts)
+            }
+            const step = s >= 8 ? s : moov.i + moov.s - i
+            if (step <= 0) break
+            i += step
+        }
+    } catch {}
+    return 0
 }
 
 let handler = async (m, { conn, text }) => {
@@ -364,6 +499,18 @@ let handler = async (m, { conn, text }) => {
             let ytMeta = null
             try { ytMeta = await fetchYtMeta(url) } catch {}
             infoLines = ytInfoBlock(r, ytMeta ? ytMeta : {})
+        } else if (platform === 'instagram') {
+            let aio = null
+            try { aio = await fetchAioMeta(url) } catch {}
+            infoLines = igInfoBlock(json, url, aio ? aio : {})
+            if (!infoLines.length) infoLines = basicBlock(platform, json, r, url)
+        } else if (platform === 'facebook') {
+            let fbMeta = null
+            let aio = null
+            try { fbMeta = await fetchFbMeta(url) } catch {}
+            try { aio = await fetchAioMeta(url) } catch {}
+            infoLines = fbInfoBlock(r, fbMeta ? fbMeta : {}, aio ? aio : {})
+            if (!infoLines.length) infoLines = basicBlock(platform, json, r, url)
         } else {
             infoLines = basicBlock(platform, json, r, url)
         }
@@ -400,6 +547,10 @@ let handler = async (m, { conn, text }) => {
             const label = (it.label || '').replace(/^download/i, '').replace(/[()]/g, '').trim()
             let cap = (multi ? `📦 Media ${origIdx + 1}/${chosen.length}\n\n` : '') + header
             if (label) cap += '\n' + infoLine('Tipe', label)
+            if (type === 'video' && !/^\s*▪️ \*Durasi:/m.test(cap)) {
+                const d = mp4Duration(buffer)
+                if (d > 0) cap += '\n' + infoLine('Durasi', formatDuration(d))
+            }
             const caption = cap
 
             if (type === 'image') {

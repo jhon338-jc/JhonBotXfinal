@@ -28,7 +28,8 @@ const USER_CMDS = [
     { name: 'papbgl',desc: 'PAP BGL random' },
     { name: 'asp',   desc: 'Asupan random' },
     { name: 'ccn',   desc: 'Cecan random' },
-    { name: 'donlodall', desc: 'Download video/foto (TikTok, IG, dll)' }
+    { name: 'donlodall', desc: 'Download video/foto (TikTok, IG, dll)' },
+    { name: 'daftar', desc: 'Daftar jadi member bot (.daftar nama,umur,status)' }
 ]
 
 const OWNER_CMDS = [
@@ -41,6 +42,7 @@ const OWNER_CMDS = [
     { name: 'grup',   desc: 'Daftar & pilih grup' },
     { name: 'ownadd', desc: 'Tambah owner baru' },
     { name: 'owndel', desc: 'Hapus owner' },
+    { name: 'ownlist', desc: 'Lihat daftar owner' },
     { name: 'ping',   desc: 'Cek respon bot' },
     { name: 'info',   desc: 'Info bot' },
     { name: 'menu',   desc: 'Menu ini' }

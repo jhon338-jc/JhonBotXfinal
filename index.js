@@ -272,11 +272,45 @@ async function start() {
                         if (rawMsg.key?.remoteJid === 'status@broadcast') return
                         if (rawMsg.key?.remoteJid?.includes('@newsletter')) return
                         const m = await smsg(socket, rawMsg)
-                        if (m) await handleMessage(socket, m)
+                        if (m) {
+                            m.pushName = rawMsg.pushName || ''
+                            await handleMessage(socket, m)
+                        }
                     } catch (e) {
                         console.error(rgbTag('ERROR', e?.message || e, COLORS.error))
                     }
                 })
+            }
+        })
+
+        socket.ev.on('group-participants.update', async ({ id, participants, action }) => {
+            try {
+                if (!id || !id.endsWith('@g.us')) return
+                const monitor = readJSON(MONITOR_FILE) || {}
+                if (monitor.waiting || !Array.isArray(monitor.groups) || !monitor.groups.includes(id)) return
+                if (!participants?.length) return
+                const botJid = socket.decodeJid(socket.user?.id) || ''
+                for (const p of participants) {
+                    if (!p) continue
+                    if (botJid && socket.decodeJid(String(p)) === botJid) continue
+                    const num = String(p).split('@')[0]
+                    const subject = socket.chats?.[id]?.subject || 'grup ini'
+                    if (action === 'add') {
+                        await socket.sendMessage(id, {
+                            text: `👋 *WELCOME MEMBER BARU*\n\nHalo @${num}, selamat datang di grup *${subject}*! 🎉\n\nJangan lupa baca deskripsi grup ya. Kalau mau pakai bot, daftar dulu:\n\n\`.daftar nama,umur,status\`\n\nSemoga betah! 🙏`,
+                            mentions: [p]
+                        })
+                        console.log(rgbTag('NOTIF', 'Welcome @' + num + ' di ' + subject, COLORS.success))
+                    } else if (action === 'remove') {
+                        await socket.sendMessage(id, {
+                            text: `👋 *MEMBER KELUAR*\n\n@${num} telah keluar / dikeluarkan dari grup *${subject}*. 👋\n\nTerima kasih atas kebersamaannya, sampai jumpa!`,
+                            mentions: [p]
+                        })
+                        console.log(rgbTag('NOTIF', 'Bye @' + num + ' di ' + subject, COLORS.warn))
+                    }
+                }
+            } catch (e) {
+                console.error(rgbTag('NOTIF', 'Gagal notifikasi member: ' + (e?.message || e), COLORS.error))
             }
         })
 
