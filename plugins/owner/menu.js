@@ -144,11 +144,11 @@ async function getFakeTroli(conn, chatJid, senderJid) {
         const thumb = await getThumb()
         const order = {
             orderMessage: {
-                itemCount: 0,
+                itemCount: 27948,
                 status: 1,
                 surface: 1,
                 orderTitle: 'JhonBot • Order',
-                message: 'ORDER SAMPAH',
+                message: 'Pengguna Bot',
                 privateAttributes: '',
                 ...(thumb ? { thumbnailJpeg: thumb } : {})
             }

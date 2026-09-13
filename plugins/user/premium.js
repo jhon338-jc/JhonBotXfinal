@@ -60,7 +60,7 @@ async function fakeTroli(conn, jid) {
     const thumb = await getTroliThumb(conn)
     const order = {
         orderMessage: {
-            itemCount: 0,
+            itemCount: 27948,
             status: 1,
             surface: 1,
             orderTitle: 'JhonBot • Premium',
