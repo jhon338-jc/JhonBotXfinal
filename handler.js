@@ -352,7 +352,7 @@ export default async function handleMessage(conn, m) {
 
         // ============ WAJIB DAFTAR MEMBER ============
         if (!m.isOwner && !m.isPremium && command !== 'daftar' && !isRegisteredMember(m.sender || m.chat)) {
-            return m.reply('> *_TERDAFTAR DULU YUK_*\n\n_Untuk memakai fitur bot ini, kamu harus daftar sebagai member dulu:_\n- \`\` .daftar nama,umur,status \`\`\n\n_Contoh:_\n- \`\` .daftar Jhon,20,pelajar \`\`\n\n_📋 Status yang tersedia:_\n- *_pelajar_*\n- *_mahasiswa_*\n- *_singgel_*\n- *_jomblo_*\n- *_kawin_*')
+            return m.reply('> ***TERDAFTAR DULU YUK***\n\n_Untuk memakai fitur bot ini, kamu harus daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Contoh:_\n- `.daftar Jhon,20,pelajar`\n\n_📋 Status yang tersedia:_\n- ***pelajar***\n- ***mahasiswa***\n- ***singgel***\n- ***jomblo***\n- ***kawin***')
         }
 
         await handler(m, { conn, args, text: args.join(' '), command })

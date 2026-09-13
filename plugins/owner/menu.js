@@ -140,11 +140,11 @@ let handler = async (m, { conn, args }) => {
 
     // Profil view (quick_reply / .profil)
     if (input === 'me' || m.command === 'profil') {
-        let status = '👤 *_User_*'
-        if (m.isOwner) status = '👑 *_Owner_*'
-        else if (m.isPremium) status = '👑 *_Premium_*'
+        let status = '👤 ***User***'
+        if (m.isOwner) status = '👑 ***Owner***'
+        else if (m.isPremium) status = '👑 ***Premium***'
         await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
-        m.reply(`> *_PROFIL KAMU_*\n\n- *_Nama_* : ${m.pushName || '-'}\n- *_Nomor_* : +${number}\n- *_Status_* : ${status}\n\n_Mau ganti akses? Hubungi owner._`)
+        m.reply(`> ***PROFIL KAMU***\n\n- ***Nama*** : ${m.pushName || '-'}\n- ***Nomor*** : +${number}\n- ***Status*** : ${status}\n\n_Mau ganti akses? Hubungi owner._`)
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         return
     }
@@ -159,11 +159,11 @@ let handler = async (m, { conn, args }) => {
     const totalPlugins = [...new Set(plugins.values())].length
 
     const menuBox = [
-        `> *_SELAMAT DATANG, ${(m.pushName || 'User').toUpperCase()}_*`,
+        `> ***SELAMAT DATANG, ${(m.pushName || 'User').toUpperCase()}***`,
         '> _JhonBot Aktif 24/7 Tanpa Henti_',
         '',
-        `*_⚡_* _Runtime:_ ${days} hari, ${hours} jam, ${minutes} menit`,
-        `*_📦_* _Total Plugin:_ ${totalPlugins}`,
+        `***⚡*** _Runtime:_ ${days} hari, ${hours} jam, ${minutes} menit`,
+        `***📦*** _Total Plugin:_ ${totalPlugins}`,
         '',
         '💡 _Ketuk tombol di bawah untuk akses cepat_'
     ].join('\n')
@@ -221,13 +221,13 @@ let handler = async (m, { conn, args }) => {
     }
 
     // Fallback: plain text (pakai kombinasi format)
-    let plainText = `> *_${botVersion.toUpperCase()}_*\n> _Aktif 24/7 Tanpa Henti_\n\n`
-    plainText += `👋 _Halo,_ *_${m.pushName || 'User'}_*\n📦 _Total Plugin:_ *_${totalPlugins}_*\n\n`
-    plainText += `*_1. 👤 MENU USER_*\n`
-    userRows.forEach(r => { plainText += `- \`\`${r.title}\`\` — _${r.description}_\n` })
+    let plainText = `> ***${botVersion.toUpperCase()}***\n> _Aktif 24/7 Tanpa Henti_\n\n`
+    plainText += `👋 _Halo,_ ***${m.pushName || 'User'}***\n📦 _Total Plugin:_ ***${totalPlugins}***\n\n`
+    plainText += `***1. 👤 MENU USER***\n`
+    userRows.forEach(r => { plainText += `- \`${r.title}\` — _${r.description}_\n` })
     if (m.isOwner) {
-        plainText += `\n*_2. 👑 MENU OWNER_*\n`
-        cmdRows(OWNER_CMDS).forEach(r => { plainText += `- \`\`${r.title}\`\` — _${r.description}_\n` })
+        plainText += `\n***2. 👑 MENU OWNER***\n`
+        cmdRows(OWNER_CMDS).forEach(r => { plainText += `- \`${r.title}\` — _${r.description}_\n` })
     }
     plainText += `\n_Ketik perintah seperti contoh di atas. Semoga bermanfaat! 🙏`
     await m.reply(plainText)

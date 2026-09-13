@@ -8,14 +8,14 @@ let handler = async (m, { conn }) => {
         return m.reply('❌ Belum ada owner terdaftar.')
     }
 
-    let text = '> *_DAFTAR OWNER_*\n> _Khusus 👑 Owner bot_\n\n'
-    text += `*_Total:_* ${owners.length}\n\n`
+    let text = '> ***DAFTAR OWNER***\n> _Khusus 👑 Owner bot_\n\n'
+    text += `***Total:*** ${owners.length}\n\n`
     owners.forEach((o, i) => {
         const rec = conn.contacts?.[o + '@s.whatsapp.net']
         const name = rec?.name || rec?.notify || ''
-        text += `${i + 1}. ${name ? `*_${name}_*` : '_Member_'} — \`\`${o}\`\`\n`
+        text += `${i + 1}. ${name ? `***${name}***` : '_Member_'} — \`${o}\`\n`
     })
-    text += '\n_Ketik_ \`\` .ownadd <nomor> \`\` _untuk menambah owner._'
+    text += '\n_Ketik_ \`.ownadd <nomor>\` _untuk menambah owner._'
 
     await m.reply(text)
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })

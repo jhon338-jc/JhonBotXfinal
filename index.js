@@ -131,7 +131,7 @@ async function applyBotProfile(conn) {
         await conn.updateProfileName(`🤖 ${BOT_NAME} v${VERSION}`)
     } catch {}
     try {
-        const bio = '> *_' + (config.botName || 'JhonBot') + ' BOT_*\n' +
+        const bio = '> ***' + (config.botName || 'JhonBot') + ' BOT***\n' +
             '> _Aktif 24/7 Tanpa Henti_\n' +
             '> _👑 Owner: ' + (config.ownerName || 'Jhon338') + '_\n' +
             '> _📋 Mau pakai bot? Daftar dulu: .daftar_'
@@ -327,13 +327,13 @@ async function start() {
                     const subject = socket.chats?.[id]?.subject || 'grup ini'
                     if (action === 'add') {
                         await socket.sendMessage(id, {
-                            text: `> *_WELCOME MEMBER BARU_*\n\n_Halo @${num}, selamat datang di grup_ *_${subject}_* 🎉\n\n_Mau pakai fitur bot? Daftar dulu:_\n- \`\` .daftar nama,umur,status \`\`\n\n_Semoga betah & ramaikan grup! 🙏_`,
+                            text: `> ***WELCOME MEMBER BARU***\n\n_Halo @${num}, selamat datang di grup_ ***${subject}*** 🎉\n\n_Mau pakai fitur bot? Daftar dulu:_\n- \`.daftar nama,umur,status\`\n\n_Semoga betah & ramaikan grup! 🙏_`,
                             mentions: [p]
                         })
                         console.log(rgbTag('NOTIF', 'Welcome @' + num + ' di ' + subject, COLORS.success))
                     } else if (action === 'remove') {
                         await socket.sendMessage(id, {
-                            text: `> *_MEMBER KELUAR_*\n\n@${num} _telah keluar / dikeluarkan dari grup_ *_${subject}_* 👋\n\n_Terima kasih atas kebersamaannya, sampai jumpa!_`,
+                            text: `> ***MEMBER KELUAR***\n\n@${num} _telah keluar / dikeluarkan dari grup_ ***${subject}*** 👋\n\n_Terima kasih atas kebersamaannya, sampai jumpa!_`,
                             mentions: [p]
                         })
                         console.log(rgbTag('NOTIF', 'Bye @' + num + ' di ' + subject, COLORS.warn))

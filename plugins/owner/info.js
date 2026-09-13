@@ -41,13 +41,13 @@ let handler = async (m, { conn }) => {
     const ghRepo = botCfg.githubRepo || 'https://github.com/jhon338-jc/JhonBotXfinal'
     const botVersion = 'JhonBot v' + (botCfg.version || '3.3.8')
 
-    const text = `> *_${botVersion}_*\n> _Aktif 24/7 Tanpa Henti_\n\n` +
-        `- 🤖 *_Nama_* : JhonBot\n` +
-        `- 👑 *_Developer_* : Jhon338\n` +
-        `- 📦 *_Plugins_* : ${total}\n` +
-        `- ⚡ *_Uptime_* : ${days}d ${hours}h ${minutes}m\n` +
-        `- 🔧 *_Mode_* : PUBLIC\n\n` +
-        `*_DEVELOPER BY JHON338 • POWERED BY BAILEYS_*`
+    const text = `> ***${botVersion}***\n> _Aktif 24/7 Tanpa Henti_\n\n` +
+        `- 🤖 ***Nama*** : JhonBot\n` +
+        `- 👑 ***Developer*** : Jhon338\n` +
+        `- 📦 ***Plugins*** : ${total}\n` +
+        `- ⚡ ***Uptime*** : ${days}d ${hours}h ${minutes}m\n` +
+        `- 🔧 ***Mode*** : PUBLIC\n\n` +
+        `***DEVELOPER BY JHON338 • POWERED BY BAILEYS***`
 
     await m.reply(text)
 

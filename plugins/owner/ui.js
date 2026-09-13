@@ -33,6 +33,10 @@ function copyCode(display_text, copy_code) {
     return { name: 'copy_code', buttonParamsJson: JSON.stringify({ display_text, copy_code }) }
 }
 
+function carouselBtn(messageVersion, buttons) {
+    return { messageVersion, buttons }
+}
+
 let handler = async (m, { conn }) => {
     const botCfg = loadBotConfig()
     const botName = botCfg.botName || 'JhonBot'
@@ -45,18 +49,18 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(m.chat, { react: { text: '🎨', key: m.key } })
 
     // ============ 1) TEKS DENGAN KOMBINASI FORMAT ============
-    const intro = '> *_PREVIEW UI & BUTTONS BOT_*\n' +
+    const intro = '> *PREVIEW UI & BUTTONS BOT*\n' +
         '> _Berikut semua jenis tampilan yang didukung bot_\n\n' +
-        '*_1. Formating Teks:_*\n' +
-        '- *_Tebal_* \u00b7 _Miring_ \u00b7 ~Coret~ \u00b7 ``Typewriter`` \u00b7 `mono`\n' +
-        '- *_Kombinasi:_* *_~tebal+coret~_* \u00b7 _*~tebal+coret+miring~*_\n\n' +
-        '*_2. Tombol di bawah (interactive card):_*\n' +
+        '*1. Format Teks:*\n' +
+        '- *Tebal* \u00b7 _Miring_ \u00b7 ~Coret~ \u00b7 `mono`\n' +
+        '- ***Tebal + Miring*** \u00b7 *~Tebal + Coret~* \u00b7 _~Miring + Coret~_\n\n' +
+        '*2. Tombol (interactive card di bawah):*\n' +
         '- ☰ List Menu (dropdown)\n' +
         '- ⚡ Quick Reply\n' +
         '- 🌐 URL Button\n' +
         '- 📞 Call Button\n' +
         '- 🔑 Copy Code Button\n\n' +
-        '*_3. UI khusus:_* Slide Card (Carousel) \u00b7 VCard Kontak \u00b7 Polling \u00b7 Lokasi'
+        '*3. UI khusus:* Slide Card (Carousel) \u00b7 VCard Kontak \u00b7 Polling \u00b7 Lokasi'
     await m.reply(intro)
 
     // ============ 2) INTERACTIVE CARD — 6 JENIS TOMBOL ============
@@ -97,41 +101,48 @@ let handler = async (m, { conn }) => {
 
     // ============ 3) SLIDE CARD / CAROUSEL UI ============
     try {
-        await conn.sendMessage(m.chat, {
-            title: '🛒 *SLIDE CARD / CAROUSEL*',
-            text: '_*_Geser kartu untuk melihat yang lain 👉_*\n\nSetiap kartu punya tombolnya sendiri._',
-            cards: [
-                {
-                    title: '🤖 Perintah Bot',
-                    body: '_Pilih perintah cepat untuk bot cuba._',
-                    footer: 'Menu',
-                    buttons: [
-                        quickReply('📖 Menu', '.menu'),
-                        quickReply('👤 Profil', '.profil'),
-                        quickReply('⚡ Ping', '.ping')
-                    ]
-                },
-                {
-                    title: '🌐 Sosial & Kode',
-                    body: '_Buka link dan salin kode versi bot._',
-                    footer: 'Komunitas',
-                    buttons: [
-                        ctaUrl('🌐 Linktree', channelLink),
-                        ctaUrl('🐙 GitHub', ghRepo),
-                        copyCode('🔑 Salin Versi', botVersion)
-                    ]
-                },
-                {
-                    title: '📞 Kontak Owner',
-                    body: '_Butuh bantuan? Hubungi owner langsung._',
-                    footer: 'Support',
-                    buttons: [
-                        callBtn('📞 Call Owner', '+' + ownerNumber),
-                        quickReply('🗣 Chat Owner? Ketik .info', '.info')
-                    ]
-                }
-            ]
-        }, { quoted: m })
+        const carouselCards = [
+            {
+                header: { title: '🤖 Perintah Bot', hasMediaAttachment: false },
+                body: { text: '_Pilih perintah cepat untuk dicoba._' },
+                footer: { text: 'Menu' },
+                nativeFlowMessage: carouselBtn(1, [
+                    quickReply('📖 Menu', '.menu'),
+                    quickReply('👤 Profil', '.profil'),
+                    quickReply('⚡ Ping', '.ping')
+                ])
+            },
+            {
+                header: { title: '🌐 Sosial & Kode', hasMediaAttachment: false },
+                body: { text: '_Buka link dan salin kode versi bot._' },
+                footer: { text: 'Komunitas' },
+                nativeFlowMessage: carouselBtn(1, [
+                    ctaUrl('🌐 Linktree', channelLink),
+                    ctaUrl('🐙 GitHub', ghRepo),
+                    copyCode('🔑 Salin Versi', botVersion)
+                ])
+            },
+            {
+                header: { title: '📞 Kontak Owner', hasMediaAttachment: false },
+                body: { text: '_Butuh bantuan? Hubungi owner langsung._' },
+                footer: { text: 'Support' },
+                nativeFlowMessage: carouselBtn(1, [
+                    callBtn('📞 Call Owner', '+' + ownerNumber),
+                    quickReply('🗣 Info', '.info')
+                ])
+            }
+        ]
+
+        const carouselMsg = {
+            interactiveMessage: {
+                header: { title: '🛒 *SLIDE CARD / CAROUSEL*', hasMediaAttachment: false },
+                body: { text: '_Geser kartu untuk melihat yang lain 👉_' },
+                footer: { text: botVersion },
+                carouselMessage: { cards: carouselCards }
+            }
+        }
+        const msg = generateWAMessageFromContent(m.chat, carouselMsg, { userJid: conn.user?.id || m.sender, quoted: m })
+        await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
     } catch (e) {
         await m.reply('❌ _Gagal kirim slide card: ' + (e?.message || e) + '_')
     }
@@ -155,7 +166,7 @@ let handler = async (m, { conn }) => {
         await m.reply('❌ _Gagal kirim VCard: ' + (e?.message || e) + '_')
     }
 
-    // ============ 4) POLL UI ============
+    // ============ 5) POLL UI ============
     try {
         await conn.sendMessage(m.chat, {
             poll: {
@@ -168,7 +179,7 @@ let handler = async (m, { conn }) => {
         await m.reply('❌ _Gagal kirim poll: ' + (e?.message || e) + '_')
     }
 
-    // ============ 5) LOCATION UI ============
+    // ============ 6) LOCATION UI ============
     try {
         await conn.sendMessage(m.chat, {
             location: {
