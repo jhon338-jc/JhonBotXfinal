@@ -29,7 +29,8 @@ const USER_CMDS = [
     { name: 'asp',   desc: 'Asupan random' },
     { name: 'ccn',   desc: 'Cecan random' },
     { name: 'donlodall', desc: 'Download video/foto (TikTok, IG, dll)' },
-    { name: 'daftar', desc: 'Daftar jadi member bot (.daftar nama,umur,status)' }
+    { name: 'daftar', desc: 'Daftar jadi member bot (.daftar nama,umur,status)' },
+    { name: 'poll', desc: 'Buat polling grup (.poll soal|a|b|c)' }
 ]
 
 const OWNER_CMDS = [
@@ -42,8 +43,9 @@ const OWNER_CMDS = [
     { name: 'grup',   desc: 'Daftar & pilih grup' },
     { name: 'ownadd', desc: 'Tambah owner baru' },
     { name: 'owndel', desc: 'Hapus owner' },
-    { name: 'ownlist', desc: 'Lihat daftar owner' },
-    { name: 'ping',   desc: 'Cek respon bot' },
+{ name: 'ownlist', desc: 'Lihat daftar owner' },
+    { name: 'ui', desc: 'Preview semua UI & tombol bot' },
+    { name: 'ping', desc: 'Cek respon bot' },
     { name: 'info',   desc: 'Info bot' },
     { name: 'menu',   desc: 'Menu ini' }
 ]
@@ -69,6 +71,22 @@ function quickReply(display_text, id) {
 
 function ctaUrl(display_text, url) {
     return { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text, url }) }
+}
+
+function callBtn(display_text, phone_number) {
+    return { name: 'call', buttonParamsJson: JSON.stringify({ display_text, phone_number }) }
+}
+
+function copyCode(display_text, copy_code) {
+    return { name: 'copy_code', buttonParamsJson: JSON.stringify({ display_text, copy_code }) }
+}
+
+function loadBotConfig() {
+    try {
+        return JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'config.json'), 'utf-8'))
+    } catch {
+        return {}
+    }
 }
 
 async function getThumb() {
@@ -122,11 +140,11 @@ let handler = async (m, { conn, args }) => {
 
     // Profil view (quick_reply / .profil)
     if (input === 'me' || m.command === 'profil') {
-        let status = '👤 User'
-        if (m.isOwner) status = '👑 Owner'
-        else if (m.isPremium) status = '👑 Premium'
+        let status = '👤 *_User_*'
+        if (m.isOwner) status = '👑 *_Owner_*'
+        else if (m.isPremium) status = '👑 *_Premium_*'
         await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
-        m.reply(`👤 *PROFIL KAMU*\n\n• Nama     : ${m.pushName || '-'}\n• Nomor    : +${number}\n• Status   : ${status}`)
+        m.reply(`> *_PROFIL KAMU_*\n\n- *_Nama_* : ${m.pushName || '-'}\n- *_Nomor_* : +${number}\n- *_Status_* : ${status}\n\n_Mau ganti akses? Hubungi owner._`)
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         return
     }
@@ -141,13 +159,13 @@ let handler = async (m, { conn, args }) => {
     const totalPlugins = [...new Set(plugins.values())].length
 
     const menuBox = [
-        `👋 Halo, ${m.pushName || 'User'}!`,
+        `> *_SELAMAT DATANG, ${(m.pushName || 'User').toUpperCase()}_*`,
+        '> _JhonBot Aktif 24/7 Tanpa Henti_',
         '',
-        '🤖 JhonBot v3.3.8',
-        `⚡ Runtime: ${days}d ${hours}h ${minutes}m`,
-        `📦 Plugins: ${totalPlugins}`,
+        `*_⚡_* _Runtime:_ ${days} hari, ${hours} jam, ${minutes} menit`,
+        `*_📦_* _Total Plugin:_ ${totalPlugins}`,
         '',
-        '💡 Tap tombol di bawah untuk akses cepat'
+        '💡 _Ketuk tombol di bawah untuk akses cepat_'
     ].join('\n')
 
     // Bangun sections
@@ -160,15 +178,24 @@ let handler = async (m, { conn, args }) => {
         if (ownerRows.length) sections.push(section('👑 OWNER', ownerRows))
     }
 
-    const native = [
-        singleSelect('BUKA MENU', sections),
-        quickReply('👤 Profil', '.profil'),
-        ctaUrl('🌐 Linktree', 'https://jhon338-jc.github.io/Linktree/')
-    ]
+    const botCfg = loadBotConfig()
+    const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
+    const ghRepo = botCfg.githubRepo || 'https://github.com/jhon338-jc/JhonBotXfinal'
+    const ownerNumber = botCfg.creator?.[0] || ''
+
+    // Maksimal 6 tombol native flow
+    const botVersion = 'JhonBot v' + (botCfg.version || '3.3.8')
+    const native = [singleSelect('BUKA MENU 📋', sections)]
+    native.push(quickReply('👤 Profil', '.profil'))
+    if (m.isOwner) native.push(quickReply('👑 Daftar Owner', '.ownlist'))
+    native.push(ctaUrl('🌐 Linktree', channelLink))
+    if (ownerNumber) native.push(callBtn('📞 Call Owner', '+' + ownerNumber))
+    native.push(copyCode('🔑 Salin Versi', botVersion))
+    if (!m.isOwner && native.length < 6 && ghRepo) native.push(ctaUrl('🐙 GitHub', ghRepo))
 
     try {
         let header = await getHeaderImage(conn)
-        if (!header) header = { title: '🤖 JhonBot v3.3.8', hasMediaAttachment: false }
+        if (!header) header = { title: '🤖 ' + botVersion, hasMediaAttachment: false }
 
         const interactiveMsg = {
             interactiveMessage: {
@@ -193,17 +220,16 @@ let handler = async (m, { conn, args }) => {
         console.error(rgbTag('MENU', e?.message || e, COLORS.warn))
     }
 
-    // Fallback: plain text
-    let plainText = `╭───『 *JhonBot v3.3.8* 』───\n`
-    plainText += `│\n│  👋 Halo, ${m.pushName || 'User'}!\n`
-    plainText += `│  📦 Plugins: ${totalPlugins}\n│\n`
-    plainText += `│  👤 *USER*\n`
-    userRows.forEach(r => { plainText += `│    ${r.title} — ${r.description}\n` })
+    // Fallback: plain text (pakai kombinasi format)
+    let plainText = `> *_${botVersion.toUpperCase()}_*\n> _Aktif 24/7 Tanpa Henti_\n\n`
+    plainText += `👋 _Halo,_ *_${m.pushName || 'User'}_*\n📦 _Total Plugin:_ *_${totalPlugins}_*\n\n`
+    plainText += `*_1. 👤 MENU USER_*\n`
+    userRows.forEach(r => { plainText += `- \`\`${r.title}\`\` — _${r.description}_\n` })
     if (m.isOwner) {
-        plainText += `│\n│  👑 *OWNER*\n`
-        cmdRows(OWNER_CMDS).forEach(r => { plainText += `│    ${r.title} — ${r.description}\n` })
+        plainText += `\n*_2. 👑 MENU OWNER_*\n`
+        cmdRows(OWNER_CMDS).forEach(r => { plainText += `- \`\`${r.title}\`\` — _${r.description}_\n` })
     }
-    plainText += `│\n╰──────────────────────────────`
+    plainText += `\n_Ketik perintah seperti contoh di atas. Semoga bermanfaat! 🙏`
     await m.reply(plainText)
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }

@@ -1,4 +1,31 @@
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
 import { getPluginSummary } from '../../handler.js'
+import { rgbTag, COLORS } from '../../lib/rgb.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+function loadBotConfig() {
+    try {
+        return JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'config.json'), 'utf-8'))
+    } catch {
+        return {}
+    }
+}
+
+function quickReply(display_text, id) {
+    return { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text, id }) }
+}
+
+function ctaUrl(display_text, url) {
+    return { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text, url }) }
+}
+
+function copyCode(display_text, copy_code) {
+    return { name: 'copy_code', buttonParamsJson: JSON.stringify({ display_text, copy_code }) }
+}
 
 let handler = async (m, { conn }) => {
     await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
@@ -9,17 +36,43 @@ let handler = async (m, { conn }) => {
     const minutes = Math.floor((runtime % 3600) / 60)
     const total = [...new Set([...owner, ...user])].length
 
-    let text = `ℹ️ *INFO BOT*\n\n`
-    text += `🤖 Nama       : JhonBot\n`
-    text += `👑 Developer  : Jhon338\n`
-    text += `📦 Plugins    : ${total}\n`
-    text += `⚡ Uptime     : ${days}d ${hours}h ${minutes}m\n`
-    text += `🔧 Mode       : PUBLIC\n\n`
-    text += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
-    text += `🌐 Linktree : https://jhon338-jc.github.io/Linktree/\n\n`
-    text += `*DEVELOPER BY JHON338 • v3.3.8*`
+    const botCfg = loadBotConfig()
+    const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
+    const ghRepo = botCfg.githubRepo || 'https://github.com/jhon338-jc/JhonBotXfinal'
+    const botVersion = 'JhonBot v' + (botCfg.version || '3.3.8')
 
-    m.reply(text)
+    const text = `> *_${botVersion}_*\n> _Aktif 24/7 Tanpa Henti_\n\n` +
+        `- 🤖 *_Nama_* : JhonBot\n` +
+        `- 👑 *_Developer_* : Jhon338\n` +
+        `- 📦 *_Plugins_* : ${total}\n` +
+        `- ⚡ *_Uptime_* : ${days}d ${hours}h ${minutes}m\n` +
+        `- 🔧 *_Mode_* : PUBLIC\n\n` +
+        `*_DEVELOPER BY JHON338 • POWERED BY BAILEYS_*`
+
+    await m.reply(text)
+
+    try {
+        const native = [
+            quickReply('📖 Menu', '.menu'),
+            quickReply('⚡ Ping', '.ping'),
+            ctaUrl('🌐 Linktree', channelLink),
+            ctaUrl('🐙 GitHub', ghRepo),
+            copyCode('🔑 Salin Versi', botVersion)
+        ]
+        const interactiveMsg = {
+            interactiveMessage: {
+                header: { title: 'ℹ️ *INFO BOT*', hasMediaAttachment: false },
+                body: { text: '_Ketuk tombol di bawah untuk aksi cepat:_' },
+                footer: { text: botVersion + ' • Powered by Baileys' },
+                nativeFlowMessage: { messageVersion: 1, buttons: native }
+            }
+        }
+        const msg = generateWAMessageFromContent(m.chat, interactiveMsg, { userJid: conn.user?.id || m.sender, quoted: m })
+        await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
+    } catch (e) {
+        console.error(rgbTag('INFO', 'gagal kirim tombol: ' + (e?.message || e), COLORS.warn))
+    }
+
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 

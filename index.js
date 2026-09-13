@@ -29,6 +29,7 @@ process.on('unhandledRejection', (err) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const MONITOR_FILE = path.join(__dirname, 'database', 'monitor.json')
 const OWNER_FILE = path.join(__dirname, 'database', 'owner.json')
+const PROFILE_PHOTO = path.join(__dirname, 'media', 'profile', 'fotobot.png')
 
 const readJSON = file => JSON.parse(fs.readFileSync(file, 'utf-8'))
 const writeJSON = (file, data) => {
@@ -50,6 +51,7 @@ let reconnectAttempt = 0
 let isConnecting = false
 let pluginsLoaded = false
 let keepAliveTimer = null
+let profileSynced = false
 let rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
 const question = t => {
@@ -108,6 +110,34 @@ function bannerConnected() {
     for (const row of chunk(user, 5)) lines.push('   • ' + row.map(c => '.' + c).join(' '))
     const c = COLORS.success
     return rgb(drawBox(lines), c.c1, c.c2)
+}
+
+// ==================== PROFIL BOT (foto, nama, bio) ====================
+async function applyBotProfile(conn) {
+    if (profileSynced) return
+    profileSynced = true
+    try {
+        const botJid = conn.decodeJid(conn.user?.id)
+        if (botJid && fs.existsSync(PROFILE_PHOTO)) {
+            await conn.updateProfilePicture(botJid, fs.readFileSync(PROFILE_PHOTO))
+            console.log(rgbTag('PROFILE', 'Foto profil bot terpasang: media/profile/fotobot.png', COLORS.success))
+        } else {
+            console.log(rgbTag('PROFILE', 'Skip foto profil: media/profile/fotobot.png belum ada', COLORS.warn))
+        }
+    } catch (e) {
+        console.error(rgbTag('PROFILE', 'Gagal update foto profil: ' + (e?.message || e), COLORS.error))
+    }
+    try {
+        await conn.updateProfileName(`🤖 ${BOT_NAME} v${VERSION}`)
+    } catch {}
+    try {
+        const bio = '> *_' + (config.botName || 'JhonBot') + ' BOT_*\n' +
+            '> _Aktif 24/7 Tanpa Henti_\n' +
+            '> _👑 Owner: ' + (config.ownerName || 'Jhon338') + '_\n' +
+            '> _📋 Mau pakai bot? Daftar dulu: .daftar_'
+        await conn.updateProfileStatus(bio)
+        console.log(rgbTag('PROFILE', 'Nama & bio bot diperbarui', COLORS.success))
+    } catch {}
 }
 
 // ==================== KIRIM DAFTAR GRUP KE OWNER ====================
@@ -297,13 +327,13 @@ async function start() {
                     const subject = socket.chats?.[id]?.subject || 'grup ini'
                     if (action === 'add') {
                         await socket.sendMessage(id, {
-                            text: `👋 *WELCOME MEMBER BARU*\n\nHalo @${num}, selamat datang di grup *${subject}*! 🎉\n\nJangan lupa baca deskripsi grup ya. Kalau mau pakai bot, daftar dulu:\n\n\`.daftar nama,umur,status\`\n\nSemoga betah! 🙏`,
+                            text: `> *_WELCOME MEMBER BARU_*\n\n_Halo @${num}, selamat datang di grup_ *_${subject}_* 🎉\n\n_Mau pakai fitur bot? Daftar dulu:_\n- \`\` .daftar nama,umur,status \`\`\n\n_Semoga betah & ramaikan grup! 🙏_`,
                             mentions: [p]
                         })
                         console.log(rgbTag('NOTIF', 'Welcome @' + num + ' di ' + subject, COLORS.success))
                     } else if (action === 'remove') {
                         await socket.sendMessage(id, {
-                            text: `👋 *MEMBER KELUAR*\n\n@${num} telah keluar / dikeluarkan dari grup *${subject}*. 👋\n\nTerima kasih atas kebersamaannya, sampai jumpa!`,
+                            text: `> *_MEMBER KELUAR_*\n\n@${num} _telah keluar / dikeluarkan dari grup_ *_${subject}_* 👋\n\n_Terima kasih atas kebersamaannya, sampai jumpa!_`,
                             mentions: [p]
                         })
                         console.log(rgbTag('NOTIF', 'Bye @' + num + ' di ' + subject, COLORS.warn))
@@ -321,6 +351,7 @@ async function start() {
             if (connection === 'open') {
                 isConnecting = false
                 reconnectAttempt = 0
+                await applyBotProfile(socket)
                 if (reconnectTimer) {
                     clearTimeout(reconnectTimer)
                     reconnectTimer = null
