@@ -1,4 +1,4 @@
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 import { saveImage } from '../../lib/autosave.js'
 
 import { fetchWithTimeout } from '../../lib/kyzz/client.js'
@@ -17,7 +17,7 @@ let handler = async (m, { conn, text }) => {
         await conn.sendMessage(m.chat, { image: buffer }, { quoted: m })
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
-        console.error(rgbTag('IQC', e?.message || e, COLORS.error))
+        console.error(log('IQC', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

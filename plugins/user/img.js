@@ -3,7 +3,7 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import { createRequire } from 'module'
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 import { makeSticker, addStickerMetadata, videoStickerArgs } from '../../lib/sticker.js'
 import { saveSticker, tmpName } from '../../lib/autosave.js'
 
@@ -81,7 +81,7 @@ let handler = async (m, { conn }) => {
 
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
-        console.error(rgbTag('IMG', e?.message || e, COLORS.error))
+        console.error(log('IMG', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

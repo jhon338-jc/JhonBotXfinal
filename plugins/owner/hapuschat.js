@@ -1,4 +1,4 @@
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 
@@ -39,7 +39,7 @@ let handler = async (m, { conn }) => {
     conn.ledgerRestore && ledgerRestore(chat, gagal)
     if (!gagal.length) ledgerClear && ledgerClear(chat)
 
-    console.log(rgbTag('HAPUSCHAT', `Hapus ${ok} pesan bot di ${chat}${gagal.length ? ` (${gagal.length} gagal)` : ''}`, ok ? COLORS.success : COLORS.warn))
+    console.log(log('HAPUSCHAT', `Hapus ${ok} pesan bot di ${chat}${gagal.length ? ` (${gagal.length} gagal)` : ''}`, ok ? COLORS.success : COLORS.warn))
 
     try { await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } }) } catch {}
 

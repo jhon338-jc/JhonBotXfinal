@@ -11,11 +11,11 @@ import {
 } from '@whiskeysockets/baileys'
 import { makeWASocket, smsg, bind } from './lib/msg.js'
 import handleMessage, { initPlugins, getPluginSummary, normalizeNumber, invalidateJSONCache } from './handler.js'
-import { rgb, rgbTag, COLORS } from './lib/rgb.js'
+import { rgb, log, divider, timeWIB, COLORS } from './lib/rgb.js'
 import { ensureTemp } from './lib/autosave.js'
 
 process.on('uncaughtException', (err) => {
-    console.error(rgbTag('FATAL', 'Uncaught Exception: ' + (err?.stack || err), COLORS.error))
+    console.error(log('FATAL', 'Uncaught Exception: ' + (err?.stack || err), COLORS.error))
     try {
         socket?.ev.removeAllListeners()
         socket?.ws?.close?.()
@@ -23,7 +23,7 @@ process.on('uncaughtException', (err) => {
     restartBot(10000)
 })
 process.on('unhandledRejection', (err) => {
-    console.error(rgbTag('FATAL', 'Unhandled Rejection: ' + (err?.message || err), COLORS.error))
+    console.error(log('FATAL', 'Unhandled Rejection: ' + (err?.message || err), COLORS.error))
 })
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -83,6 +83,7 @@ function bannerStart() {
     const c = COLORS.start
     const box = drawBox([
         `   🤖 ${BOT_NAME} v${VERSION}`,
+        `   🕒 ${timeWIB()} WIB`,
         '   ⚡ Starting...',
         `   📱 Pairing Code: ${PAIR_CODE}`,
         '   🔗 Waiting for connection...'
@@ -120,12 +121,12 @@ async function applyBotProfile(conn) {
         const botJid = conn.decodeJid(conn.user?.id)
         if (botJid && fs.existsSync(PROFILE_PHOTO)) {
             await conn.updateProfilePicture(botJid, fs.readFileSync(PROFILE_PHOTO))
-            console.log(rgbTag('PROFILE', 'Foto profil bot terpasang: src/img/menu.png', COLORS.success))
+            console.log(log('PROFILE', 'Foto profil bot terpasang: src/img/menu.png', COLORS.success))
         } else {
-            console.log(rgbTag('PROFILE', 'Skip foto profil: src/img/menu.png belum ada', COLORS.warn))
+            console.log(log('PROFILE', 'Skip foto profil: src/img/menu.png belum ada', COLORS.warn))
         }
     } catch (e) {
-        console.error(rgbTag('PROFILE', 'Gagal update foto profil: ' + (e?.message || e), COLORS.error))
+        console.error(log('PROFILE', 'Gagal update foto profil: ' + (e?.message || e), COLORS.error))
     }
     try {
         await conn.updateProfileName(`🤖 ${BOT_NAME} v${VERSION}`)
@@ -136,7 +137,7 @@ async function applyBotProfile(conn) {
             '> _👑 Owner: ' + (config.ownerName || 'Jhon338') + '_\n' +
             '> _📋 Mau pakai bot? Daftar dulu: .daftar_'
         await conn.updateProfileStatus(bio)
-        console.log(rgbTag('PROFILE', 'Nama & bio bot diperbarui', COLORS.success))
+        console.log(log('PROFILE', 'Nama & bio bot diperbarui', COLORS.success))
     } catch {}
 }
 
@@ -146,8 +147,8 @@ async function sendGroupListToOwner(conn) {
         const monitor = readJSON(MONITOR_FILE)
         monitor.groups ??= []
         if (!monitor.waiting && monitor.groups.length > 0) {
-            console.log(rgbTag('STARTUP', `Menggunakan ${monitor.groups.length} grup tersimpan`, COLORS.info))
-            console.log(rgbTag('STARTUP', 'Ketik .grup ke bot untuk mengganti pilihan grup', COLORS.info))
+            console.log(log('STARTUP', `Menggunakan ${monitor.groups.length} grup tersimpan`, COLORS.info))
+            console.log(log('STARTUP', 'Ketik .grup ke bot untuk mengganti pilihan grup', COLORS.info))
             return
         }
 
@@ -159,7 +160,7 @@ async function sendGroupListToOwner(conn) {
 
         if (!groupList.length) {
             await conn.sendMessage(ownerJid, { text: '❌ Bot tidak ada di grup manapun!' })
-            console.log(rgbTag('STARTUP', 'Tidak ada grup ditemukan', COLORS.warn))
+            console.log(log('STARTUP', 'Tidak ada grup ditemukan', COLORS.warn))
             return
         }
 
@@ -175,10 +176,10 @@ async function sendGroupListToOwner(conn) {
         writeJSON(MONITOR_FILE, monitor)
 
         await conn.sendMessage(ownerJid, { text: text })
-        console.log(rgbTag('STARTUP', 'Daftar grup terkirim ke owner', COLORS.success))
-        console.log(rgbTag('STARTUP', 'Menunggu pilihan grup dari owner...', COLORS.warn))
+        console.log(log('STARTUP', 'Daftar grup terkirim ke owner', COLORS.success))
+        console.log(log('STARTUP', 'Menunggu pilihan grup dari owner...', COLORS.warn))
     } catch (err) {
-        console.error(rgbTag('STARTUP', 'Gagal kirim daftar grup: ' + (err?.message || err), COLORS.error))
+        console.error(log('STARTUP', 'Gagal kirim daftar grup: ' + (err?.message || err), COLORS.error))
     }
 }
 
@@ -204,7 +205,7 @@ function getStatusCode(lastDisconnect) {
 
 function restartBot(delay = 5000) {
     if (reconnectTimer) clearTimeout(reconnectTimer)
-    console.log(rgbTag('RECONNECT', `Menyambung ulang dalam ${delay / 1000} detik...`, COLORS.warn))
+    console.log(log('RECONNECT', `Menyambung ulang dalam ${delay / 1000} detik...`, COLORS.warn))
     reconnectTimer = setTimeout(() => {
         reconnectTimer = null
         reconnectAttempt++
@@ -251,27 +252,27 @@ async function start() {
 
         // ============ PAIRING ============
         if (!state.creds.registered) {
-            console.log(rgb('─────────────────────────────────', COLORS.info.c1, COLORS.info.c2))
-            console.log(rgb('MASUKKAN NOMOR PEMILIK', COLORS.start.c1, COLORS.start.c2))
-            console.log(rgb('Contoh: 628xxxxxxxxxx', COLORS.info.c1, COLORS.info.c2))
+            console.log(divider(' PAIRING ', COLORS.start))
+            console.log(log('PAIRING', 'Masukkan nomor pemilik', COLORS.start))
+            console.log(log('PAIRING', 'Contoh: 628xxxxxxxxxx', COLORS.info))
             const number = await question(rgb('Nomor: ', [255, 170, 0], [255, 255, 120]))
             const cleanNumber = number.replace(/\D/g, '')
             if (!cleanNumber) {
-                console.log(rgbTag('PAIRING', 'Nomor tidak valid. Ulangi...', COLORS.error))
+                console.log(log('PAIRING', 'Nomor tidak valid. Ulangi...', COLORS.error))
                 restartBot(3000)
                 return
             }
             try {
                 const code = await socket.requestPairingCode(cleanNumber, PAIR_CODE)
-                console.log(rgbTag('PAIRING', `KODE PAIRING: ${code}`, COLORS.success))
-                console.log(rgb('─────────────────────────────────', COLORS.info.c1, COLORS.info.c2))
-                console.log(rgb('CARA PAIRING:', COLORS.start.c1, COLORS.start.c2))
-                console.log(rgb('1. Buka WhatsApp di HP nomor tersebut', COLORS.info.c1, COLORS.info.c2))
-                console.log(rgb('2. Masuk ke Perangkat Tertaut', COLORS.info.c1, COLORS.info.c2))
-                console.log(rgb('3. Pilih "Tautkan dengan nomor telepon"', COLORS.info.c1, COLORS.info.c2))
-                console.log(rgb('4. Ketik nomor yang tadi dimasukkan', COLORS.info.c1, COLORS.info.c2))
-                console.log(rgb('5. Masukkan kode pairing di atas', COLORS.info.c1, COLORS.info.c2))
-                console.log(rgb('─────────────────────────────────', COLORS.info.c1, COLORS.info.c2))
+                console.log(divider(' KODE PAIRING ', COLORS.warn))
+                console.log(log('PAIRING', `KODE: ${code}`, COLORS.success))
+                console.log(divider(' CARA PAIRING ', COLORS.info))
+                console.log(log('PAIRING', '1. Buka WhatsApp di HP nomor tersebut', COLORS.info))
+                console.log(log('PAIRING', '2. Masuk ke Perangkat Tertaut', COLORS.info))
+                console.log(log('PAIRING', '3. Pilih "Tautkan dengan nomor telepon"', COLORS.info))
+                console.log(log('PAIRING', '4. Ketik nomor yang tadi dimasukkan', COLORS.info))
+                console.log(log('PAIRING', '5. Masukkan kode pairing di atas', COLORS.info))
+                console.log(divider('', COLORS.start))
 
                 // Auto-set nomor pairing sebagai OWNER
                 const ownerNum = normalizeNumber(cleanNumber)
@@ -280,9 +281,9 @@ async function start() {
                 db.owner = [...new Set(db.owner.map(n => normalizeNumber(n)).filter(Boolean))]
                 if (!db.owner.includes(ownerNum)) db.owner.push(ownerNum)
                 writeJSON(OWNER_FILE, db)
-                console.log(rgbTag('PAIRING', `Nomor ${ownerNum} di-set sebagai OWNER`, COLORS.success))
+                console.log(log('PAIRING', `Nomor ${ownerNum} di-set sebagai OWNER`, COLORS.success))
             } catch (err) {
-                console.error(rgbTag('PAIRING', 'Gagal mengirim kode pairing: ' + (err?.message || err), COLORS.error))
+                console.error(log('PAIRING', 'Gagal mengirim kode pairing: ' + (err?.message || err), COLORS.error))
                 restartBot(5000)
                 return
             } finally {
@@ -308,7 +309,7 @@ async function start() {
                             await handleMessage(socket, m)
                         }
                     } catch (e) {
-                        console.error(rgbTag('ERROR', e?.message || e, COLORS.error))
+                        console.error(log('ERROR', e?.message || e, COLORS.error))
                     }
                 })
             }
@@ -331,17 +332,17 @@ async function start() {
                             text: `> *WELCOME MEMBER BARU*\n\n_Halo @${num}, selamat datang di grup_ *${subject}* 🎉\n\n_Mau pakai fitur bot? Daftar dulu:_\n- \`.daftar nama,umur,status\`\n\n_Semoga betah & ramaikan grup! 🙏_`,
                             mentions: [p]
                         })
-                        console.log(rgbTag('NOTIF', 'Welcome @' + num + ' di ' + subject, COLORS.success))
+                        console.log(log('NOTIF', 'Welcome @' + num + ' di ' + subject, COLORS.success))
                     } else if (action === 'remove') {
                         await socket.sendMessage(id, {
                             text: `> *MEMBER KELUAR*\n\n@${num} _telah keluar / dikeluarkan dari grup_ *${subject}* 👋\n\n_Terima kasih atas kebersamaannya, sampai jumpa!_`,
                             mentions: [p]
                         })
-                        console.log(rgbTag('NOTIF', 'Bye @' + num + ' di ' + subject, COLORS.warn))
+                        console.log(log('NOTIF', 'Bye @' + num + ' di ' + subject, COLORS.warn))
                     }
                 }
             } catch (e) {
-                console.error(rgbTag('NOTIF', 'Gagal notifikasi member: ' + (e?.message || e), COLORS.error))
+                console.error(log('NOTIF', 'Gagal notifikasi member: ' + (e?.message || e), COLORS.error))
             }
         })
 
@@ -370,7 +371,7 @@ async function start() {
                 isConnecting = false
 
                 if (statusCode === DisconnectReason.loggedOut) {
-                    console.log(rgbTag('LOGOUT', 'Bot logout, hapus auth & restart...', COLORS.warn))
+                    console.log(log('LOGOUT', 'Bot logout, hapus auth & restart...', COLORS.warn))
                     try { fs.rmSync('./auth', { recursive: true, force: true }) } catch {}
                     restartBot(3000)
                     return
@@ -383,7 +384,7 @@ async function start() {
                 else if (statusCode === DisconnectReason.timedOut) delay = 10000
                 if (reconnectAttempt > 10) delay = 60000
 
-                console.log(rgbTag('DISCONNECT', `Status: ${statusCode} • Attempt: ${reconnectAttempt} • ${errorMessage}`, COLORS.warn))
+                console.log(log('DISCONNECT', `Status: ${statusCode} • Attempt: ${reconnectAttempt} • ${errorMessage}`, COLORS.warn))
                 restartBot(delay)
             }
         })
@@ -398,7 +399,7 @@ async function start() {
         }, 30000)
     } catch (e) {
         isConnecting = false
-        console.error(rgbTag('ERROR', e?.message || e, COLORS.error))
+        console.error(log('ERROR', e?.message || e, COLORS.error))
         if (!reconnectTimer) restartBot(10000)
     }
 }
@@ -409,7 +410,7 @@ process.on('SIGINT', async () => {
         socket?.ev.removeAllListeners()
         socket?.ws?.close?.()
     } catch {}
-    console.log(rgbTag('EXIT', 'Bot dimatikan. Sampai jumpa!', COLORS.info))
+    console.log(log('EXIT', 'Bot dimatikan. Sampai jumpa!', COLORS.info))
     process.exit(0)
 })
 

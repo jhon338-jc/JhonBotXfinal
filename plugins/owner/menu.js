@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 import { generateWAMessageFromContent, prepareWAMessageMedia } from '@whiskeysockets/baileys'
 import sharp from 'sharp'
 import { plugins } from '../../handler.js'
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 
 // ============================================================
 //  MENU — tampilan menu dengan tombol interaktif (native flow)
@@ -133,7 +133,7 @@ async function getHeaderImage(conn) {
             title: '🤖 JhonBot v' + (loadBotConfig().version || '3.3.8')
         }
     } catch (e) {
-        console.error(rgbTag('MENU', 'header image gagal: ' + (e?.message || e), COLORS.warn))
+        console.error(log('MENU', 'header image gagal: ' + (e?.message || e), COLORS.warn))
         return null
     }
 }
@@ -156,7 +156,7 @@ async function getFakeTroli(conn, chatJid, senderJid) {
         const msg = generateWAMessageFromContent(chatJid || '0@s.whatsapp.net', order, { userJid: senderJid || '0@s.whatsapp.net' })
         return { key: msg.key, message: msg.message }
     } catch (e) {
-        console.error(rgbTag('MENU', 'troli gagal: ' + (e?.message || e), COLORS.warn))
+        console.error(log('MENU', 'troli gagal: ' + (e?.message || e), COLORS.warn))
         return null
     }
 }
@@ -251,7 +251,7 @@ let handler = async (m, { conn, args }) => {
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         return
     } catch (e) {
-        console.error(rgbTag('MENU', e?.message || e, COLORS.warn))
+        console.error(log('MENU', e?.message || e, COLORS.warn))
     }
 
     // Fallback: plain text (pakai kombinasi format)

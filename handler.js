@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
-import { rgbTag, COLORS } from './lib/rgb.js'
+import { log, COLORS } from './lib/rgb.js'
 import { runAntiSpam } from './lib/antispam.js'
 
 // ============================================================
@@ -272,9 +272,9 @@ async function loadPlugin(file) {
             plugins.set(key, handler)
             if (!summary[category].includes(key)) summary[category].push(key)
         }
-        console.log(rgbTag('PLUGIN', 'Loaded ' + path.relative(pluginDir, file), COLORS.plugin))
+        console.log(log('PLUGIN', 'Loaded ' + path.relative(pluginDir, file), COLORS.plugin))
     } catch (e) {
-        console.error(rgbTag('PLUGIN', 'Failed ' + file + ' : ' + (e?.message || e), COLORS.error))
+        console.error(log('PLUGIN', 'Failed ' + file + ' : ' + (e?.message || e), COLORS.error))
     }
 }
 
@@ -428,7 +428,7 @@ export default async function handleMessage(conn, m) {
                     const fetched = await conn.groupFetchAllParticipating()
                     groups = Object.values(fetched || {})
                 } catch (e) {
-                    console.error(rgbTag('HANDLER', 'Gagal ambil daftar grup: ' + (e?.message || e), COLORS.error))
+                    console.error(log('HANDLER', 'Gagal ambil daftar grup: ' + (e?.message || e), COLORS.error))
                     return
                 }
                 const outOfRange = nums.filter(n => n < 1 || n > groups.length)
@@ -473,8 +473,9 @@ export default async function handleMessage(conn, m) {
         if (!handler) return
 
         // ============ DIAGNOSTIK OWNER ============
-        if (handler.owner || ['menu', 'profil', 'help'].includes(command)) {
-            console.log(rgbTag('OWNER', `cmd="${command}" sender="${m.sender}" nums=[${nums.join(',')}] owners=[${owners.join(',')}] isOwner=${m.isOwner ? '✅' : '❌'}`, m.isOwner ? COLORS.success : COLORS.warn))
+        if (['menu', 'profil', 'help'].includes(command) || (handler.owner && m.isOwner)) {
+            const who = m.pushName ? `${m.pushName} (+${m.sender?.split('@')[0] || '?'})` : `+${m.sender?.split('@')[0] || '?'}`
+            console.log(log('CMD', `.${command} ← ${who}`, m.isOwner ? COLORS.success : COLORS.info))
         }
 
         // ============ ACCESS CONTROL ============
@@ -501,7 +502,7 @@ export default async function handleMessage(conn, m) {
 
         await handler(m, { conn, args, text: args.join(' '), command })
     } catch (e) {
-        console.error(rgbTag('HANDLER', e?.message || e, COLORS.error))
+        console.error(log('HANDLER', e?.message || e, COLORS.error))
         try {
             await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         } catch {}

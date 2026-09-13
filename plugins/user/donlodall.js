@@ -1,4 +1,4 @@
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 import { saveImage, saveVideo } from '../../lib/autosave.js'
 
 const API_BASE = 'https://api.azbry.com/api/download/'
@@ -568,7 +568,7 @@ let handler = async (m, { conn, text }) => {
 
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
-        console.error(rgbTag('DONLODALL', e?.message || e, COLORS.error))
+        console.error(log('DONLODALL', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         m.reply('❌ *Gagal memproses download.*\n\n_' + (e?.message || e) + '_')
     }

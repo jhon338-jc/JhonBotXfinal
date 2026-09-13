@@ -3,7 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
 import { getPluginSummary } from '../../handler.js'
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -68,7 +68,7 @@ let handler = async (m, { conn }) => {
         const msg = generateWAMessageFromContent(m.chat, interactiveMsg, { userJid: conn.user?.id || m.sender, quoted: m })
         await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
     } catch (e) {
-        console.error(rgbTag('INFO', 'gagal kirim tombol: ' + (e?.message || e), COLORS.warn))
+        console.error(log('INFO', 'gagal kirim tombol: ' + (e?.message || e), COLORS.warn))
     }
 
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })

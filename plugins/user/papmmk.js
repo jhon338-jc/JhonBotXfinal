@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 import { randomImage } from '../../lib/pap.js'
 import { saveImage } from '../../lib/autosave.js'
 import { sendMediaFlow, mediaCacheGet, mediaCacheSet, mediaButtons } from '../../lib/flow.js'
@@ -31,7 +31,7 @@ let handler = async (m, { conn, args, command }) => {
         await sendMediaFlow(conn, m.chat, { ...data, buttons: mediaButtons(command), quoted: m })
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
-        console.error(rgbTag('PAPMMK', e?.message || e, COLORS.error))
+        console.error(log('PAPMMK', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

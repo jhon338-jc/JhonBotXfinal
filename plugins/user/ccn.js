@@ -1,4 +1,4 @@
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 import {
     getCecanChina, getCecanHijaber, getCecanIndonesia,
     getCecanJapan, getCecanKorea,
@@ -51,7 +51,7 @@ let handler = async (m, { conn, args, command }) => {
 
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
-        console.error(rgbTag('CCN', e?.message || e, COLORS.error))
+        console.error(log('CCN', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

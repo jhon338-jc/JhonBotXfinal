@@ -1,4 +1,4 @@
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 import { makeSticker } from '../../lib/sticker.js'
 import { saveSticker } from '../../lib/autosave.js'
 
@@ -19,7 +19,7 @@ let handler = async (m, { conn, text }) => {
         await conn.sendMessage(m.chat, { sticker }, { quoted: m })
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
-        console.error(rgbTag('BRAT', e?.message || e, COLORS.error))
+        console.error(log('BRAT', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }

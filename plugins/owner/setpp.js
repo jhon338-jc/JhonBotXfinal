@@ -1,5 +1,5 @@
 import Jimp from 'jimp'
-import { rgbTag, COLORS } from '../../lib/rgb.js'
+import { log, COLORS } from '../../lib/rgb.js'
 
 let handler = async (m, { conn }) => {
     if (!m.isGroup) {
@@ -27,7 +27,7 @@ let handler = async (m, { conn }) => {
         await conn.updateProfilePicture(m.chat, buffer)
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
-        console.error(rgbTag('SETPP', e?.message || e, COLORS.error))
+        console.error(log('SETPP', e?.message || e, COLORS.error))
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         m.reply('❌ Gagal ganti foto profil! Pastikan bot admin.')
     }
