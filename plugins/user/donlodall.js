@@ -5,7 +5,27 @@ const MAX_MEDIA = 5
 
 function pickUrl(text = '') {
     const m = String(text).match(/https?:\/\/[^\s]+/i)
-    return m ? m[0].replace(/[)\]}]+$/, '') : ''
+    return m ? m[0].replace(/[)\]}>]+$/, '') : ''
+}
+
+function sanitizeUrl(url = '') {
+    try {
+        const u = new URL(url)
+        u.search = ''
+        u.hash = ''
+        return u.toString().replace(/\/$/, '')
+    } catch {
+        return ''
+    }
+}
+
+async function fetchAzbry(url) {
+    const res = await fetch('https://api.azbry.com/api/download/allinone?url=' + encodeURIComponent(url), {
+        headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+        signal: AbortSignal.timeout(30000)
+    })
+    const json = await res.json().catch(() => null)
+    return { res, json }
 }
 
 function extOf(url = '') {
@@ -60,19 +80,20 @@ let handler = async (m, { conn, text }) => {
 
     await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
     try {
-        const res = await fetch('https://api.azbry.com/api/download/allinone?url=' + encodeURIComponent(url), {
-            headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-        })
-        const json = await res.json().catch(() => null)
+        const clean = sanitizeUrl(url)
+        let res, json, lastErr = ''
+        for (const attempt of [url, clean].filter(Boolean)) {
+            ;({ res, json } = await fetchAzbry(attempt))
+            const bad = !json || json.status === false || json.code === 403 || json.code === 500 || !json.result
+            if (!bad) break
+            lastErr = json?.error || json?.message || ''
+            if (!res.ok && !json) lastErr = 'HTTP ' + res.status
+        }
 
         if (!json || json.status === false || json.code === 403 || json.code === 500 || !json.result) {
-            const err = json?.error || json?.message || 'Link tidak didukung atau gagal diproses server'
-            if (!res.ok && !json) {
-                await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-                return m.reply('❌ *Download gagal* (HTTP ' + res.status + ')\n\nCoba lagi nanti atau link lain.')
-            }
             await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-            return m.reply('❌ *Download gagal.*\n\n_' + err + '_')
+            const hint = 'Pastikan link valid (video belum dihapus / tidak private).\nCoba ulangi tanpa parameter tambahan pada link, atau gunakan link TikTok lain.'
+            return m.reply('❌ *Download gagal.*\n\n_' + lastErr + '_\n\n' + hint)
         }
 
         const r = json.result || {}
