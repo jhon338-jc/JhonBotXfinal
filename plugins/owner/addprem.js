@@ -17,7 +17,7 @@ let handler = async (m, { conn, args }) => {
     const fmt = formatPremiumEntry(entry)
     const T = PREMIUM_TIERS[tier]
 
-    let msg = '> ***AKTIVASI PREMIUM***\n\n'
+    let msg = '> *AKTIVASI PREMIUM*\n\n'
     msg += '━━━━━━━━━━━━━━━━━━\n'
     msg += `📱 Nomor : *+${num}*\n`
     msg += `🎁 Paket : *${T.label}*\n`
@@ -32,7 +32,7 @@ let handler = async (m, { conn, args }) => {
     if (before?.active && before.endDate) {
         msg += `\n📌 _Durasi dihitung dari langganan pertama (${before.startDate ? new Date(before.startDate).toLocaleDateString('id-ID') : '-'}). Sudah pernah aktif → perpanjangan otomatis._`
     }
-    msg += '\n\n_⭐ Nomor ini menjadi **member premium**, bukan owner. Akses premium berakhir otomatis setelah waktu habis selama server nyala._\n_👑 Untuk owner asli (tanpa batas waktu): `.ownadd`._'
+    msg += '\n\n_⭐ Nomor ini menjadi *member premium*, bukan owner. Akses premium berakhir otomatis setelah waktu habis selama server nyala._\n_👑 Untuk owner asli (tanpa batas waktu): `.ownadd`._'
     m.reply(msg)
 }
 

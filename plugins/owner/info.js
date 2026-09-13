@@ -40,13 +40,13 @@ let handler = async (m, { conn }) => {
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
     const botVersion = 'JhonBot v' + (botCfg.version || '3.3.8')
 
-    const text = `> ***${botVersion}***\n> _Aktif 24/7 Tanpa Henti_\n\n` +
-        `- 🤖 ***Nama*** : JhonBot\n` +
-        `- 👑 ***Developer*** : Jhon338\n` +
-        `- 📦 ***Plugins*** : ${total}\n` +
-        `- ⚡ ***Uptime*** : ${days}d ${hours}h ${minutes}m\n` +
-        `- 🔧 ***Mode*** : PUBLIC\n\n` +
-        `***DEVELOPER BY JHON338 • POWERED BY BAILEYS***`
+    const text = `> *${botVersion}*\n> _Aktif 24/7 Tanpa Henti_\n\n` +
+        `- 🤖 *Nama*        : JhonBot\n` +
+        `- 👑 *Developer*   : Jhon338\n` +
+        `- 📦 *Plugins*     : ${total}\n` +
+        `- ⚡ *Uptime*      : ${days}d ${hours}h ${minutes}m\n` +
+        `- 🔧 *Mode*        : PUBLIC\n\n` +
+        `*DEVELOPER BY JHON338 • POWERED BY BAILEYS*`
 
     await m.reply(text)
 

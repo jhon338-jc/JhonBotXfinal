@@ -3,7 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { generateWAMessageFromContent, prepareWAMessageMedia } from '@whiskeysockets/baileys'
 import sharp from 'sharp'
-import { PREMIUM_TIERS, loadPremiumList, formatPremiumEntry } from '../../handler.js'
+import { PREMIUM_TIERS, loadPremiumList, formatPremiumEntry, normalizeNumber, nowWIB } from '../../handler.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -85,10 +85,12 @@ async function fakeTroli(conn, jid) {
 
 // Kirim carousel (geser ke samping) + protocolMessage interaktivitas
 // supaya UI kartu & tombolnya benar-benar tampil/ter-register di WhatsApp.
+// messageVersion wajib ada di level carouselMessage (bukan cuma di kartu)
+// supaya HP Android/iOS ikut merender kartunya (Desktop sudah bisa).
 async function sendCarousel(conn, jid, cards, { userJid, quoted } = {}) {
     const msg = generateWAMessageFromContent(jid, {
         interactiveMessage: {
-            carouselMessage: { cards }
+            carouselMessage: { cards, messageVersion: 1 }
         }
     }, { userJid: userJid || '0@s.whatsapp.net', quoted: quoted || undefined })
     await conn.relayMessage(jid, msg.message, { messageId: msg.key.id })
@@ -133,11 +135,12 @@ function buildFormat(tierKey) {
 let handler = async (m, { conn, args, command }) => {
     const input = (args?.[0] || '').toLowerCase()
     const creator = loadCreator()
+    const meNumber = normalizeNumber(m.sender?.split('@')[0] || '')
 
     // ===== Status premium user =====
     if (input === 'status') {
         const list = loadPremiumList()
-        const myFmt = formatPremiumEntry(list.find(e => e && e.number === m.sender?.split('@')[0]))
+        const myFmt = formatPremiumEntry(list.find(e => e && normalizeNumber(e.number) === meNumber))
         let s
         if (m.isOwner) s = '👑 *OWNER* — akses penuh tanpa batas.'
         else if (m.isPremium && myFmt?.active) {
@@ -146,12 +149,14 @@ let handler = async (m, { conn, args, command }) => {
             s = `⭐ *PREMIUM ${(PREMIUM_TIERS[myFmt.tier]?.label || '')}*\n🗓️ Aktif s/d: ${dEnd}\n⏳ Sisa: ~${dur} hari`
         } else s = '👤 *USER* — belum premium.\n\n_Gunakan `.premium` untuk melihat paket & cara aktivasi._'
         const status = [
-            `> ***STATUS AKUN KAMU***`,
+            `> *STATUS AKUN KAMU*`,
             '',
             `- Nama : ${m.pushName || '-'}`,
-            `- Nomor: +${m.sender?.split('@')[0] || '?'}`,
+            `- Nomor: +${meNumber || '?'}`,
             '',
             s,
+            '',
+            `🕐 _Sekarang: ${nowWIB({ weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })} WIB_`,
             '',
             '_Mau upgrade / perpanjang? Pilih paket di menu premium._'
         ].join('\n')
@@ -195,15 +200,15 @@ let handler = async (m, { conn, args, command }) => {
         const waLink = `https://wa.me/${creator}?text=${encodeURIComponent(copyText)}`
 
         const caption = [
-            `> ***ORDER PREMIUM ${Tsel.label}***`,
+            `> *ORDER PREMIUM ${Tsel.label}*`,
             '',
-            `🗒️ ***RINCIAN PESANAN:***`,
+            `🗒️ *RINCIAN PESANAN:*`,
             `- Paket : *${Tsel.label}*`,
             `- Harga : *Rp ${Tsel.price.toLocaleString('id-ID')}*`,
             `- Durasi: *${Tsel.days} hari*`,
             `- Tier  : *${chosen}*`,
             '',
-            `💵 ***CARA BAYAR & AKTIVASI:***`,
+            `💵 *CARA BAYAR & AKTIVASI:*`,
             `1. Tekan tombol *👤 Chat Owner* di bawah`,
             `2. Format pesan sudah terisi otomatis (berisi tier + nomor kamu)`,
             `3. Kirim bukti transfer, lalu owner akan aktivasi dengan:`,
@@ -299,7 +304,7 @@ let handler = async (m, { conn, args, command }) => {
             return `• *${tinfo.label}* — Rp ${tinfo.price.toLocaleString('id-ID')} / ${tinfo.days} hari\n   _Ketik_ \`.premium ${t}\`_ untuk order._`
         }).join('\n\n')
         await conn.sendMessage(m.chat, {
-            text: `> ***MENU LANGGANAN PREMIUM***\n\n${statLine}\n\n📦 *PAKET TERSEDIA:*\n${rows}\n\n👆 _Ketik nomor paket untuk memesan._`
+            text: `> *MENU LANGGANAN PREMIUM*\n\n${statLine}\n\n📦 *PAKET TERSEDIA:*\n${rows}\n\n👆 _Ketik nomor paket untuk memesan._`
         }, { quoted: m })
     }
     await conn.sendMessage(m.chat, { react: { text: '👑', key: m.key } })

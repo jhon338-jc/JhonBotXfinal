@@ -4,7 +4,7 @@ import { normalizeNumber } from '../../handler.js'
 let handler = async (m, { conn, args }) => {
     if (!m.isGroup) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('> ***GROUP ONLY***\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
+        return m.reply('> *GROUP ONLY*\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
     }
 
     const num = normalizeNumber(args[0])

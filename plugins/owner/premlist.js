@@ -7,7 +7,7 @@ let handler = async (m, { conn, args }) => {
     const active = records.filter(r => r.active)
     const expired = records.filter(r => !r.active)
 
-    let msg = '> ***DAFTAR PREMIUM***\n\n'
+    let msg = '> *DAFTAR PREMIUM*\n\n'
     msg += '━━━━━━━━━━━━━━━━━━\n'
 
     if (!records.length) {

@@ -52,7 +52,7 @@ let handler = async (m, { conn }) => {
         '> _Berikut semua jenis tampilan yang didukung bot_\n\n' +
         '*1. Format Teks:*\n' +
         '- *Tebal* \u00b7 _Miring_ \u00b7 ~Coret~ \u00b7 `mono`\n' +
-        '- ***Tebal + Miring*** \u00b7 *~Tebal + Coret~* \u00b7 _~Miring + Coret~_\n\n' +
+        '- *Tebal + Miring* \u00b7 *~Tebal + Coret~* \u00b7 _~Miring + Coret~_\n\n' +
         '*2. Tombol (interactive card di bawah):*\n' +
         '- ☰ List Menu (dropdown)\n' +
         '- ⚡ Quick Reply\n' +

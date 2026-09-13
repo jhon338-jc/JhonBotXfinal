@@ -12,6 +12,25 @@ import { runAntiSpam } from './lib/antispam.js'
 export const BOT_NAME = 'JhonBot'
 export const BOT_VERSION = '3.3.8'
 
+// Versi bot dari config.json (biar caption/keterangan tidak stale saat versi diganti)
+export function getBotVersion() {
+    try {
+        const cfg = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8'))
+        return 'JhonBot v' + (cfg.version || BOT_VERSION)
+    } catch {
+        return 'JhonBot v' + BOT_VERSION
+    }
+}
+
+// Tanggal & jam WIB real-time saat pesan diproses (bukan timestamp statis)
+export function nowWIB(opt = {}) {
+    try {
+        return new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', ...opt })
+    } catch {
+        return new Date().toLocaleString('id-ID')
+    }
+}
+
 // Command publik yang BOLEH dipakai di DM (selain itu DM tidak dilayani)
 const DM_PUBLIC = new Set(['rvo', 'brat', 'img', 'toimg', 'iqc', 'lirik', 'donlodall', 'daftar'])
 
@@ -147,8 +166,8 @@ export function addPremium(number = '', tier = 'premium2', { extend = true } = {
     if (existing) {
         const startDate = Number(existing.startDate) || now
         if (Number(existing.endDate) > now && extend) {
-            // masih aktif → endDate = startDate + kumulatif durasi baru
-            existing.endDate = startDate + duration
+            // masih aktif → endDate ditambah durasi paket baru (menumpuk dari tanggal habis sekarang)
+            existing.endDate = Math.max(now, Number(existing.endDate) || now) + duration
         } else {
             // sudah habis → mulai dari sekarang
             existing.startDate = now
@@ -401,7 +420,8 @@ export default async function handleMessage(conn, m) {
         // ============ PEMILIHAN GRUP (balas nomor: "2,5") ============
         if (/^[\d,\s]+$/.test(cleaned) && !isButtonResponse) {
             if (!m.isGroup && m.isOwner && monitor.waiting) {
-                const nums = cleaned.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
+                const picked = cleaned.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
+                const nums = [...new Set(picked)]
                 if (!nums.length || nums.length > 5) return
                 let groups = []
                 try {
@@ -411,9 +431,12 @@ export default async function handleMessage(conn, m) {
                     console.error(rgbTag('HANDLER', 'Gagal ambil daftar grup: ' + (e?.message || e), COLORS.error))
                     return
                 }
-                const list = groups
-                const selected = nums.map(n => list[n - 1]).filter(Boolean)
-                if (!selected.length || selected.length > 5) return
+                const outOfRange = nums.filter(n => n < 1 || n > groups.length)
+                if (outOfRange.length) {
+                    return m.reply(`> *NOMOR TIDAK VALID*\n\n_Nomor_\n- \`${outOfRange.join(', ')}\`\n\n_tidak ada di daftar grup. Balas nomor_ \`1-${groups.length}\`_._`)
+                }
+                const selected = nums.map(n => groups[n - 1]).filter(Boolean)
+                if (!selected.length) return
                 monitor.groups = selected.map(g => g.id)
                 monitor.waiting = false
                 writeJSON(DB_FILES.monitor, monitor)
@@ -456,24 +479,24 @@ export default async function handleMessage(conn, m) {
 
         // ============ ACCESS CONTROL ============
         if (handler.owner && !m.isOwner) {
-            return m.reply('> ***OWNER ONLY***\n\n_❌ Fitur ini khusus 👑 **Owner**._\n\n_Kamu bukan owner. Mau jadi owner? Hubungi kreator Jhon338._')
+            return m.reply('> *OWNER ONLY*\n\n_❌ Fitur ini khusus 👑 **Owner**._\n\n_Kamu bukan owner. Mau jadi owner? Hubungi kreator Jhon338._')
         }
         if (handler.premium && !m.isPremium) {
-            return m.reply('> ***PREMIUM ONLY***\n\n_❌ Fitur ini khusus ⭐ **member premium**._\n\n_Mau jadi member premium? Ketik:_\n- `.premium`\n\n_👑 Atau hubungi owner untuk aktivasi._')
+            return m.reply('> *PREMIUM ONLY*\n\n_❌ Fitur ini khusus ⭐ **member premium**._\n\n_Mau jadi member premium? Ketik:_\n- `.premium`\n\n_👑 Atau hubungi owner untuk aktivasi._')
         }
         if (handler.group && !m.isGroup) {
-            return m.reply('> ***GROUP ONLY***\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
+            return m.reply('> *GROUP ONLY*\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
         }
         if (handler.botAdmin && m.isGroup && !m.isBotAdmin) {
-            return m.reply('> ***BOT ADMIN REQUIRED***\n\n_❌ Bot harus menjadi **admin grup** untuk fitur ini._')
+            return m.reply('> *BOT ADMIN REQUIRED*\n\n_❌ Bot harus menjadi **admin grup** untuk fitur ini._')
         }
         if (handler.admin && m.isGroup && !m.isAdmin && !m.isOwner) {
-            return m.reply('> ***ADMIN ONLY***\n\n_❌ Fitur ini khusus **admin grup**._')
+            return m.reply('> *ADMIN ONLY*\n\n_❌ Fitur ini khusus **admin grup**._')
         }
 
         // ============ WAJIB DAFTAR MEMBER ============
-        if (!m.isOwner && !m.isPremium && command !== 'daftar' && !isRegisteredMember(m.sender || m.chat)) {
-            return m.reply('> ***TERDAFTAR DULU YUK***\n\n_Untuk memakai fitur bot ini, kamu harus daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Contoh:_\n- `.daftar Jhon,20,pelajar`\n\n_📋 Status yang tersedia:_\n- ***pelajar***\n- ***mahasiswa***\n- ***singgel***\n- ***jomblo***\n- ***kawin***')
+        if (!m.isOwner && !m.isPremium && !['daftar', 'register', 'reg'].includes(command) && !isRegisteredMember(m.sender || m.chat)) {
+            return m.reply('> *TERDAFTAR DULU YUK*\n\n_Untuk memakai fitur bot ini, kamu harus daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Contoh:_\n- `.daftar Jhon,20,pelajar`\n\n_📋 Status yang tersedia:_\n- *pelajar*\n- *mahasiswa*\n- *singgel*\n- *jomblo*\n- *kawin*')
         }
 
         await handler(m, { conn, args, text: args.join(' '), command })

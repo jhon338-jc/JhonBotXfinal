@@ -168,11 +168,11 @@ let handler = async (m, { conn, args }) => {
 
     // Profil view (quick_reply / .profil)
     if (input === 'me' || m.command === 'profil') {
-        let status = '👤 ***User***'
-        if (m.isOwner) status = '👑 ***Owner***'
-        else if (m.isPremium) status = '👑 ***Premium***'
+        let status = '👤 *User*'
+        if (m.isOwner) status = '👑 *Owner*'
+        else if (m.isPremium) status = '👑 *Premium*'
         await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
-        m.reply(`> ***PROFIL KAMU***\n\n- ***Nama*** : ${m.pushName || '-'}\n- ***Nomor*** : +${number}\n- ***Status*** : ${status}\n\n_Mau ganti akses? Hubungi owner._`)
+        m.reply(`> *PROFIL KAMU*\n\n- *Nama* : ${m.pushName || '-'}\n- *Nomor* : +${number}\n- *Status* : ${status}\n\n_Mau ganti akses? Hubungi owner._`)
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         return
     }
@@ -220,7 +220,7 @@ let handler = async (m, { conn, args }) => {
 
     // Maksimal 6 tombol native flow
     const botVersion = 'JhonBot v' + (botCfg.version || '3.3.8')
-    const native = [singleSelect('BUKA MENU 📋', sections)]
+    const native = [singleSelect('BUKA MENU', sections)]
     native.push(quickReply('👤 Profil', '.profil'))
     if (m.isOwner) native.push(quickReply('👑 Daftar Owner', '.ownlist'))
     native.push(ctaUrl('🌐 Linktree', channelLink))
@@ -255,12 +255,12 @@ let handler = async (m, { conn, args }) => {
     }
 
     // Fallback: plain text (pakai kombinasi format)
-    let plainText = `> ***${botVersion.toUpperCase()}***\n> _Aktif 24/7 Tanpa Henti_\n\n`
-    plainText += `👋 _Halo,_ ***${m.pushName || 'User'}***\n📦 _Total Plugin:_ ***${totalPlugins}***\n\n`
-    plainText += `***1. 👤 MENU USER***\n`
+    let plainText = `> *${botVersion.toUpperCase()}*\n> _Aktif 24/7 Tanpa Henti_\n\n`
+    plainText += `👋 _Halo,_ *${m.pushName || 'User'}*\n📦 _Total Plugin:_ *${totalPlugins}*\n\n`
+    plainText += `*1. 👤 MENU USER*\n`
     userRows.forEach(r => { plainText += `- \`${r.title}\` — _${r.description}_\n` })
     if (m.isOwner) {
-        plainText += `\n***2. 👑 MENU OWNER***\n`
+        plainText += `\n*2. 👑 MENU OWNER*\n`
         cmdRows(OWNER_CMDS).forEach(r => { plainText += `- \`${r.title}\` — _${r.description}_\n` })
     }
     plainText += `\n_Ketik perintah seperti contoh di atas. Semoga bermanfaat! 🙏`
