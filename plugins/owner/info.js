@@ -38,7 +38,6 @@ let handler = async (m, { conn }) => {
 
     const botCfg = loadBotConfig()
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
-    const ghRepo = botCfg.githubRepo || 'https://github.com/jhon338-jc/JhonBotXfinal'
     const botVersion = 'JhonBot v' + (botCfg.version || '3.3.8')
 
     const text = `> ***${botVersion}***\n> _Aktif 24/7 Tanpa Henti_\n\n` +
@@ -56,7 +55,6 @@ let handler = async (m, { conn }) => {
             quickReply('📖 Menu', '.menu'),
             quickReply('⚡ Ping', '.ping'),
             ctaUrl('🌐 Linktree', channelLink),
-            ctaUrl('🐙 GitHub', ghRepo),
             copyCode('🔑 Salin Versi', botVersion)
         ]
         const interactiveMsg = {

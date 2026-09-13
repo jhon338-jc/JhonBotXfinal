@@ -227,7 +227,6 @@ let handler = async (m, { conn, args }) => {
 
     const botCfg = loadBotConfig()
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
-    const ghRepo = botCfg.githubRepo || 'https://github.com/jhon338-jc/JhonBotXfinal'
     const ownerNumber = botCfg.creator?.[0] || ''
 
     // Maksimal 6 tombol native flow
@@ -238,7 +237,6 @@ let handler = async (m, { conn, args }) => {
     native.push(ctaUrl('🌐 Linktree', channelLink))
     if (ownerNumber) native.push(callBtn('📞 Call Owner', '+' + ownerNumber))
     native.push(copyCode('🔑 Salin Versi', botVersion))
-    if (!m.isOwner && native.length < 6 && ghRepo) native.push(ctaUrl('🐙 GitHub', ghRepo))
 
     try {
         let header = await getHeaderImage(conn)

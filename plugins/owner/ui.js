@@ -44,7 +44,6 @@ let handler = async (m, { conn }) => {
     const ownerNumber = (botCfg.creator?.[0] || '').replace(/\D/g, '')
     const ownerName = botCfg.ownerName || 'Jhon338'
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
-    const ghRepo = botCfg.githubRepo || 'https://github.com/jhon338-jc/JhonBotXfinal'
 
     await conn.sendMessage(m.chat, { react: { text: '🎨', key: m.key } })
 
@@ -80,8 +79,7 @@ let handler = async (m, { conn }) => {
         quickReply('⚡ Quick Reply', '.menu'),
         ctaUrl('🌐 URL Button', channelLink),
         callBtn('📞 Call Owner', '+' + ownerNumber),
-        copyCode('🔑 Copy Code', 'Kode Bot: ' + botVersion),
-        ctaUrl('🐙 GitHub', ghRepo)
+        copyCode('🔑 Copy Code', 'Kode Bot: ' + botVersion)
     ]
 
     try {
@@ -118,7 +116,6 @@ let handler = async (m, { conn }) => {
                 footer: { text: 'Komunitas' },
                 nativeFlowMessage: carouselBtn(1, [
                     ctaUrl('🌐 Linktree', channelLink),
-                    ctaUrl('🐙 GitHub', ghRepo),
                     copyCode('🔑 Salin Versi', botVersion)
                 ])
             },
