@@ -186,6 +186,14 @@ async function resolveSenderNumbers(conn, m) {
     addJid(m.key?.participantAlt)
     addJid(m.key?.remoteJidAlt)
 
+    // Di chat pribadi, lawan bicara = pengirim (biar owner tetap dikenali
+    // meskipun field sender/participant kosong atau berupa LID)
+    if (!m.isGroup) {
+        addJid(m.chat)
+        addJid(m.key?.remoteJid)
+        addJid(m.key?.remoteJidAlt)
+    }
+
     const lidBase = j => String(j).split('@')[0].split(':')[0]
     const senderLid = [m.sender, m.participant, m.key?.participant].find(j => j && /@lid$/i.test(String(j)))
     if (senderLid) {
@@ -215,7 +223,10 @@ export default async function handleMessage(conn, m) {
     try {
         if (!m?.chat) return
         if (m.chat.includes('@newsletter') || m.chat === 'status@broadcast') return
-        if (m.fromMe) return
+        // Hanya abaikan pesan yang DIBUAT bot sendiri (id Baileys BAE5).
+        // Pesan owner di chat pribadi/self-chat tetap fromMe=true karena bot
+        // ter-pairing di nomor owner, tapi id-nya bukan BAE5 → tetap dilayani.
+        if (m.fromMe && m.isBaileys) return
 
         const { body, isButtonResponse } = extractCommandFromMessage(m)
         if (!body) return
