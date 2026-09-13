@@ -1,7 +1,8 @@
 import { rgbTag, COLORS } from '../../lib/rgb.js'
 import { saveImage, saveVideo } from '../../lib/autosave.js'
 
-const MAX_MEDIA = 5
+const API = 'https://api.azbry.com/api/download/allinonev2'
+const MAX_IMAGES = 5
 
 function pickUrl(text = '') {
     const m = String(text).match(/https?:\/\/[^\s]+/i)
@@ -20,7 +21,7 @@ function sanitizeUrl(url = '') {
 }
 
 async function fetchAzbry(url) {
-    const res = await fetch('https://api.azbry.com/api/download/allinone?url=' + encodeURIComponent(url), {
+    const res = await fetch(API + '?url=' + encodeURIComponent(url) + '&format=.mp4', {
         headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
         signal: AbortSignal.timeout(30000)
     })
@@ -28,29 +29,32 @@ async function fetchAzbry(url) {
     return { res, json }
 }
 
-function extOf(url = '') {
-    try {
-        const ext = new URL(url).pathname.split('.').pop().toLowerCase()
-        return ext === url ? '' : ext
-    } catch {
-        return ''
-    }
+function labelOf(item = {}) {
+    return String(item?.label || '').toLowerCase() + ' ' + String(item?.name || '').toLowerCase()
 }
 
 function typeOf(item = {}) {
-    const raw = [item.type, item.mime, item.mimeType, item.extension, item.file_type, item.format, extOf(item.url || item.link || item.download_url)]
-        .filter(Boolean).join(' ').toLowerCase()
-    if (/video|mp4|mov|webm|mkv|p120|avc/.test(raw)) return 'video'
+    const raw = [item.type, item.mime, item.mimeType, item.extension, item.file_type, item.format, labelOf(item), item.url].filter(Boolean).join(' ').toLowerCase()
+    if (/video|mp4|mov|webm|mkv/.test(raw)) return 'video'
     if (/image|jpe?g|png|webp|gif|heic/.test(raw)) return 'image'
-    if (/audio|mp3|m4a|opus|wav|p140/.test(raw)) return 'audio'
+    if (/audio|mp3|m4a|opus|wav/.test(raw)) return 'audio'
     return 'unknown'
+}
+
+function score(item = {}) {
+    const l = labelOf(item)
+    let s = 0
+    if (/hd|4k|1080|720|high/.test(l)) s += 3
+    if (/no[_-]?watermark/.test(l)) s += 2
+    if (/wartermark|watermark/.test(l) && !/no_?watermark/.test(l)) s -= 2
+    if (/thumb/.test(l)) s -= 5
+    return s
 }
 
 function collectMedia(json) {
     const candidates = []
-    const add = (arr) => {
-        if (Array.isArray(arr)) candidates.push(...arr)
-    }
+    const add = (arr) => { if (Array.isArray(arr)) candidates.push(...arr) }
+    add(json?.result?.downloads)
     add(json?.result?.medias)
     add(json?.result?.resource)
     add(json?.result?.links)
@@ -60,22 +64,25 @@ function collectMedia(json) {
     add(json?.links)
 
     const direct = json?.result?.download_url || json?.result?.url || json?.result?.link
-    if (direct) candidates.push({ url: direct, type: json?.result?.file_type || json?.result?.type || json?.result?.extension || '' })
+    if (direct) candidates.push({ url: direct, type: json?.result?.file_type || json?.result?.type || '' })
 
-    const dedup = new Map()
+    const seen = new Map()
     for (const c of candidates) {
         const u = c?.url || c?.link || c?.download_url
         if (!u || !/^https?:\/\//i.test(u)) continue
-        if (!dedup.has(u)) dedup.set(u, c)
+        if (typeOf(c) === 'audio') continue
+        if (!seen.has(u)) seen.set(u, c)
     }
-    return [...dedup.values()]
+    const arr = [...seen.values()]
+    arr.sort((a, b) => score(b) - score(a))
+    return arr
 }
 
 let handler = async (m, { conn, text }) => {
     const url = pickUrl(text)
     if (!url) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('⚠️ *Penggunaan:*\n\n`.donlodall <link>`\n\nContoh:\n`.donlodall https://www.tiktok.com/@user/video/123`\n\n✅ Bisa TikTok, Instagram, Facebook, X, Pinterest, dll.')
+        return m.reply('⚠️ *Penggunaan:*\n\n`.donlodall <link>`\n\nContoh:\n`.donlodall https://vt.tiktok.com/ZSquqFFSh/`\n\n✅ Bisa TikTok, Instagram, Facebook, X, Pinterest, dll.')
     }
 
     await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
@@ -86,45 +93,49 @@ let handler = async (m, { conn, text }) => {
             ;({ res, json } = await fetchAzbry(attempt))
             const bad = !json || json.status === false || json.code === 403 || json.code === 500 || !json.result
             if (!bad) break
-            lastErr = json?.error || json?.message || ''
-            if (!res.ok && !json) lastErr = 'HTTP ' + res.status
+            lastErr = json?.error || json?.message || (res.ok ? '' : ('HTTP ' + res.status))
         }
 
         if (!json || json.status === false || json.code === 403 || json.code === 500 || !json.result) {
             await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-            const hint = 'Pastikan link valid (video belum dihapus / tidak private).\nCoba ulangi tanpa parameter tambahan pada link, atau gunakan link TikTok lain.'
-            return m.reply('❌ *Download gagal.*\n\n_' + lastErr + '_\n\n' + hint)
+            return m.reply('❌ *Download gagal.*\n\n_' + (lastErr || 'Unknown error') + '_\n\nPastikan link valid (video belum dihapus/private). Kalau masih gagal, coba link TikTok lain.')
         }
 
         const r = json.result || {}
-        const medias = collectMedia(json)
-        const items = medias
-            .filter(it => typeOf(it) !== 'audio')
-            .slice(0, MAX_MEDIA)
+        const items = collectMedia(json)
+        const vids = items.filter(it => typeOf(it) === 'video')
+        const imgs = items.filter(it => typeOf(it) === 'image')
+        const chosen = vids.length ? vids.slice(0, 1) : imgs.slice(0, MAX_IMAGES)
+        const multi = chosen.length > 1
 
-        if (!items.length) {
+        if (!chosen.length) {
             await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
             return m.reply('❌ *Tidak ada media yang bisa diunduh* dari link tersebut.')
         }
 
         const title = (r.title || r.judul || '').split('\n')[0].slice(0, 120)
-        const source = r.source || r.hosting || r.platform || '-'
-        const author = r.author || r.username || ''
+        const author = r.owner || r.author || r.username || ''
+        const thumb = r.thumbnail || ''
 
-        await conn.sendMessage(m.chat, { react: { text: '📥', key: m.key } })
+        if (!multi) {
+            await conn.sendMessage(m.chat, { react: { text: '📥', key: m.key } })
+        }
 
-        for (const [i, item] of items.entries()) {
+        for (const [i, item] of chosen.entries()) {
             const u = item.url || item.link || item.download_url
             const type = typeOf(item)
-            const kval = item.quality || item.resolution || item.quality_text || item.kualitas || ''
-            const prefix = items.length > 1 ? (`📦 Media ${i + 1}/${items.length}\n`) : ''
+            const label = (item.label || item.kualitas || '').replace(/^download[ (]*/i, '').trim()
+            let cap = (multi ? `📦 Media ${i + 1}/${chosen.length}\n\n` : '') +
+                `*🎯 ALL IN ONE DOWNLOAD*\n\n▪️ *Judul:* ${title || '-'}\n▪️ *Author:* ${author || '-'}`
+            if (label) cap += `\n▪️ *Tipe:* ${label}`
+            const caption = cap
 
-            const dl = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } })
-            if (!dl.ok) throw new Error('Gagal unduh media ' + i + 1 + ' (HTTP ' + dl.status + ')')
+            const dl = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }, signal: AbortSignal.timeout(90000) })
+            if (!dl.ok) throw new Error('Gagal unduh media (' + dl.status + ')')
             const buffer = Buffer.from(await dl.arrayBuffer())
-            if (!buffer.length) throw new Error('Media ' + i + 1 + ' kosong')
+            if (!buffer.length) throw new Error('Media kosong')
+            if (buffer.length > 70 * 1024 * 1024) throw new Error('Media terlalu besar untuk WhatsApp (>70MB)')
 
-            const caption = `${prefix}*🎯 ALL IN ONE DOWNLOAD*\n\n▪️ *Judul:* ${title || '-'}\n▪️ *Source:* ${source}\n▪️ *Author:* ${author || '-'}\n▪️ *Kualitas:* ${kval || '-'}`
             if (type === 'video') {
                 await saveVideo(buffer)
                 await conn.sendMessage(m.chat, { video: buffer, mimetype: 'video/mp4', caption }, { quoted: m })
@@ -133,7 +144,7 @@ let handler = async (m, { conn, text }) => {
                 await conn.sendMessage(m.chat, { image: buffer, caption }, { quoted: m })
             } else {
                 await saveVideo(buffer)
-                const fname = 'media_' + (i + 1) + (extOf(u) ? '.' + extOf(u) : '')
+                const fname = 'tiktok_aiodl.mp4'
                 await conn.sendMessage(m.chat, { document: buffer, mimetype: 'application/octet-stream', fileName: fname, caption }, { quoted: m })
             }
         }
