@@ -37,4 +37,6 @@ let handler = async (m, { conn, args, command }) => {
 }
 
 handler.command = ['papmmk']
+handler.premium = true
+handler.tags = ['premium']
 export default handler

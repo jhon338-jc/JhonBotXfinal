@@ -71,12 +71,132 @@ export function loadOwners() {
     }
 }
 
+// ==================== PREMIUM ====================
+// Schema premium.json:
+//   { "premium": [ { "number": "628xxx", "tier": "premium1", "startDate": ms, "endDate": ms } ] }
+// Legacy format lama (array string polos) tetap didukung saat load.
+export const PREMIUM_TIERS = {
+    premium1: { label: 'PREMIUM 1', price: 15000, days: 2 },
+    premium2: { label: 'PREMIUM 2', price: 20000, days: 7 },
+    premium3: { label: 'PREMIUM 3', price: 50000, days: 30 }
+}
+const TIER_ALIAS = {
+    '1': 'premium1', 'premium1': 'premium1', 'prem1': 'premium1',
+    '2': 'premium2', 'premium2': 'premium2', 'prem2': 'premium2',
+    '3': 'premium3', 'premium3': 'premium3', 'prem3': 'premium3'
+}
+export function resolveTier(input = '') {
+    return TIER_ALIAS[String(input).toLowerCase()] || null
+}
+
 export function loadPremium() {
     const db = readJSON(DB_FILES.premium)
     try {
-        return (db?.premium || []).map(n => normalizeNumber(n))
+        const list = Array.isArray(db?.premium) ? db.premium : []
+        const now = Date.now()
+        const active = []
+        for (const e of list) {
+            // Legacy: string polos → dianggap aktif tanpa batas waktu
+            if (typeof e === 'string' || typeof e === 'number') {
+                active.push(normalizeNumber(e))
+                continue
+            }
+            if (!e || !e.number) continue
+            const end = Number(e.endDate || 0)
+            const num = normalizeNumber(e.number)
+            if (!num) continue
+            if (!end || end > now) active.push(num)
+        }
+        return active
     } catch {
         return []
+    }
+}
+
+// ==================== PENYIMPANAN DATABASE PREMIUM ====================
+export function loadPremiumList() {
+    const db = readJSON(DB_FILES.premium)
+    return Array.isArray(db?.premium) ? db.premium : []
+}
+
+export function savePremiumList(list) {
+    const db = readJSON(DB_FILES.premium) || {}
+    db.premium = list
+    writeJSON(DB_FILES.premium, db)
+}
+
+export function isPremiumActive(number = '') {
+    const num = normalizeNumber(number)
+    if (!num) return false
+    return loadPremium().includes(num)
+}
+
+// Durasi dihitung dari langganan pertama (startDate dipertahankan).
+// - User baru         → startDate = sekarang, endDate = startDate + durasi
+// - User sudah aktif  → startDate tetap, endDate ditambah durasi dari startDate
+// - User sudah habis  → dimulai ulang dari sekarang (langganan pertama baru)
+export function addPremium(number = '', tier = 'premium2', { extend = true } = {}) {
+    const num = normalizeNumber(number)
+    const T = PREMIUM_TIERS[tier] || PREMIUM_TIERS.premium2
+    if (!num) return null
+    const now = Date.now()
+    const duration = T.days * 24 * 60 * 60 * 1000
+    const list = loadPremiumList()
+    const existing = list.find(e => e && normalizeNumber(e.number) === num)
+    if (existing) {
+        const startDate = Number(existing.startDate) || now
+        if (Number(existing.endDate) > now && extend) {
+            // masih aktif → endDate = startDate + kumulatif durasi baru
+            existing.endDate = startDate + duration
+        } else {
+            // sudah habis → mulai dari sekarang
+            existing.startDate = now
+            existing.endDate = now + duration
+        }
+        existing.tier = tier
+        existing.number = num
+        savePremiumList(list)
+        return existing
+    }
+    const entry = { number: num, tier, startDate: now, endDate: now + duration }
+    list.push(entry)
+    savePremiumList(list)
+    return entry
+}
+
+export function removePremium(number = '') {
+    const num = normalizeNumber(number)
+    if (!num) return false
+    const list = loadPremiumList().filter(e => {
+        if (typeof e === 'string' || typeof e === 'number') return normalizeNumber(e) !== num
+        return e && normalizeNumber(e.number) !== num
+    })
+    savePremiumList(list)
+    return true
+}
+
+export function getPremiumEntry(number = '') {
+    const num = normalizeNumber(number)
+    if (!num) return null
+    const list = loadPremiumList()
+    return list.find(e => e && normalizeNumber(e.number) === num) || null
+}
+
+export function formatPremiumEntry(entry) {
+    if (!entry) return null
+    if (typeof entry === 'string' || typeof entry === 'number') {
+        return { number: normalizeNumber(entry), tier: 'premium2', startDate: 0, endDate: 0, active: true, remainingMs: null, legacy: true }
+    }
+    const num = normalizeNumber(entry.number)
+    const end = Number(entry.endDate || 0)
+    const tier = PREMIUM_TIERS[entry.tier] ? entry.tier : 'premium2'
+    return {
+        number: num,
+        tier,
+        startDate: Number(entry.startDate || 0),
+        endDate: end,
+        active: !end || end > Date.now(),
+        remainingMs: end ? end - Date.now() : null
     }
 }
 
@@ -338,7 +458,7 @@ export default async function handleMessage(conn, m) {
             return m.reply('❌ Fitur ini khusus 👑 *Owner*!')
         }
         if (handler.premium && !m.isPremium) {
-            return m.reply('❌ Fitur ini khusus 👑 *Premium*!')
+            return m.reply('> ***PREMIUM ONLY***\n\n_❌ Fitur ini khusus member premium._\n\n_Mau jadi member premium? Ketik:_\n- `.premium`\n\n_👑 Atau hubungi owner untuk aktivasi._')
         }
         if (handler.group && !m.isGroup) {
             return m.reply('❌ Fitur ini hanya bisa dipakai di grup!')

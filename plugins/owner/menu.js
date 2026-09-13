@@ -91,7 +91,7 @@ function loadBotConfig() {
 
 async function getThumb() {
     try {
-        const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'menu.jpg')
+        const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'menu.png')
         if (!fs.existsSync(imgPath)) return null
         return await sharp(imgPath).resize({ width: 300 }).jpeg({ quality: 70 }).toBuffer()
     } catch {
@@ -125,10 +125,33 @@ async function getHeaderImage(conn) {
         return {
             hasMediaAttachment: true,
             imageMessage: media.imageMessage,
-            title: '🤖 JhonBot v3.3.8'
+            title: '🤖 JhonBot v' + (loadBotConfig().version || '3.3.8')
         }
     } catch (e) {
         console.error(rgbTag('MENU', 'header image gagal: ' + (e?.message || e), COLORS.warn))
+        return null
+    }
+}
+
+// ===== FAKE TROLI (ORDER SAMPAH) =====
+async function getFakeTroli(conn, chatJid, senderJid) {
+    try {
+        const thumb = await getThumb()
+        const order = {
+            orderMessage: {
+                itemCount: 0,
+                status: 1,
+                surface: 1,
+                orderTitle: 'JhonBot • Order',
+                message: 'ORDER SAMPAH',
+                privateAttributes: '',
+                ...(thumb ? { thumbnailJpeg: thumb } : {})
+            }
+        }
+        const msg = generateWAMessageFromContent(chatJid || '0@s.whatsapp.net', order, { userJid: senderJid || '0@s.whatsapp.net' })
+        return { key: msg.key, message: msg.message }
+    } catch (e) {
+        console.error(rgbTag('MENU', 'troli gagal: ' + (e?.message || e), COLORS.warn))
         return null
     }
 }
@@ -158,12 +181,31 @@ let handler = async (m, { conn, args }) => {
     const minutes = Math.floor((runtime % 3600) / 60)
     const totalPlugins = [...new Set(plugins.values())].length
 
+    let status = '👤 *MEMBER*'
+    if (m.isOwner) status = '👑 *OWNER*'
+    else if (m.isPremium) status = '⭐ *PREMIUM*'
+
+    const boxW = 42
+    const top = '┌' + '─'.repeat(boxW) + '┐'
+    const mid = '├' + '─'.repeat(boxW) + '┤'
+    const bot = '└' + '─'.repeat(boxW) + '┘'
+    const line = (txt = '') => '│' + String(txt).padEnd(boxW) + '│'
+    const mkRow = (k, v) => line(` ${k.padEnd(6)}: ${v}`)
+
     const menuBox = [
-        `> ***SELAMAT DATANG, ${(m.pushName || 'User').toUpperCase()}***`,
-        '> _JhonBot Aktif 24/7 Tanpa Henti_',
-        '',
-        `***⚡*** _Runtime:_ ${days} hari, ${hours} jam, ${minutes} menit`,
-        `***📦*** _Total Plugin:_ ${totalPlugins}`,
+        top,
+        line('   ✦   *J H O N B O T*   ✦'),
+        line('   🤖 _Aktif 24/7 Tanpa Henti_'),
+        mid,
+        mkRow('👤', (m.pushName || '-').slice(0, 24)),
+        mkRow('📱', '+' + number),
+        mkRow('🏷️', status),
+        mid,
+        mkRow('⚡', days + 'd ' + hours + 'j ' + minutes + 'm'),
+        mkRow('📦', String(totalPlugins) + ' plugin'),
+        mkRow('🖥️', process.version || '-'),
+        mkRow('🌐', String(process.platform || '-').toUpperCase()),
+        bot,
         '',
         '💡 _Ketuk tombol di bawah untuk akses cepat_'
     ].join('\n')
@@ -211,7 +253,7 @@ let handler = async (m, { conn, args }) => {
         const msg = generateWAMessageFromContent(
             m.chat,
             interactiveMsg,
-            { userJid: conn.user?.id || m.sender, quoted: m }
+            { userJid: conn.user?.id || m.sender, quoted: (await getFakeTroli(conn, m.chat, m.sender)) || m }
         )
         await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
