@@ -4,19 +4,20 @@ const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 let handler = async (m, { conn }) => {
     const chat = m.chat
-    const entries = (conn.ledgerGet && conn.ledgerGet(chat)) || []
-    const now = Date.now()
-    const DAY = 24 * 60 * 60 * 1000
-    const targets = entries.filter(e => (now - (e.t || 0)) < DAY && e.id)
+    const ledgerGet = conn.ledgerGet
+    const ledgerClear = conn.ledgerClear
+    const ledgerRestore = conn.ledgerRestore
+    const entries = (ledgerGet && ledgerGet(chat)) || []
+    const targets = entries.filter(e => e.id)
 
     if (!targets.length) {
-        return m.reply(`> ***HAPUS SEMUA PESAN BOT***\n\n_Tidak ada pesan bot yang bisa dihapus di chat ini (pesan yang bisa dihapus harus < 24 jam untuk semua orang)._\n\n💬 _Total pesan bot tercatat: ${entries.length}_`)
+        return m.reply(`> ***HAPUS SEMUA PESAN BOT***\n\n_Tidak ada pesan bot tercatat yang bisa dihapus di chat ini._\n\n💬 _Total pesan bot tercatat: ${entries.length}_`)
     }
 
     try { await conn.sendMessage(m.chat, { react: { text: '🗑️', key: m.key } }) } catch {}
 
     let ok = 0
-    let fail = 0
+    const gagal = []
 
     for (const e of targets) {
         try {
@@ -30,22 +31,23 @@ let handler = async (m, { conn }) => {
             await conn.sendMessage(chat, { delete: deleteContent })
             ok++
         } catch (err) {
-            fail++
+            gagal.push(e)
         }
         await sleep(250)
     }
 
-    conn.ledgerClear && conn.ledgerClear(chat)
-    console.log(rgbTag('HAPUSCHAT', `Hapus ${ok} pesan bot di ${chat}`, ok ? COLORS.success : COLORS.warn))
+    conn.ledgerRestore && ledgerRestore(chat, gagal)
+    if (!gagal.length) ledgerClear && ledgerClear(chat)
+
+    console.log(rgbTag('HAPUSCHAT', `Hapus ${ok} pesan bot di ${chat}${gagal.length ? ` (${gagal.length} gagal)` : ''}`, ok ? COLORS.success : COLORS.warn))
 
     try { await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } }) } catch {}
 
-    const sisa = targets.length - ok
-    const ringkasan = sisa > 0
-        ? `\n\n⚠️ _${sisa} pesan gagal dihapus (angka feasible dihapus fast / ngga)._ Telusuri ulang beberapa detik lagi!`
+    const ringkasan = gagal.length
+        ? `\n\n⚠️ _${gagal.length} pesan gagal (biasanya karena sudah lewat batas waktu "hapus untuk semua orang" di WhatsApp). Pesan tadi disimpan, coba lagi beberapa saat!\n\n📌 Hapus ulang dengan:_\n- \`.hapuschat\` _untuk mencoba pesan yang gagal._`
         : ''
     try {
-        await m.reply(`> ***HAPUS SEMUA PESAN BOT***\n\n✅ Berhasil menghapus *${ok}* pesan bot di chat ini untuk semua orang.${ringkasan}\n\n_🔒 Hanya pesan bot yang dikirim < 24 jam yang bisa dihapus untuk semua orang._`)
+        await m.reply(`> ***HAPUS SEMUA PESAN BOT***\n\n✅ Berhasil menghapus *${ok}* pesan bot di chat ini untuk semua orang.${ringkasan}\n\n_🔒 WhatsApp punya batas waktu "hapus untuk semua orang" — pesan yang sudah lewat batas hanya bisa dihapus di sisi bot (tidak untuk semua orang)._`)
     } catch {}
 }
 

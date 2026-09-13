@@ -15,5 +15,8 @@ tmp/
 .DS_Store
 Thumbs.db
 
+# Ledger pesan bot (hapuschat)
+database/ledger.json
+
 # Kredensial
 .env
