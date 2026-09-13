@@ -4,7 +4,7 @@ import { rgbTag, COLORS } from '../../lib/rgb.js'
 let handler = async (m, { conn }) => {
     if (!m.isGroup) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❌ Fitur ini khusus grup!')
+        return m.reply('> ***GROUP ONLY***\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
     }
 
     const q = m.quoted || m

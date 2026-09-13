@@ -28,7 +28,7 @@ let handler = async (m, { conn, args }) => {
     fs.writeFileSync(OWNER_FILE, JSON.stringify(db, null, 2))
     invalidateJSONCache(OWNER_FILE)
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-    m.reply('✅ Nomor *+' + num + '* berhasil ditambahkan sebagai Owner.\n\n👑 Total Owner sekarang: ' + db.owner.length)
+    m.reply('👑 Nomor *+' + num + '* berhasil ditambahkan sebagai **Owner asli** (permanen, tanpa batas waktu).\n\n📊 Total Owner sekarang: ' + db.owner.length + '\n\n_📌 Untuk member yang langganan, gunakan `.addprem <no> <tier>` — dia menjadi **member premium** dengan masa aktif sesuai paket._')
 }
 
 handler.command = ['ownadd', 'addowner']

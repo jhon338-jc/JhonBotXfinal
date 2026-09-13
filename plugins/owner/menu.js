@@ -30,7 +30,8 @@ const USER_CMDS = [
     { name: 'ccn',   desc: 'Cecan random' },
     { name: 'donlodall', desc: 'Download video/foto (TikTok, IG, dll)' },
     { name: 'daftar', desc: 'Daftar jadi member bot (.daftar nama,umur,status)' },
-    { name: 'poll', desc: 'Buat polling grup (.poll soal|a|b|c)' }
+    { name: 'poll', desc: 'Buat polling grup (.poll soal|a|b|c)' },
+    { name: 'premium', desc: 'Lihat paket & langganan premium' }
 ]
 
 const OWNER_CMDS = [
@@ -41,9 +42,13 @@ const OWNER_CMDS = [
     { name: 'setds',  desc: 'Ganti deskripsi grup' },
     { name: 'htg',    desc: 'Hidetag semua member' },
     { name: 'grup',   desc: 'Daftar & pilih grup' },
-    { name: 'ownadd', desc: 'Tambah owner baru' },
+    { name: 'ownadd', desc: 'Tambah owner baru (asli, permanen)' },
     { name: 'owndel', desc: 'Hapus owner' },
-{ name: 'ownlist', desc: 'Lihat daftar owner' },
+    { name: 'ownlist', desc: 'Lihat daftar owner' },
+    { name: 'addprem', desc: 'Aktifkan member premium (.addprem no tier)' },
+    { name: 'delprem', desc: 'Hapus member premium' },
+    { name: 'premlist', desc: 'Lihat daftar premium' },
+    { name: 'hapuschat', desc: 'Hapus semua pesan bot <24 jam' },
     { name: 'ui', desc: 'Preview semua UI & tombol bot' },
     { name: 'ping', desc: 'Cek respon bot' },
     { name: 'info',   desc: 'Info bot' },

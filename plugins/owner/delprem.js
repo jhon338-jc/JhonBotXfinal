@@ -8,7 +8,7 @@ let handler = async (m, { conn, args }) => {
     const entry = getPremiumEntry(num)
     if (!entry) return m.reply('❌ Nomor *+' + num + '* tidak terdaftar sebagai Premium.')
     removePremium(num)
-    m.reply('✅ Premium nomor *+' + num + '* telah dihapus.\n\n🔒 Akses premium tidak berlaku lagi.')
+    m.reply('> ***PREMIUM DIHAPUS***\n\n✅ Premium nomor *+' + num + '* telah dihapus.\n\n_🔒 Akses premium tidak berlaku lagi. Nomor ini kembali menjadi member biasa._')
 }
 
 handler.command = ['delprem', 'removepremium']

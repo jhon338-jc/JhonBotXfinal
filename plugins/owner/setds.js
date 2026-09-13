@@ -1,7 +1,7 @@
 let handler = async (m, { conn, text }) => {
     if (!m.isGroup) {
         await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❌ Fitur ini khusus grup!')
+        return m.reply('> ***GROUP ONLY***\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
     }
     const desc = (text || '').trim()
     if (!desc) {

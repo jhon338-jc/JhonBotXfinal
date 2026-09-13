@@ -145,8 +145,16 @@ let handler = async (m, { conn, args, command }) => {
 
     if (chosen) {
         const Tsel = T[chosen]
-        // Format pesan otomatis utk wa.me + copy_code
-        const copyText = `Halo Admin JhonBot, saya mau langganan *${Tsel.label}* (Rp ${Tsel.price.toLocaleString('id-ID')} / ${Tsel.days} hari).\nNomor saya: +${m.sender?.split('@')[0] || '?'}\n\nIni bukti pembayarannya 👇`
+        // Format pesan otomatis utk wa.me + copy_code.
+        // Berisi tier asli (premium1/2/3) supaya owner tinggal copy-paste:
+        //   .addprem <nomor> <tier>
+        const copyText = [
+            'Halo Admin JhonBot, saya mau *langganan premium*.',
+            `Paket: *${Tsel.label}* (Rp ${Tsel.price.toLocaleString('id-ID')} / ${Tsel.days} hari)`,
+            `Nomor saya: +${m.sender?.split('@')[0] || '?'}`,
+            '',
+            'Mohon aktifkan premium saya ya, terima kasih 🙏'
+        ].join('\n')
         const waLink = `https://wa.me/${creator}?text=${encodeURIComponent(copyText)}`
 
         const caption = [
@@ -156,11 +164,13 @@ let handler = async (m, { conn, args, command }) => {
             `- Paket : *${Tsel.label}*`,
             `- Harga : *Rp ${Tsel.price.toLocaleString('id-ID')}*`,
             `- Durasi: *${Tsel.days} hari*`,
+            `- Tier  : *${chosen}*`,
             '',
-            `💵 ***CARA BAYAR:***`,
+            `💵 ***CARA BAYAR & AKTIVASI:***`,
             `1. Tekan tombol *👤 Chat Owner* di bawah`,
-            `2. Format pesan sudah terisi otomatis`,
-            `3. Kirim bukti transfer, lalu owner akan aktivasi premium`,
+            `2. Format pesan sudah terisi otomatis (berisi tier + nomor kamu)`,
+            `3. Kirim bukti transfer, lalu owner akan aktivasi dengan:`,
+            `   \`.addprem ${m.sender?.split('@')[0] || 'NOMOR'} ${chosen}\``,
             '',
             `⏳ _Durasi dihitung dari langganan pertama._`
         ].join('\n')
@@ -196,7 +206,7 @@ let handler = async (m, { conn, args, command }) => {
         return `• *${tinfo.label}* — Rp ${tinfo.price.toLocaleString('id-ID')} / ${tinfo.days} hari (_ .premium ${t} _)`
     }).join('\n')
 
-    let hdr = '> ***MENU LANGANGGANAN PREMIUM***\n\n'
+    let hdr = '> ***MENU LANGGANAN PREMIUM***\n\n'
     hdr += `👤 *${m.pushName || 'User'}*\n`
     if (m.isOwner) hdr += '👑 _Status: OWNER_\n'
     else if (m.isPremium) {

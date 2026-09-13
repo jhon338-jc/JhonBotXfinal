@@ -455,19 +455,19 @@ export default async function handleMessage(conn, m) {
 
         // ============ ACCESS CONTROL ============
         if (handler.owner && !m.isOwner) {
-            return m.reply('❌ Fitur ini khusus 👑 *Owner*!')
+            return m.reply('> ***OWNER ONLY***\n\n_❌ Fitur ini khusus 👑 **Owner**._\n\n_Kamu bukan owner. Mau jadi owner? Hubungi kreator Jhon338._')
         }
         if (handler.premium && !m.isPremium) {
-            return m.reply('> ***PREMIUM ONLY***\n\n_❌ Fitur ini khusus member premium._\n\n_Mau jadi member premium? Ketik:_\n- `.premium`\n\n_👑 Atau hubungi owner untuk aktivasi._')
+            return m.reply('> ***PREMIUM ONLY***\n\n_❌ Fitur ini khusus ⭐ **member premium**._\n\n_Mau jadi member premium? Ketik:_\n- `.premium`\n\n_👑 Atau hubungi owner untuk aktivasi._')
         }
         if (handler.group && !m.isGroup) {
-            return m.reply('❌ Fitur ini hanya bisa dipakai di grup!')
+            return m.reply('> ***GROUP ONLY***\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
         }
         if (handler.botAdmin && m.isGroup && !m.isBotAdmin) {
-            return m.reply('❌ Bot harus menjadi *admin grup* untuk fitur ini!')
+            return m.reply('> ***BOT ADMIN REQUIRED***\n\n_❌ Bot harus menjadi **admin grup** untuk fitur ini._')
         }
         if (handler.admin && m.isGroup && !m.isAdmin && !m.isOwner) {
-            return m.reply('❌ Fitur ini khusus *admin grup*!')
+            return m.reply('> ***ADMIN ONLY***\n\n_❌ Fitur ini khusus **admin grup**._')
         }
 
         // ============ WAJIB DAFTAR MEMBER ============
