@@ -76,9 +76,9 @@ export function loadOwners() {
 //   { "premium": [ { "number": "628xxx", "tier": "premium1", "startDate": ms, "endDate": ms } ] }
 // Legacy format lama (array string polos) tetap didukung saat load.
 export const PREMIUM_TIERS = {
-    premium1: { label: 'PREMIUM 1', price: 15000, days: 2 },
-    premium2: { label: 'PREMIUM 2', price: 20000, days: 7 },
-    premium3: { label: 'PREMIUM 3', price: 50000, days: 30 }
+    premium1: { label: 'PREMIUM 1', price: 5000, days: 2 },
+    premium2: { label: 'PREMIUM 2', price: 10000, days: 7 },
+    premium3: { label: 'PREMIUM 3', price: 15000, days: 30 }
 }
 const TIER_ALIAS = {
     '1': 'premium1', 'premium1': 'premium1', 'prem1': 'premium1',
