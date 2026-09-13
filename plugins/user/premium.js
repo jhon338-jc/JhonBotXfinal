@@ -198,45 +198,62 @@ let handler = async (m, { conn, args, command }) => {
         return
     }
 
-    // ===== Tampilkan daftar paket (menu utama premium) =====
+    // ===== Tampilkan daftar paket (CAROUSEL — geser ke samping) =====
     const list = loadPremiumList()
     const myFmt = formatPremiumEntry(list.find(e => e && e.number === m.sender?.split('@')[0]))
-    const rows = tiers.map(t => {
-        const tinfo = T[t]
-        return `• *${tinfo.label}* — Rp ${tinfo.price.toLocaleString('id-ID')} / ${tinfo.days} hari (_ .premium ${t} _)`
-    }).join('\n')
 
-    let hdr = '> ***MENU LANGGANAN PREMIUM***\n\n'
-    hdr += `👤 *${m.pushName || 'User'}*\n`
-    if (m.isOwner) hdr += '👑 _Status: OWNER_\n'
+    const keuntungan = '📌 *Fitur premium aktif:*\n• .pap · .paptt · .papmmk\n• .papbgl · .asp · .ccn'
+    const deskripsi = {
+        premium1: 'Paket *2 hari*\nCocok buat coba-coba dulu 😉',
+        premium2: 'Paket *1 minggu*\nBuat yang mau pakai lebih lama 👍',
+        premium3: 'Paket *1 bulan*\nPaling irit & hemat maksimal 💯'
+    }
+
+    let statLine = '👤 *_Status: Member_*'
+    if (m.isOwner) statLine = '👑 *_Status: OWNER_*'
     else if (m.isPremium) {
         const dur = myFmt?.endDate ? Math.max(0, Math.ceil((myFmt.endDate - Date.now()) / 86400000)) : null
-        hdr += '⭐ _Status: PREMIUM' + (dur && myFmt?.active ? ` (sisa ~${dur} hari)` : '') + '_\n'
+        statLine = '⭐ *_Status: Premium' + (dur && myFmt?.active ? ` (sisa ~${dur} hari)_*` : '_*')
     }
-    hdr += '\n'
-    hdr += '📦 *PAKET TERSEDIA:*\n'
-    hdr += rows + '\n\n'
-    hdr += '👆 _Pilih paket di bawah, lalu klik tombol **Chat Owner**_\n'
-    hdr += '_Format pesan & bukti transfer otomatis terisi._'
 
-    const native = tiers.map(t => quickReply(T[t].label, '.premium ' + t))
-    if (native.length < 6) native.push(quickReply('🖨️ Status Premium', '.premium status'))
-
-    const body = {
-        interactiveMessage: {
-            header: { hasMediaAttachment: false, title: '👑 JhonBot Premium' },
-            body: { text: hdr },
-            footer: { text: 'Developer: Jhon338 • JhonBot' },
+    const cards = tiers.map(t => {
+        const tinfo = T[t]
+        const cardBody = [
+            deskripsi[t],
+            '',
+            `💵 *Rp ${tinfo.price.toLocaleString('id-ID')}* / ${tinfo.days} hari`,
+            '',
+            keuntungan,
+            '',
+            '_Klik tombol *PILIH PAKET* di bawah untuk pesan & bayar._'
+        ].join('\n')
+        return {
+            header: { title: '🛒 ' + tinfo.label, hasMediaAttachment: false },
+            body: { text: cardBody },
+            footer: { text: 'JhonBot Premium • geser 👉 lihat paket lain' },
             nativeFlowMessage: {
                 messageVersion: 1,
-                buttons: native
+                buttons: [
+                    quickReply('✅ PILIH PAKET', '.premium ' + t),
+                    quickReply('🖨️ Status Saya', '.premium status')
+                ]
             }
+        }
+    })
+
+    const cm = {
+        interactiveMessage: {
+            header: { hasMediaAttachment: false, title: '👑 JHONBOT PREMIUM' },
+            body: {
+                text: `_Geser ke samping untuk lihat paket 👉_\n\n👤 *${m.pushName || 'User'}*\n${statLine}\n\n_Pilih paket, lalu tekan **PILIH PAKET**._`
+            },
+            footer: { text: 'Developer: Jhon338 • JhonBot' },
+            carouselMessage: { cards }
         }
     }
 
-    // Sebelum promo, cek status / tampilkan troli menu
     const troli = await fakeTroli(conn, m.chat)
-    const msg = generateWAMessageFromContent(m.chat, body, { userJid: conn.user?.id || m.sender, quoted: troli })
+    const msg = generateWAMessageFromContent(m.chat, cm, { userJid: conn.user?.id || m.sender, quoted: troli })
     await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
     await conn.sendMessage(m.chat, { react: { text: '👑', key: m.key } })
 }
