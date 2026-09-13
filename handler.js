@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { rgbTag, COLORS } from './lib/rgb.js'
+import { runAntiSpam } from './lib/antispam.js'
 
 // ============================================================
 //  JHONBOT v3.3.8 - BRAIN (OTAK BOT)
@@ -214,6 +215,7 @@ export default async function handleMessage(conn, m) {
     try {
         if (!m?.chat) return
         if (m.chat.includes('@newsletter') || m.chat === 'status@broadcast') return
+        if (m.fromMe) return
 
         const { body, isButtonResponse } = extractCommandFromMessage(m)
         if (!body) return
@@ -276,6 +278,12 @@ export default async function handleMessage(conn, m) {
             } else if (!monitor.groups.includes(m.chat)) {
                 return
             }
+        }
+
+        // ============ ANTI-SPAM (hanya grup yang dipantau) ============
+        if (m.isGroup) {
+            const blocked = await runAntiSpam({ conn, m, body })
+            if (blocked) return
         }
 
         // ============ CARI PLUGIN ============
