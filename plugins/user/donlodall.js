@@ -35,10 +35,22 @@ function labelOf(item = {}) {
 
 function typeOf(item = {}) {
     const raw = [item.type, item.mime, item.mimeType, item.extension, item.file_type, item.format, labelOf(item), item.url].filter(Boolean).join(' ').toLowerCase()
-    if (/video|mp4|mov|webm|mkv/.test(raw)) return 'video'
-    if (/image|jpe?g|png|webp|gif|heic/.test(raw)) return 'image'
-    if (/audio|mp3|m4a|opus|wav/.test(raw)) return 'audio'
-    return 'unknown'
+    if (/audio|mp3|m4a|opus|wav|sp3|sp5/.test(raw) && !/video/.test(raw)) return 'audio'
+    if (/image|jpe?g|png|webp|gif|heic/.test(raw) && !/video/.test(raw)) return 'image'
+    return 'video'
+}
+
+function sniff(buffer, contentType = '') {
+    const magic = buffer.subarray(0, 12)
+    if (magic.length > 10 && magic.subarray(4, 8).toString('latin1') === 'ftyp') return { t: 'video', mime: 'video/mp4' }
+    if (magic[0] === 0xff && magic[1] === 0xd8 && magic[2] === 0xff) return { t: 'image', mime: 'image/jpeg' }
+    if (magic.subarray(0, 4).toString('latin1') === '\x89PNG') return { t: 'image', mime: 'image/png' }
+    if (magic.subarray(0, 4).toString('latin1') === 'RIFF' && magic.subarray(8, 12).toString('latin1') === 'WEBP') return { t: 'image', mime: 'image/webp' }
+    const ct = String(contentType || '').toLowerCase()
+    if (/image\//.test(ct)) return { t: 'image', mime: ct }
+    if (/video\//.test(ct)) return { t: 'video', mime: ct }
+    if (/audio\//.test(ct)) return { t: 'audio', mime: ct }
+    return { t: 'video', mime: 'video/mp4' }
 }
 
 function score(item = {}) {
@@ -123,8 +135,7 @@ let handler = async (m, { conn, text }) => {
 
         for (const [i, item] of chosen.entries()) {
             const u = item.url || item.link || item.download_url
-            const type = typeOf(item)
-            const label = (item.label || item.kualitas || '').replace(/^download[ (]*/i, '').trim()
+            const label = (item.label || item.kualitas || '').replace(/^download/i, '').replace(/[()]/g, '').trim()
             let cap = (multi ? `📦 Media ${i + 1}/${chosen.length}\n\n` : '') +
                 `*🎯 ALL IN ONE DOWNLOAD*\n\n▪️ *Judul:* ${title || '-'}\n▪️ *Author:* ${author || '-'}`
             if (label) cap += `\n▪️ *Tipe:* ${label}`
@@ -136,16 +147,17 @@ let handler = async (m, { conn, text }) => {
             if (!buffer.length) throw new Error('Media kosong')
             if (buffer.length > 70 * 1024 * 1024) throw new Error('Media terlalu besar untuk WhatsApp (>70MB)')
 
-            if (type === 'video') {
-                await saveVideo(buffer)
-                await conn.sendMessage(m.chat, { video: buffer, mimetype: 'video/mp4', caption }, { quoted: m })
-            } else if (type === 'image') {
+            const type = sniff(buffer, dl.headers.get('content-type')).t
+            if (type === 'image') {
                 await saveImage(buffer)
                 await conn.sendMessage(m.chat, { image: buffer, caption }, { quoted: m })
+            } else if (type === 'audio') {
+                await saveVideo(buffer)
+                const aname = 'audio_' + (i + 1) + '.mp3'
+                await conn.sendMessage(m.chat, { document: buffer, mimetype: 'audio/mpeg', fileName: aname, caption }, { quoted: m })
             } else {
                 await saveVideo(buffer)
-                const fname = 'tiktok_aiodl.mp4'
-                await conn.sendMessage(m.chat, { document: buffer, mimetype: 'application/octet-stream', fileName: fname, caption }, { quoted: m })
+                await conn.sendMessage(m.chat, { video: buffer, mimetype: 'video/mp4', caption }, { quoted: m })
             }
         }
 
