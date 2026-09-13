@@ -27,7 +27,8 @@ const USER_CMDS = [
     { name: 'papmmk',desc: 'PAP MMK random' },
     { name: 'papbgl',desc: 'PAP BGL random' },
     { name: 'asp',   desc: 'Asupan random' },
-    { name: 'ccn',   desc: 'Cecan random' }
+    { name: 'ccn',   desc: 'Cecan random' },
+    { name: 'donlodall', desc: 'Download video/foto (TikTok, IG, dll)' }
 ]
 
 const OWNER_CMDS = [

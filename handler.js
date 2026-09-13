@@ -12,7 +12,7 @@ export const BOT_NAME = 'JhonBot'
 export const BOT_VERSION = '3.3.8'
 
 // Command publik yang BOLEH dipakai di DM (selain itu DM tidak dilayani)
-const DM_PUBLIC = new Set(['rvo', 'brat', 'img', 'toimg', 'iqc', 'lirik'])
+const DM_PUBLIC = new Set(['rvo', 'brat', 'img', 'toimg', 'iqc', 'lirik', 'donlodall'])
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginDir = path.join(__dirname, 'plugins')
