@@ -4,7 +4,7 @@ import os from 'os'
 import path from 'path'
 import { createRequire } from 'module'
 import { rgbTag, COLORS } from '../../lib/rgb.js'
-import { makeSticker, makeWatermarkPng, videoStickerArgs } from '../../lib/sticker.js'
+import { makeSticker, addStickerMetadata, videoStickerArgs } from '../../lib/sticker.js'
 import { saveSticker, tmpName } from '../../lib/autosave.js'
 
 const require = createRequire(import.meta.url)
@@ -47,18 +47,16 @@ let handler = async (m, { conn }) => {
         if (isVideo) {
             const mp4Path = path.join(os.tmpdir(), tmpName('mp4', 'tmp_v'))
             const webpPath = path.join(os.tmpdir(), tmpName('webp', 'tmp_v'))
-            const wmPath = path.join(os.tmpdir(), tmpName('png', 'tmp_v'))
 
             try {
                 fs.writeFileSync(mp4Path, buffer)
-                fs.writeFileSync(wmPath, await makeWatermarkPng())
-                execFileSync(FFMPEG, videoStickerArgs(mp4Path, wmPath, webpPath), { timeout: 90000 })
+                execFileSync(FFMPEG, videoStickerArgs(mp4Path, webpPath), { timeout: 90000 })
 
                 let stickerBuffer = fs.readFileSync(webpPath)
                 if (stickerBuffer.length > 650000) {
                     const webpPath2 = path.join(os.tmpdir(), tmpName('webp', 'tmp_v'))
                     try {
-                        execFileSync(FFMPEG, videoStickerArgs(mp4Path, wmPath, webpPath2, 512, { fps: 8, bitrate: '250k', maxrate: '300k', bufsize: '600k' }), { timeout: 90000 })
+                        execFileSync(FFMPEG, videoStickerArgs(mp4Path, webpPath2, 512, { fps: 8, bitrate: '250k', maxrate: '300k', bufsize: '600k' }), { timeout: 90000 })
                         const reduced = fs.readFileSync(webpPath2)
                         if (reduced.length && reduced.length < stickerBuffer.length) stickerBuffer = reduced
                     } finally {
@@ -67,10 +65,11 @@ let handler = async (m, { conn }) => {
                     if (stickerBuffer.length > 990000) throw new Error('Sticker video terlalu besar (melebihi limit WhatsApp)')
                 }
 
+                stickerBuffer = await addStickerMetadata(stickerBuffer)
                 await saveSticker(stickerBuffer)
                 await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
             } finally {
-                for (const f of [mp4Path, webpPath, wmPath]) {
+                for (const f of [mp4Path, webpPath]) {
                     try { fs.unlinkSync(f) } catch {}
                 }
             }

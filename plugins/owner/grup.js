@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { DB_FILES, invalidateJSONCache } from '../../handler.js'
 
 let handler = async (m, { conn }) => {
     await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
@@ -25,14 +26,15 @@ let handler = async (m, { conn }) => {
 
     let monitor
     try {
-        monitor = JSON.parse(fs.readFileSync('./database/monitor.json', 'utf-8'))
+        monitor = JSON.parse(fs.readFileSync(DB_FILES.monitor, 'utf-8'))
         if (!monitor || typeof monitor !== 'object') monitor = {}
     } catch {
         monitor = {}
     }
     monitor.groups ??= []
     monitor.waiting = true
-    fs.writeFileSync('./database/monitor.json', JSON.stringify(monitor, null, 2))
+    fs.writeFileSync(DB_FILES.monitor, JSON.stringify(monitor, null, 2))
+    invalidateJSONCache(DB_FILES.monitor)
 
     await m.reply(text)
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })

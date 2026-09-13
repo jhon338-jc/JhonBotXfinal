@@ -21,6 +21,14 @@ export const plugins = new Map()
 const summary = { owner: [], user: [] }
 
 const jsonCache = new Map()
+
+// Jalur absolut DB — konsisten apa pun working directory proses
+export const DB_FILES = {
+    owner: path.join(__dirname, 'database', 'owner.json'),
+    premium: path.join(__dirname, 'database', 'premium.json'),
+    monitor: path.join(__dirname, 'database', 'monitor.json')
+}
+
 function readJSON(file) {
     try {
         const stat = fs.statSync(file)
@@ -34,7 +42,15 @@ function readJSON(file) {
     }
 }
 
-const writeJSON = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2))
+export function invalidateJSONCache(file) {
+    if (file) jsonCache.delete(file)
+    else jsonCache.clear()
+}
+
+const writeJSON = (file, data) => {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2))
+    invalidateJSONCache(file)
+}
 
 // ==================== NORMALISASI NOMOR ====================
 // Mendukung format 628xxx / 08xxx / +628xxx → 628xxx
@@ -45,7 +61,7 @@ export function normalizeNumber(raw = '') {
 }
 
 export function loadOwners() {
-    const db = readJSON('./database/owner.json')
+    const db = readJSON(DB_FILES.owner)
     try {
         return (db?.owner || []).map(n => normalizeNumber(n))
     } catch {
@@ -54,7 +70,7 @@ export function loadOwners() {
 }
 
 export function loadPremium() {
-    const db = readJSON('./database/premium.json')
+    const db = readJSON(DB_FILES.premium)
     try {
         return (db?.premium || []).map(n => normalizeNumber(n))
     } catch {
@@ -156,6 +172,43 @@ function stripPrefix(txt) {
     return txt
 }
 
+async function resolveSenderNumbers(conn, m) {
+    const nums = []
+    const addJid = (jid) => {
+        if (!jid) return
+        const user = String(jid).split('@')[0]
+        if (user && /^\d+$/.test(user)) nums.push(normalizeNumber(user))
+    }
+    addJid(m.sender)
+    addJid(m.participant)
+    addJid(m.key?.participant)
+    addJid(m.key?.participantAlt)
+    addJid(m.key?.remoteJidAlt)
+
+    const lidBase = j => String(j).split('@')[0].split(':')[0]
+    const senderLid = [m.sender, m.participant, m.key?.participant].find(j => j && /@lid$/i.test(String(j)))
+    if (senderLid) {
+        try {
+            const pn = await conn.signalRepository?.lidMapping?.getPNForLID(senderLid)
+            if (pn) addJid(pn)
+        } catch {}
+        if (m.isGroup) {
+            try {
+                const meta = conn.chats?.[m.chat]?.metadata || await conn.groupMetadata(m.chat).catch(() => null)
+                const p = (meta?.participants || []).find(u => u.lid && lidBase(u.lid) === lidBase(senderLid))
+                if (p) addJid(p.id)
+            } catch {}
+        }
+        try {
+            for (const c of Object.values(conn.contacts || {})) {
+                if (c?.lid && lidBase(c.lid) === lidBase(senderLid)) addJid(c.id)
+            }
+        } catch {}
+    }
+
+    return [...new Set(nums)]
+}
+
 // ==================== HANDLER UTAMA ====================
 export default async function handleMessage(conn, m) {
     try {
@@ -165,12 +218,12 @@ export default async function handleMessage(conn, m) {
         const { body, isButtonResponse } = extractCommandFromMessage(m)
         if (!body) return
 
-        const monitor = readJSON('./database/monitor.json') || { groups: [], waiting: false }
-        const number = normalizeNumber(m.sender.split('@')[0])
+        const monitor = readJSON(DB_FILES.monitor) || { groups: [], waiting: false }
         const owners = loadOwners()
         const premium = loadPremium()
-        m.isOwner = owners.includes(number)
-        m.isPremium = m.isOwner || premium.includes(number)
+        const nums = await resolveSenderNumbers(conn, m)
+        m.isOwner = nums.some(n => owners.includes(n))
+        m.isPremium = m.isOwner || nums.some(n => premium.includes(n))
 
         // Parsing command (stripPrefix hanya SEKALI)
         const raw = isButtonResponse ? body : body.trim()
@@ -202,7 +255,7 @@ export default async function handleMessage(conn, m) {
                 if (!selected.length || selected.length > 5) return
                 monitor.groups = selected.map(g => g.id)
                 monitor.waiting = false
-                writeJSON('./database/monitor.json', monitor)
+                writeJSON(DB_FILES.monitor, monitor)
                 let txt = '✅ *GRUP TERPILIH:*\n\n'
                 txt += selected.map((g, i) => `${i + 1}. ${g.subject}\n   👥 ${g.participants?.length || 0} member`).join('\n\n')
                 return await conn.sendMessage(m.chat, { text: txt }, { quoted: m })
@@ -228,6 +281,11 @@ export default async function handleMessage(conn, m) {
         // ============ CARI PLUGIN ============
         const handler = plugins.get(command)
         if (!handler) return
+
+        // ============ DIAGNOSTIK OWNER ============
+        if (handler.owner || ['menu', 'profil', 'help'].includes(command)) {
+            console.log(rgbTag('OWNER', `cmd="${command}" sender="${m.sender}" nums=[${nums.join(',')}] owners=[${owners.join(',')}] isOwner=${m.isOwner ? '✅' : '❌'}`, m.isOwner ? COLORS.success : COLORS.warn))
+        }
 
         // ============ ACCESS CONTROL ============
         if (handler.owner && !m.isOwner) {

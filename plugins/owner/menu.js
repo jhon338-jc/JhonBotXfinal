@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { generateWAMessageFromContent, prepareWAMessageMedia } from '@whiskeysockets/baileys'
+import sharp from 'sharp'
 import { plugins } from '../../handler.js'
 import { rgbTag, COLORS } from '../../lib/rgb.js'
 
@@ -66,25 +68,46 @@ function ctaUrl(display_text, url) {
     return { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text, url }) }
 }
 
-function adReply(thumb, title, body) {
-    if (!thumb) return undefined
-    return {
-        externalAdReply: {
-            title, body,
-            mediaType: 1, thumbnail: thumb,
-            sourceUrl: 'https://jhon338-jc.github.io/Linktree/',
-            renderLargerThumbnail: true
-        }
-    }
-}
-
-function getThumb() {
+async function getThumb() {
     try {
         const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'menu.jpg')
         if (!fs.existsSync(imgPath)) return null
-        const buf = fs.readFileSync(imgPath)
-        return buf
+        return await sharp(imgPath).resize({ width: 300 }).jpeg({ quality: 70 }).toBuffer()
     } catch {
+        return null
+    }
+}
+
+async function getHeaderImage(conn) {
+    let imgBuf = null
+    try {
+        const botJid = conn.user?.id
+        if (botJid) {
+            const url = await conn.profilePictureUrl(botJid, 'image')
+            if (url) {
+                const r = await fetch(url)
+                if (r.ok) imgBuf = Buffer.from(await r.arrayBuffer())
+            }
+        }
+    } catch {}
+    if (!imgBuf?.length) imgBuf = await getThumb()
+    if (!imgBuf?.length) return null
+    try {
+        const small = await sharp(imgBuf).resize({ width: 400 }).jpeg({ quality: 85 }).toBuffer()
+        const media = await prepareWAMessageMedia({ image: small }, {
+            upload: async (encFile, opts) => {
+                const result = await conn.waUploadToServer(encFile, opts)
+                return result
+            }
+        })
+        if (!media?.imageMessage) return null
+        return {
+            hasMediaAttachment: true,
+            imageMessage: media.imageMessage,
+            title: '🤖 JhonBot v3.3.8'
+        }
+    } catch (e) {
+        console.error(rgbTag('MENU', 'header image gagal: ' + (e?.message || e), COLORS.warn))
         return null
     }
 }
@@ -108,7 +131,6 @@ let handler = async (m, { conn, args }) => {
     await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     // ============ MENU UTAMA ============
-    let thumb = getThumb()
     const runtime = process.uptime()
     const days = Math.floor(runtime / 86400)
     const hours = Math.floor((runtime % 86400) / 3600)
@@ -136,19 +158,32 @@ let handler = async (m, { conn, args }) => {
     }
 
     const native = [
-        singleSelect('☰ BUKA MENU', sections),
+        singleSelect('BUKA MENU', sections),
         quickReply('👤 Profil', '.profil'),
         ctaUrl('🌐 Linktree', 'https://jhon338-jc.github.io/Linktree/')
     ]
 
     try {
-        await conn.sendMessage(m.chat, {
-            interactiveButtons: native,
-            text: menuBox,
-            title: '🤖 JhonBot v3.3.8',
-            footer: 'Developer: Jhon338 • Powered by Baileys',
-            contextInfo: adReply(thumb, 'JhonBot v3.3.8', 'DEVELOPER BY JHON338')
-        }, { quoted: m })
+        let header = await getHeaderImage(conn)
+        if (!header) header = { title: '🤖 JhonBot v3.3.8', hasMediaAttachment: false }
+
+        const interactiveMsg = {
+            interactiveMessage: {
+                header,
+                body: { text: menuBox },
+                footer: { text: 'Developer: Jhon338 • Powered by Baileys' },
+                nativeFlowMessage: {
+                    messageVersion: 1,
+                    buttons: native
+                }
+            }
+        }
+        const msg = generateWAMessageFromContent(
+            m.chat,
+            interactiveMsg,
+            { userJid: conn.user?.id || m.sender, quoted: m }
+        )
+        await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
         return
     } catch (e) {

@@ -33,10 +33,10 @@ JhonBot adalah bot WhatsApp yang hanya aktif di **grup yang dipilih Owner** lewa
 | `.toimg` | Ubah stiker jadi gambar/video |
 | `.lirik` | Cari lirik lagu |
 | `.rvo` | Baca pesan view once |
-| `.pap` | Kirim foto random (folder `pap`) |
-| `.paptt` | Kirim foto random (folder `pap_susu`) |
-| `.papmmk` | Kirim foto random (folder `pap_memek`) |
-| `.papbgl` | Kirim foto random (folder `pap_bugil`) |
+| `.pap` | Kirim gambar +18 random |
+| `.paptt` | Kirim gambar +18 random |
+| `.papmmk` | Kirim gambar +18 random |
+| `.papbgl` | Kirim gambar +18 random |
 | `.asp` | Video asupan random |
 | `.ccn` | Foto cecan random |
 

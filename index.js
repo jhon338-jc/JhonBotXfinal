@@ -1,4 +1,6 @@
 import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import readline from 'readline'
 import pino from 'pino'
 import { Boom } from '@hapi/boom'
@@ -8,7 +10,7 @@ import {
     Browsers
 } from '@whiskeysockets/baileys'
 import { makeWASocket, smsg, bind } from './lib/msg.js'
-import handleMessage, { initPlugins, getPluginSummary, normalizeNumber } from './handler.js'
+import handleMessage, { initPlugins, getPluginSummary, normalizeNumber, invalidateJSONCache } from './handler.js'
 import { rgb, rgbTag, COLORS } from './lib/rgb.js'
 import { ensureTemp } from './lib/autosave.js'
 
@@ -24,11 +26,15 @@ process.on('unhandledRejection', (err) => {
     console.error(rgbTag('FATAL', 'Unhandled Rejection: ' + (err?.message || err), COLORS.error))
 })
 
-const MONITOR_FILE = './database/monitor.json'
-const OWNER_FILE = './database/owner.json'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const MONITOR_FILE = path.join(__dirname, 'database', 'monitor.json')
+const OWNER_FILE = path.join(__dirname, 'database', 'owner.json')
 
 const readJSON = file => JSON.parse(fs.readFileSync(file, 'utf-8'))
-const writeJSON = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2))
+const writeJSON = (file, data) => {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2))
+    invalidateJSONCache(file)
+}
 
 function loadConfig() {
     try {

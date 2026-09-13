@@ -1,5 +1,7 @@
 import fs from 'fs'
-import { normalizeNumber } from '../../handler.js'
+import { normalizeNumber, DB_FILES, invalidateJSONCache } from '../../handler.js'
+
+const OWNER_FILE = DB_FILES.owner
 
 let handler = async (m, { conn, args }) => {
     const num = normalizeNumber(args[0])
@@ -10,7 +12,7 @@ let handler = async (m, { conn, args }) => {
 
     let db
     try {
-        db = JSON.parse(fs.readFileSync('./database/owner.json', 'utf-8'))
+        db = JSON.parse(fs.readFileSync(OWNER_FILE, 'utf-8'))
         if (!db || typeof db !== 'object') db = {}
     } catch {
         db = {}
@@ -18,13 +20,15 @@ let handler = async (m, { conn, args }) => {
     db.owner ??= []
     if (!Array.isArray(db.owner)) db.owner = []
     if (db.owner.includes(num)) {
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-        return
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('❌ Nomor *+' + num + '* sudah menjadi Owner.')
     }
 
     db.owner.push(num)
-    fs.writeFileSync('./database/owner.json', JSON.stringify(db, null, 2))
+    fs.writeFileSync(OWNER_FILE, JSON.stringify(db, null, 2))
+    invalidateJSONCache(OWNER_FILE)
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+    m.reply('✅ Nomor *+' + num + '* berhasil ditambahkan sebagai Owner.\n\n👑 Total Owner sekarang: ' + db.owner.length)
 }
 
 handler.command = ['ownadd', 'addowner']

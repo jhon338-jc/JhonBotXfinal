@@ -6,6 +6,7 @@ import {
 } from '../../lib/kyzz/asupan.js'
 import { requireKyzzKey } from '../../lib/kyzz/client.js'
 import { saveVideo } from '../../lib/autosave.js'
+import { sendMediaFlow, mediaCacheGet, mediaCacheSet, mediaButtons } from '../../lib/flow.js'
 
 const SOURCES = {
     bocil: { fn: getAsupanBocil, label: 'Bocil' },
@@ -18,7 +19,15 @@ const SOURCES = {
     ukhty: { fn: getAsupanUkhty, label: 'Ukhty' }
 }
 
-let handler = async (m, { conn }) => {
+let handler = async (m, { conn, args, command }) => {
+    if (args?.[0] === 'ulang') {
+        const last = mediaCacheGet(m.chat, command)
+        if (!last) return m.reply('⚠️ Tidak ada media sebelumnya. Silakan pilih *🎲 Acak Baru*.')
+        await conn.sendMessage(m.chat, { react: { text: '🔄', key: m.key } })
+        await sendMediaFlow(conn, m.chat, { ...last, buttons: mediaButtons(command), quoted: m })
+        return
+    }
+
     await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         requireKyzzKey()
@@ -31,10 +40,14 @@ let handler = async (m, { conn }) => {
         if (!buffer.length) throw new Error('Respons kosong dari sumber asupan')
         await saveVideo(buffer)
 
-        await conn.sendMessage(m.chat, {
-            video: buffer,
-            mimetype: 'video/mp4'
-        }, { quoted: m })
+        const data = {
+            media: buffer,
+            mimetype: 'video/mp4',
+            caption: `📌 Asupan ${src.label} random • JhonBot v3.3.8`,
+            footer: '👇 Tap tombol: kirim ulang atau acak baru'
+        }
+        mediaCacheSet(m.chat, command, data)
+        await sendMediaFlow(conn, m.chat, { ...data, buttons: mediaButtons(command), quoted: m })
 
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
