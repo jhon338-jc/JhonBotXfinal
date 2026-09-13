@@ -35,6 +35,16 @@ function loadCreator() {
     }
 }
 
+async function getCardImage() {
+    try {
+        const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'menu.png')
+        if (fs.existsSync(imgPath)) {
+            return await sharp(imgPath).resize({ width: 640 }).jpeg({ quality: 75 }).toBuffer()
+        }
+    } catch {}
+    return null
+}
+
 async function getTroliThumb(conn) {
     try {
         const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'menu.png')
@@ -243,7 +253,8 @@ let handler = async (m, { conn, args, command }) => {
         statLine = '⭐ *_Status: Premium' + (dur && myFmt?.active ? ` (sisa ~${dur} hari)_*` : '_*')
     }
 
-    const cards = tiers.map(t => {
+    const imgBuff = await getCardImage()
+    const cards = await Promise.all(tiers.map(async t => {
         const tinfo = T[t]
         const cardBody = [
             deskripsi[t],
@@ -254,8 +265,15 @@ let handler = async (m, { conn, args, command }) => {
             '',
             '_Klik tombol *PILIH PAKET* di bawah untuk pesan & bayar._'
         ].join('\n')
+        let header = { title: '🛒 ' + tinfo.label, hasMediaAttachment: false }
+        if (imgBuff) {
+            try {
+                const media = await prepareWAMessageMedia({ image: imgBuff }, { upload: conn.waUploadToServer })
+                header = { title: '🛒 ' + tinfo.label, ...media, hasMediaAttachment: true }
+            } catch {}
+        }
         return {
-            header: { title: '🛒 ' + tinfo.label, hasMediaAttachment: false },
+            header,
             body: { text: cardBody },
             footer: { text: 'JhonBot Premium • geser 👉 lihat paket lain' },
             nativeFlowMessage: {
@@ -266,7 +284,7 @@ let handler = async (m, { conn, args, command }) => {
                 ]
             }
         }
-    })
+    }))
 
     let carouselSent = false
     try {
