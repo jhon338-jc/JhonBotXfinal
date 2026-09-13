@@ -3,6 +3,91 @@ import { saveImage, saveVideo } from '../../lib/autosave.js'
 
 const API = 'https://api.azbry.com/api/download/allinonev2'
 const MAX_IMAGES = 5
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36'
+const TIKTOK_RE = /(^|\.)tiktok\.com$/i
+
+function formatCount(n) {
+    const v = Number(n)
+    if (!Number.isFinite(v)) return String(n)
+    if (Math.abs(v) < 1000) return String(v)
+    const d = v >= 1e9 ? 1e9 : v >= 1e6 ? 1e6 : 1e3
+    return (v / d).toFixed(1).replace(/\.0$/, '') + (d >= 1e9 ? 'B' : d >= 1e6 ? 'M' : 'K')
+}
+
+function formatDuration(sec) {
+    const s = Math.max(0, Math.round(Number(sec) || 0))
+    const h = Math.floor(s / 3600)
+    const m = Math.floor((s % 3600) / 60)
+    const ss = s % 60
+    const pad = n => String(n).padStart(2, '0')
+    return h ? `${h}:${pad(m)}:${pad(ss)}` : `${m}:${pad(ss)}`
+}
+
+function fmtDate(unixSec) {
+    const d = new Date(Number(unixSec) * 1000)
+    if (isNaN(d)) return ''
+    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+function tiktokHost(url = '') {
+    try { return TIKTOK_RE.test(new URL(url).hostname) } catch { return false }
+}
+
+async function fetchTikTokMeta(inputUrl) {
+    let u = inputUrl
+    for (let i = 0; i < 6; i++) {
+        const r = await fetch(u, { headers: { 'user-agent': UA }, redirect: 'manual', signal: AbortSignal.timeout(20000) })
+        if (r.status >= 300 && r.status < 400) {
+            const loc = r.headers.get('location')
+            if (!loc) break
+            u = new URL(loc, u).toString()
+        } else break
+    }
+    if (!/tiktok\.com/.test(u)) return null
+    const clean = new URL(u)
+    clean.search = ''
+    clean.hash = ''
+    const r = await fetch(clean.toString(), { headers: { 'user-agent': UA }, redirect: 'follow', signal: AbortSignal.timeout(25000) })
+    const html = await r.text()
+    const m = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/)
+    if (!m) return null
+    return JSON.parse(m[1])?.__DEFAULT_SCOPE__?.['webapp.video-detail']?.itemInfo?.itemStruct || null
+}
+
+function ttInfoBlock(t = {}) {
+    const v = t.video || {}
+    const m = t.music || {}
+    const a = t.author || {}
+    const s = t.stats || {}
+    const aStats = t.authorStats || {}
+    const lines = []
+    const caption = String(t.desc || '').trim()
+    if (caption) lines.push(`〽️ *Caption:* ${caption.slice(0, 600)}`)
+    const tags = [...new Set([
+        ...(Array.isArray(t.challenges) ? t.challenges.map(c => c.title) : []),
+        ...(Array.isArray(t.channelTags) ? t.channelTags.map(c => c.title) : []),
+        ...(Array.isArray(t.textExtra) ? t.textExtra.map(x => x.hashtagName).filter(Boolean) : [])
+    ])].filter(Boolean)
+    if (tags.length) lines.push(`🏷️ *Tag:* ${tags.map(h => '#' + h.replace(/^#/, '')).join(' ')}`)
+    if (v.duration) lines.push(`⏱️ *Durasi:* ${formatDuration(v.duration)}`)
+    if (m.title) {
+        let mus = String(m.title)
+        if (m.authorName && !mus.includes(m.authorName)) mus += ' — ' + m.authorName
+        lines.push(`🎵 *Musik:* ${mus}`)
+    }
+    if (v.ratio) lines.push(`📐 *Kualitas:* ${v.ratio}` + (v.videoQuality && v.videoQuality !== 'normal' ? ' · ' + v.videoQuality : ''))
+    const statsParts = []
+    if (s.playCount) statsParts.push(`👁 ${formatCount(s.playCount)}`)
+    if (s.diggCount) statsParts.push(`❤️ ${formatCount(s.diggCount)}`)
+    if (s.commentCount) statsParts.push(`💬 ${formatCount(s.commentCount)}`)
+    if (s.shareCount) statsParts.push(`↪️ ${formatCount(s.shareCount)}`)
+    if (s.collectCount) statsParts.push(`🔖 ${formatCount(s.collectCount)}`)
+    if (statsParts.length) lines.push(`📊 *Statistik:* ${statsParts.join(' · ')}`)
+    if (a.nickname) lines.push(`👤 *Author:* ${a.nickname}` + (a.uniqueId ? ` (@${a.uniqueId})` : ''))
+    if (aStats.followerCount) lines.push(`🙌 *Followers:* ${formatCount(aStats.followerCount)}`)
+    if (t.createTime && fmtDate(t.createTime)) lines.push(`🗓️ *Posting:* ${fmtDate(t.createTime)}`)
+    return lines.join('\n')
+}
 
 function pickUrl(text = '') {
     const m = String(text).match(/https?:\/\/[^\s]+/i)
@@ -127,7 +212,11 @@ let handler = async (m, { conn, text }) => {
 
         const title = (r.title || r.judul || '').split('\n')[0].slice(0, 120)
         const author = r.owner || r.author || r.username || ''
-        const thumb = r.thumbnail || ''
+
+        let ttMeta = null
+        if (tiktokHost(url)) {
+            try { ttMeta = await fetchTikTokMeta(url) } catch { ttMeta = null }
+        }
 
         if (!multi) {
             await conn.sendMessage(m.chat, { react: { text: '📥', key: m.key } })
@@ -137,8 +226,14 @@ let handler = async (m, { conn, text }) => {
             const u = item.url || item.link || item.download_url
             const label = (item.label || item.kualitas || '').replace(/^download/i, '').replace(/[()]/g, '').trim()
             let cap = (multi ? `📦 Media ${i + 1}/${chosen.length}\n\n` : '') +
-                `*🎯 ALL IN ONE DOWNLOAD*\n\n▪️ *Judul:* ${title || '-'}\n▪️ *Author:* ${author || '-'}`
-            if (label) cap += `\n▪️ *Tipe:* ${label}`
+                `*🎯 ALL IN ONE DOWNLOAD*\n\n`
+            if (ttMeta) {
+                cap += ttInfoBlock(ttMeta)
+                if (label) cap += `\n▪️ *Tipe:* ${label}`
+            } else {
+                cap += `▪️ *Judul:* ${title || '-'}\n▪️ *Author:* ${author || '-'}`
+                if (label) cap += `\n▪️ *Tipe:* ${label}`
+            }
             const caption = cap
 
             const dl = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }, signal: AbortSignal.timeout(90000) })
