@@ -72,8 +72,7 @@ function drawBox(lines, width = 44) {
     const bottom = '╰' + '─'.repeat(width) + '╯'
     const out = [top]
     for (const line of lines) {
-        const inner = line.padEnd(width - 1)
-        out.push('│' + inner + '│')
+        out.push('│  ' + line)
     }
     out.push(bottom)
     return out.join('\n')
