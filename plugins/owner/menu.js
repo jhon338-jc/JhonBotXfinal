@@ -186,33 +186,22 @@ let handler = async (m, { conn, args }) => {
     const minutes = Math.floor((runtime % 3600) / 60)
     const totalPlugins = [...new Set(plugins.values())].length
 
-    let status = '👤 *MEMBER*'
-    if (m.isOwner) status = '👑 *OWNER*'
-    else if (m.isPremium) status = '⭐ *PREMIUM*'
-
-    const boxW = 42
-    const top = '┌' + '─'.repeat(boxW) + '┐'
-    const mid = '├' + '─'.repeat(boxW) + '┤'
-    const bot = '└' + '─'.repeat(boxW) + '┘'
-    const line = (txt = '') => '│' + String(txt).padEnd(boxW) + '│'
-    const mkRow = (k, v) => line(` ${k.padEnd(6)}: ${v}`)
+    let status = '👤 Member'
+    if (m.isOwner) status = '👑 Owner'
+    else if (m.isPremium) status = '⭐ Premium'
 
     const menuBox = [
-        top,
-        line('   ✦   *J H O N B O T*   ✦'),
-        line('   🤖 _Aktif 24/7 Tanpa Henti_'),
-        mid,
-        mkRow('👤', (m.pushName || '-').slice(0, 24)),
-        mkRow('📱', '+' + number),
-        mkRow('🏷️', status),
-        mid,
-        mkRow('⚡', days + 'd ' + hours + 'j ' + minutes + 'm'),
-        mkRow('📦', String(totalPlugins) + ' plugin'),
-        mkRow('🖥️', process.version || '-'),
-        mkRow('🌐', String(process.platform || '-').toUpperCase()),
-        bot,
+        '⚡ *JHONBOT* — _Aktif 24/7_',
         '',
-        '💡 _Ketuk tombol di bawah untuk akses cepat_'
+        'Nama   : ' + (m.pushName || '-').slice(0, 20),
+        'Status : ' + status,
+        'Uptime : ' + days + 'd ' + hours + 'j ' + minutes + 'm',
+        'Plugin : ' + totalPlugins,
+        'Node   : ' + (process.version || '-') + ' · ' + String(process.platform || '-').toUpperCase(),
+        '',
+        '📢 *JhonBot* — bot multifungsi, cepat,',
+        '   dan gratis buat kebutuhan harian!',
+        '💡 _Tekan tombol di bawah untuk menu._'
     ].join('\n')
 
     // Bangun sections
