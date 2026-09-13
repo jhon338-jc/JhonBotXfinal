@@ -73,6 +73,33 @@ async function fakeTroli(conn, jid) {
     return { key: msg.key, message: msg.message }
 }
 
+// Kirim carousel (geser ke samping) + protocolMessage interaktivitas
+// supaya UI kartu & tombolnya benar-benar tampil/ter-register di WhatsApp.
+async function sendCarousel(conn, jid, cards, { userJid, quoted } = {}) {
+    const msg = generateWAMessageFromContent(jid, {
+        interactiveMessage: {
+            carouselMessage: { cards }
+        }
+    }, { userJid: userJid || '0@s.whatsapp.net', quoted: quoted || undefined })
+    await conn.relayMessage(jid, msg.message, { messageId: msg.key.id })
+    await conn.relayMessage(jid, {
+        protocolMessage: {
+            type: 3,
+            interactiveResponseMessage: {
+                body: {
+                    protocolMessage: {
+                        type: 3,
+                        interactiveResponseMessage: {
+                            interactiveMessage: msg.message.interactiveMessage
+                        }
+                    }
+                }
+            }
+        }
+    }, {})
+    return msg.key.id
+}
+
 function buildFormat(tierKey) {
     const T = PREMIUM_TIERS[tierKey]
     if (!T) return null
@@ -241,20 +268,22 @@ let handler = async (m, { conn, args, command }) => {
         }
     })
 
-    const cm = {
-        interactiveMessage: {
-            header: { hasMediaAttachment: false, title: '👑 JHONBOT PREMIUM' },
-            body: {
-                text: `_Geser ke samping untuk lihat paket 👉_\n\n👤 *${m.pushName || 'User'}*\n${statLine}\n\n_Pilih paket, lalu tekan **PILIH PAKET**._`
-            },
-            footer: { text: 'Developer: Jhon338 • JhonBot' },
-            carouselMessage: { cards }
-        }
-    }
+    let carouselSent = false
+    try {
+        const troli = await fakeTroli(conn, m.chat)
+        await sendCarousel(conn, m.chat, cards, { userJid: conn.user?.id || m.sender, quoted: troli })
+        carouselSent = true
+    } catch {}
 
-    const troli = await fakeTroli(conn, m.chat)
-    const msg = generateWAMessageFromContent(m.chat, cm, { userJid: conn.user?.id || m.sender, quoted: troli })
-    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
+    if (!carouselSent) {
+        const rows = tiers.map(t => {
+            const tinfo = T[t]
+            return `• *${tinfo.label}* — Rp ${tinfo.price.toLocaleString('id-ID')} / ${tinfo.days} hari\n   _Ketik_ \`.premium ${t}\`_ untuk order._`
+        }).join('\n\n')
+        await conn.sendMessage(m.chat, {
+            text: `> ***MENU LANGGANAN PREMIUM***\n\n${statLine}\n\n📦 *PAKET TERSEDIA:*\n${rows}\n\n👆 _Ketik nomor paket untuk memesan._`
+        }, { quoted: m })
+    }
     await conn.sendMessage(m.chat, { react: { text: '👑', key: m.key } })
 }
 
