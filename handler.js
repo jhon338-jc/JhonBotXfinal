@@ -65,7 +65,8 @@ export function normalizeNumber(raw = '') {
 export function loadOwners() {
     const db = readJSON(DB_FILES.owner)
     try {
-        return (db?.owner || []).map(n => normalizeNumber(n))
+        const list = (db?.owner || []).map(n => normalizeNumber(n))
+        return [...new Set(list.filter(Boolean))]
     } catch {
         return []
     }

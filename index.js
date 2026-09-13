@@ -277,6 +277,7 @@ async function start() {
                 const ownerNum = normalizeNumber(cleanNumber)
                 const db = readJSON(OWNER_FILE)
                 db.owner ??= []
+                db.owner = [...new Set(db.owner.map(n => normalizeNumber(n)).filter(Boolean))]
                 if (!db.owner.includes(ownerNum)) db.owner.push(ownerNum)
                 writeJSON(OWNER_FILE, db)
                 console.log(rgbTag('PAIRING', `Nomor ${ownerNum} di-set sebagai OWNER`, COLORS.success))
