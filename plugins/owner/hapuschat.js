@@ -1,5 +1,7 @@
 import { rgbTag, COLORS } from '../../lib/rgb.js'
 
+const sleep = ms => new Promise(r => setTimeout(r, ms))
+
 let handler = async (m, { conn }) => {
     const chat = m.chat
     const entries = (conn.ledgerGet && conn.ledgerGet(chat)) || []
@@ -11,7 +13,8 @@ let handler = async (m, { conn }) => {
         return m.reply(`> ***HAPUS SEMUA PESAN BOT***\n\n_Tidak ada pesan bot yang bisa dihapus di chat ini (pesan yang bisa dihapus harus < 24 jam untuk semua orang)._\n\n💬 _Total pesan bot tercatat: ${entries.length}_`)
     }
 
-    await conn.sendMessage(m.chat, { react: { text: '🗑️', key: m.key } })
+    try { await conn.sendMessage(m.chat, { react: { text: '🗑️', key: m.key } }) } catch {}
+
     let ok = 0
     let fail = 0
 
@@ -29,13 +32,21 @@ let handler = async (m, { conn }) => {
         } catch (err) {
             fail++
         }
+        await sleep(250)
     }
 
     conn.ledgerClear && conn.ledgerClear(chat)
     console.log(rgbTag('HAPUSCHAT', `Hapus ${ok} pesan bot di ${chat}`, ok ? COLORS.success : COLORS.warn))
 
-    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-    m.reply(`> ***HAPUS SEMUA PESAN BOT***\n\n✅ Berhasil menghapus *${ok}* pesan bot di chat ini untuk semua orang.\n\n📦 Sisa pesan (gagal / belum masuk rentang): *${fail}*\n\n_🔒 Hanya pesan bot yang dikirim < 24 jam yang bisa dihapus untuk semua orang._`)
+    try { await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } }) } catch {}
+
+    const sisa = targets.length - ok
+    const ringkasan = sisa > 0
+        ? `\n\n⚠️ _${sisa} pesan gagal dihapus (angka feasible dihapus fast / ngga)._ Telusuri ulang beberapa detik lagi!`
+        : ''
+    try {
+        await m.reply(`> ***HAPUS SEMUA PESAN BOT***\n\n✅ Berhasil menghapus *${ok}* pesan bot di chat ini untuk semua orang.${ringkasan}\n\n_🔒 Hanya pesan bot yang dikirim < 24 jam yang bisa dihapus untuk semua orang._`)
+    } catch {}
 }
 
 handler.command = ['hapuschat', 'delmsg', 'hapuspesan']
