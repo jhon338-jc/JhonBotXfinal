@@ -56,7 +56,7 @@ let handler = async (m, { conn }) => {
         '- 🌐 URL Button\n' +
         '- 📞 Call Button\n' +
         '- 🔑 Copy Code Button\n\n' +
-        '*_3. UI khusus:_* VCard Kontak \u00b7 Polling \u00b7 Lokasi'
+        '*_3. UI khusus:_* Slide Card (Carousel) \u00b7 VCard Kontak \u00b7 Polling \u00b7 Lokasi'
     await m.reply(intro)
 
     // ============ 2) INTERACTIVE CARD — 6 JENIS TOMBOL ============
@@ -95,7 +95,48 @@ let handler = async (m, { conn }) => {
         await m.reply('❌ _Gagal kirim interactive card: ' + (e?.message || e) + '_')
     }
 
-    // ============ 3) VCARD / CONTACT CARD ============
+    // ============ 3) SLIDE CARD / CAROUSEL UI ============
+    try {
+        await conn.sendMessage(m.chat, {
+            title: '🛒 *SLIDE CARD / CAROUSEL*',
+            text: '_*_Geser kartu untuk melihat yang lain 👉_*\n\nSetiap kartu punya tombolnya sendiri._',
+            cards: [
+                {
+                    title: '🤖 Perintah Bot',
+                    body: '_Pilih perintah cepat untuk bot cuba._',
+                    footer: 'Menu',
+                    buttons: [
+                        quickReply('📖 Menu', '.menu'),
+                        quickReply('👤 Profil', '.profil'),
+                        quickReply('⚡ Ping', '.ping')
+                    ]
+                },
+                {
+                    title: '🌐 Sosial & Kode',
+                    body: '_Buka link dan salin kode versi bot._',
+                    footer: 'Komunitas',
+                    buttons: [
+                        ctaUrl('🌐 Linktree', channelLink),
+                        ctaUrl('🐙 GitHub', ghRepo),
+                        copyCode('🔑 Salin Versi', botVersion)
+                    ]
+                },
+                {
+                    title: '📞 Kontak Owner',
+                    body: '_Butuh bantuan? Hubungi owner langsung._',
+                    footer: 'Support',
+                    buttons: [
+                        callBtn('📞 Call Owner', '+' + ownerNumber),
+                        quickReply('🗣 Chat Owner? Ketik .info', '.info')
+                    ]
+                }
+            ]
+        }, { quoted: m })
+    } catch (e) {
+        await m.reply('❌ _Gagal kirim slide card: ' + (e?.message || e) + '_')
+    }
+
+    // ============ 4) VCARD / CONTACT CARD ============
     try {
         const vcard = 'BEGIN:VCARD\n' +
             'VERSION:3.0\n' +

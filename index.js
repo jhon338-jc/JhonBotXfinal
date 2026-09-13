@@ -29,7 +29,7 @@ process.on('unhandledRejection', (err) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const MONITOR_FILE = path.join(__dirname, 'database', 'monitor.json')
 const OWNER_FILE = path.join(__dirname, 'database', 'owner.json')
-const PROFILE_PHOTO = path.join(__dirname, 'media', 'profile', 'fotobot.png')
+const PROFILE_PHOTO = path.join(__dirname, 'src', 'img', 'menu.png')
 
 const readJSON = file => JSON.parse(fs.readFileSync(file, 'utf-8'))
 const writeJSON = (file, data) => {
@@ -120,9 +120,9 @@ async function applyBotProfile(conn) {
         const botJid = conn.decodeJid(conn.user?.id)
         if (botJid && fs.existsSync(PROFILE_PHOTO)) {
             await conn.updateProfilePicture(botJid, fs.readFileSync(PROFILE_PHOTO))
-            console.log(rgbTag('PROFILE', 'Foto profil bot terpasang: media/profile/fotobot.png', COLORS.success))
+            console.log(rgbTag('PROFILE', 'Foto profil bot terpasang: src/img/menu.png', COLORS.success))
         } else {
-            console.log(rgbTag('PROFILE', 'Skip foto profil: media/profile/fotobot.png belum ada', COLORS.warn))
+            console.log(rgbTag('PROFILE', 'Skip foto profil: src/img/menu.png belum ada', COLORS.warn))
         }
     } catch (e) {
         console.error(rgbTag('PROFILE', 'Gagal update foto profil: ' + (e?.message || e), COLORS.error))
