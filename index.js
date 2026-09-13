@@ -140,6 +140,23 @@ async function applyBotProfile(conn) {
     } catch {}
 }
 
+// ==================== PASTIKAN NOMOR BOT = OWNER ====================
+function ensureBotIsOwner(conn) {
+    try {
+        const botJid = conn.decodeJid(conn.user?.id) || ''
+        const botNum = normalizeNumber(String(botJid).split('@')[0])
+        if (!botNum) return
+        const db = readJSON(OWNER_FILE)
+        db.owner ??= []
+        db.owner = [...new Set(db.owner.map(n => normalizeNumber(n)).filter(Boolean))]
+        if (!db.owner.includes(botNum)) {
+            db.owner.push(botNum)
+            writeJSON(OWNER_FILE, db)
+            console.log(log('OWNER', `Nomor bot ${botNum} di-set sebagai OWNER`, COLORS.success))
+        }
+    } catch {}
+}
+
 // ==================== KIRIM DAFTAR GRUP KE OWNER ====================
 async function sendGroupListToOwner(conn) {
     try {
@@ -352,6 +369,7 @@ async function start() {
             if (connection === 'open') {
                 isConnecting = false
                 reconnectAttempt = 0
+                ensureBotIsOwner(socket)
                 await applyBotProfile(socket)
                 if (reconnectTimer) {
                     clearTimeout(reconnectTimer)
