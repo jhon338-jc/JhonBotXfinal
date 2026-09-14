@@ -8,7 +8,7 @@ const WEBSITES = [
         body: 'Dengarkan musik, podcast, dan album favoritmu secara gratis.',
         sourceUrl: 'https://open.spotify.com',
         color: '#1DB954',
-        icon: '🎵'
+        icon: ''
     },
     {
         key: 'github',
@@ -16,15 +16,15 @@ const WEBSITES = [
         body: 'Platform kolaborasi kode terbesar untuk developer seluruh dunia.',
         sourceUrl: 'https://github.com',
         color: '#8b5cf6',
-        icon: '💻'
+        icon: ''
     },
     {
         key: 'myweb',
         title: 'Jhon338 Linktree',
-        body: 'Kumpulan link penting dari Jhon338 — bot, sosial media, dan proyek.',
+        body: 'Kumpulan link penting dari Jhon338  bot, sosial media, dan proyek.',
         sourceUrl: 'https://jhon338-jc.github.io/Linktree/',
         color: '#06b6d4',
-        icon: '🔗'
+        icon: ''
     },
     {
         key: 'youtube',
@@ -32,23 +32,23 @@ const WEBSITES = [
         body: 'Tonton video, musik, dan konten kreator favoritmu.',
         sourceUrl: 'https://youtube.com',
         color: '#ef4444',
-        icon: '▶️'
+        icon: ''
     },
     {
         key: 'google',
         title: 'Google',
-        body: 'Mesin pencari terbesar di dunia — cari apa saja dengan cepat.',
+        body: 'Mesin pencari terbesar di dunia  cari apa saja dengan cepat.',
         sourceUrl: 'https://google.com',
         color: '#4285f4',
-        icon: '🔍'
+        icon: ''
     },
     {
         key: 'chatgpt',
         title: 'ChatGPT',
-        body: 'Asisten AI dari OpenAI — tanya apa saja, dapatkan jawaban instan.',
+        body: 'Asisten AI dari OpenAI  tanya apa saja, dapatkan jawaban instan.',
         sourceUrl: 'https://chat.openai.com',
         color: '#10a37f',
-        icon: '🤖'
+        icon: ''
     }
 ]
 
@@ -76,9 +76,9 @@ let handler = async (m, { conn, args }) => {
     const key = (args?.[0] || '').trim().toLowerCase()
 
     if (!key) {
-        const list = WEBSITES.map((w, i) => `${i + 1}. *${w.key}* — ${w.title}`).join('\n')
+        const list = WEBSITES.map((w, i) => `${i + 1}. *${w.key}*  ${w.title}`).join('\n')
         const caption = [
-            '*🌐 AI RICH — Daftar Website*',
+            '* AI RICH  Daftar Website*',
             '',
             'Ketik *.airich <key>* untuk mengirim Rich Card.',
             '',
@@ -96,14 +96,10 @@ let handler = async (m, { conn, args }) => {
         return m.reply(`> *KEY TIDAK DITEMUKAN*\n\n_Key yang kamu masukkan:_ \`${key}\`\n\n_Key tersedia:_\n${available}`)
     }
 
-    await conn.sendMessage(m.chat, { react: { text: '🌐', key: m.key } })
-
     try {
         await sendAiRich(conn, m.chat, buildCardHTML(site), { title: site.title })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

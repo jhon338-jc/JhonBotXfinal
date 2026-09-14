@@ -28,7 +28,7 @@ function show(msg,ok){
 var r=document.getElementById('rcpt');
 if(ok){
 var id='TRX'+Math.floor(Math.random()*1e9);
-r.innerHTML='<div style="background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.5);border-radius:12px;padding:12px;margin-top:10px;text-align:center"><div style="font-size:22px">✅</div><div class="big">Pembayaran Sukses!</div><div class="muted" style="margin:6px 0">'+fmt(den)+' via '+pay+'</div><div class="chip" style="display:inline-block">ID: '+id+'</div><div class="muted" style="margin-top:6px">Struk diterima, saldo sudah masuk</div></div>';
+r.innerHTML='<div style="background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.5);border-radius:12px;padding:12px;margin-top:10px;text-align:center"><div style="font-size:22px"></div><div class="big">Pembayaran Sukses!</div><div class="muted" style="margin:6px 0">'+fmt(den)+' via '+pay+'</div><div class="chip" style="display:inline-block">ID: '+id+'</div><div class="muted" style="margin-top:6px">Struk diterima, saldo sudah masuk</div></div>';
 }else{
 r.innerHTML='<div style="background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.5);border-radius:12px;padding:12px;margin-top:10px;text-align:center;color:#ff9a9a">'+msg+'</div>';
 }
@@ -44,14 +44,11 @@ renderDen();renderPay();updBtn();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '💳', key: m.key } })
     try {
-        const html = shell({ title: 'Top Up', tag: 'APP', icon: '💳', html: '<div class="row" style="justify-content:space-between"><span class="big">Saldo<br><span id="bal">Rp 25.000</span></span><span class="chip">💳 Top Up</span></div><div class="muted" style="margin-top:10px">1️⃣ Pilih Nominal</div><div class="row" id="den"></div><div class="muted">2️⃣ Metode Pembayaran</div><div class="row" id="pay"></div><button class="btn" id="confirm" style="background:#6c5ce7;width:100%;margin-top:12px">CONFIRM TOP UP</button><div id="rcpt"></div>', script: GAME_JS })
+        const html = shell({ title: 'Top Up', tag: 'APP', icon: '', html: '<div class="row" style="justify-content:space-between"><span class="big">Saldo<br><span id="bal">Rp 25.000</span></span><span class="chip"> Top Up</span></div><div class="muted" style="margin-top:10px">1 Pilih Nominal</div><div class="row" id="den"></div><div class="muted">2 Metode Pembayaran</div><div class="row" id="pay"></div><button class="btn" id="confirm" style="background:#6c5ce7;width:100%;margin-top:12px">CONFIRM TOP UP</button><div id="rcpt"></div>', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Top Up' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

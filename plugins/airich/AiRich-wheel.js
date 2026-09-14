@@ -36,9 +36,9 @@ return PRI[Math.floor(rel/(TAU/PRI.length))%PRI.length];
 }
 function settle(){
 var w=winner(),add=0,txt='',isCoin=true;
-if(w==='LOSE'){bal=Math.max(0,bal-25);txt='💔 Zonk! LOSE -25';isCoin=false}
-else if(w==='PLUS'){add=100;txt='✦ PLUS +100'}
-else{add=parseInt(w);txt='🎉 +'+w}
+if(w==='LOSE'){bal=Math.max(0,bal-25);txt=' Zonk! LOSE -25';isCoin=false}
+else if(w==='PLUS'){add=100;txt=' PLUS +100'}
+else{add=parseInt(w);txt=' +'+w}
 bal+=add;
 document.getElementById('bal').textContent=bal;
 document.getElementById('spinN').style.pointerEvents='auto';
@@ -72,14 +72,11 @@ draw();loop();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '🎯', key: m.key } })
     try {
-        const html = shell({ title: 'Wheel of Fortune', tag: 'GAME', icon: '🎯', html: '<div class="row" style="justify-content:space-between"><span class="big">Wheel of Fortune</span><span class="chip">Koin: <b id="bal">100</b> · spin 10</span></div>' + stage(560, 320) + '<button class="btn" id="spinN" style="background:#6c5ce7;width:100%">🎯 SPIN</button><div class="muted" style="margin-top:8px">Riwayat spin:</div><div id="hist"></div>', script: GAME_JS })
+        const html = shell({ title: 'Wheel of Fortune', tag: 'GAME', icon: '', html: '<div class="row" style="justify-content:space-between"><span class="big">Wheel of Fortune</span><span class="chip">Koin: <b id="bal">100</b> · spin 10</span></div>' + stage(560, 320) + '<button class="btn" id="spinN" style="background:#6c5ce7;width:100%"> SPIN</button><div class="muted" style="margin-top:8px">Riwayat spin:</div><div id="hist"></div>', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Wheel of Fortune' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

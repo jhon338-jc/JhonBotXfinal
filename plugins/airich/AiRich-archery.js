@@ -26,14 +26,11 @@ init();draw();loop();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '🏹', key: m.key } })
     try {
-        const html = shell({ title: 'Archery', tag: 'GAME', icon: '🏹', html: stage(560, 360), script: GAME_JS })
+        const html = shell({ title: 'Archery', tag: 'GAME', icon: '', html: stage(560, 360), script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Archery' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

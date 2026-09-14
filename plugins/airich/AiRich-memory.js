@@ -2,7 +2,7 @@ import { sendAiRich, shell } from '../../lib/airich.js'
 import { log, COLORS } from '../../lib/rgb.js'
 
 const GAME_JS = `
-var emojis=['🍎','🍊','🍋','🍇','🍓','🍒','🍑','🥝'];
+var emojis=['','','','','','','',''];
 var cards=[],flipped=[],matched=[],moves=0,locked=false,found=0;
 var board=document.getElementById('mb');if(!board){board=document.createElement('div');board.id='mb';board.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px';document.querySelector('.wrap').appendChild(board)}
 var info=document.getElementById('mi');if(!info){info=document.createElement('div');info.id='mi';info.style.cssText='text-align:center;margin:8px 0';document.querySelector('.wrap').appendChild(info)}
@@ -15,14 +15,11 @@ init();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '🧠', key: m.key } })
     try {
-        const html = shell({ title: 'Memory Match', tag: 'GAME', icon: '🧠', html: '', script: GAME_JS })
+        const html = shell({ title: 'Memory Match', tag: 'GAME', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Memory Match' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

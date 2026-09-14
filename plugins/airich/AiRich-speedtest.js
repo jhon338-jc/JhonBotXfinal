@@ -24,7 +24,7 @@ resultCard.style.cssText='display:none;background:rgba(108,92,231,.08);border:1p
 document.querySelector('.wrap').appendChild(resultCard);
 var startBtn=document.createElement('div');
 startBtn.style.cssText='text-align:center;padding:14px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-radius:14px;font-size:16px;font-weight:bold;color:#fff;cursor:pointer;transition:all .2s;margin-top:8px';
-startBtn.textContent='▶ START';
+startBtn.textContent=' START';
 document.querySelector('.wrap').appendChild(startBtn);
 var status=document.createElement('div');
 status.style.cssText='text-align:center;font-size:11px;color:rgba(255,255,255,.5);margin-top:6px;min-height:16px';
@@ -49,7 +49,7 @@ if(phase>=meters.length){
 showResult(targets);
 running=false;
 startBtn.style.display='block';
-startBtn.textContent='▶ START';
+startBtn.textContent=' START';
 return;
 }
 var m=meters[phase];
@@ -100,14 +100,11 @@ resultCard.style.animation='fadeIn .4s';
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '📶', key: m.key } })
     try {
-        const html = shell({ title: 'Speed Test', tag: 'TOOL', icon: '📶', html: '', script: GAME_JS })
+        const html = shell({ title: 'Speed Test', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Speed Test' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

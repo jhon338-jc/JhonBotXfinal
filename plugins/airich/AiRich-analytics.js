@@ -13,7 +13,7 @@ const HTML = `
     <button class="ptab" data-p="W" style="flex:1;padding:8px;border:0;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;background:rgba(255,255,255,.08);color:#ddd">Week</button>
     <button class="ptab" data-p="M" style="flex:1;padding:8px;border:0;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;background:rgba(255,255,255,.08);color:#ddd">Month</button>
   </div>
-  <div style="font-size:12px;font-weight:bold;color:#fff" id="charttitle">📊 Daily Activity</div>
+  <div style="font-size:12px;font-weight:bold;color:#fff" id="charttitle"> Daily Activity</div>
   <div id="chartbox" style="display:block;margin-top:8px;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px"></div>
 </div>`
 
@@ -30,7 +30,7 @@ var seg=(w-2*pad)/(n-1),len=(n-1)*seg,sum=0;
 for(k=0;k<n;k++)sum+=data[k];
 c1.textContent=sum.toFixed(0)+'K';c2.textContent=(18+Math.floor(Math.random()*14))+'%';
 var gr=Math.floor(Math.random()*11)-5;c3.textContent=(gr>=0?'▲ ':'▼ ')+Math.abs(gr)+'%';c3.style.color=gr>=0?'#00b894':'#e17055';
-ttl.textContent='📊 '+per[active].title;
+ttl.textContent=' '+per[active].title;
 var svg='<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;display:block"><defs><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(108,92,231,.35)"/><stop offset="100%" stop-color="rgba(108,92,231,0)"/></linearGradient></defs>';
 svg+='<path d="'+area+'" fill="url(#gr)"/>';
 svg+='<polyline points="'+line+'" fill="none" stroke="#6c5ce7" stroke-width="3" stroke-linecap="round" stroke-dasharray="'+len.toFixed(0)+'" stroke-dashoffset="'+len.toFixed(0)+'" style="animation:draw 1s ease forwards"/>';
@@ -42,14 +42,11 @@ build();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '📈', key: m.key } })
     try {
-        const html = shell({ title: 'Analytics', tag: 'APP', icon: '📈', html: HTML, script: GAME_JS })
+        const html = shell({ title: 'Analytics', tag: 'APP', icon: '', html: HTML, script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Analytics' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

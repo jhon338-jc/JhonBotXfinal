@@ -22,13 +22,10 @@ const SOURCES = {
 let handler = async (m, { conn, args, command }) => {
     if (args?.[0] === 'ulang') {
         const last = mediaCacheGet(m.chat, command)
-        if (!last) return m.reply('⚠️ Tidak ada media sebelumnya. Silakan pilih *🎲 Acak Baru*.')
-        await conn.sendMessage(m.chat, { react: { text: '🔄', key: m.key } })
+        if (!last) return m.reply(' Tidak ada media sebelumnya. Silakan pilih * Acak Baru*.')
         await sendMediaFlow(conn, m.chat, { ...last, buttons: mediaButtons(command), quoted: m })
         return
     }
-
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         requireKyzzKey()
         const keys = Object.keys(SOURCES)
@@ -43,16 +40,13 @@ let handler = async (m, { conn, args, command }) => {
         const data = {
             media: buffer,
             mimetype: 'video/mp4',
-            caption: `📌 Asupan ${src.label} random • JhonBot v3.3.8`,
-            footer: '👇 Tap tombol: kirim ulang atau acak baru'
+            caption: '',
+            footer: ' Tap tombol: kirim ulang atau acak baru'
         }
         mediaCacheSet(m.chat, command, data)
         await sendMediaFlow(conn, m.chat, { ...data, buttons: mediaButtons(command), quoted: m })
-
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('ASP', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

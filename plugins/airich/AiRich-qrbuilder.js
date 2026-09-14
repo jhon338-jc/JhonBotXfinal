@@ -79,15 +79,15 @@ input.value='hello';
 generate();
 var dlBtn=document.createElement('div');
 dlBtn.style.cssText='text-align:center;padding:10px;margin-top:6px;background:rgba(255,255,255,.06);border-radius:10px;font-size:12px;color:rgba(255,255,255,.6);cursor:pointer';
-dlBtn.textContent='💾 Download QR';
+dlBtn.textContent=' Download QR';
 dlBtn.addEventListener('pointerdown',function(e){
 e.preventDefault();
 var link=document.createElement('a');
 link.download='qr.png';
 link.href=c.toDataURL();
 link.click();
-dlBtn.textContent='✅ Saved!';
-setTimeout(function(){dlBtn.textContent='💾 Download QR';},1500);
+dlBtn.textContent=' Saved!';
+setTimeout(function(){dlBtn.textContent=' Download QR';},1500);
 });
 wrap.appendChild(dlBtn);
 var hint=document.createElement('div');
@@ -97,14 +97,11 @@ wrap.appendChild(hint);
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '📱', key: m.key } })
     try {
-        const html = shell({ title: 'QR Builder', tag: 'TOOL', icon: '📱', html: stage(280, 280), script: GAME_JS })
+        const html = shell({ title: 'QR Builder', tag: 'TOOL', icon: '', html: stage(280, 280), script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'QR Builder' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

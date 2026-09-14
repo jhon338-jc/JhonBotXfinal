@@ -45,8 +45,6 @@ let handler = async (m, { conn }) => {
     const ownerName = botCfg.ownerName || 'Jhon338'
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
 
-    await conn.sendMessage(m.chat, { react: { text: '🎨', key: m.key } })
-
     // ============ 1) TEKS DENGAN KOMBINASI FORMAT ============
     const intro = '> *PREVIEW UI & BUTTONS BOT*\n' +
         '> _Berikut semua jenis tampilan yang didukung bot_\n\n' +
@@ -54,15 +52,15 @@ let handler = async (m, { conn }) => {
         '- *Tebal* \u00b7 _Miring_ \u00b7 ~Coret~ \u00b7 `mono`\n' +
         '- *Tebal + Miring* \u00b7 *~Tebal + Coret~* \u00b7 _~Miring + Coret~_\n\n' +
         '*2. Tombol (interactive card di bawah):*\n' +
-        '- ☰ List Menu (dropdown)\n' +
-        '- ⚡ Quick Reply\n' +
-        '- 🌐 URL Button\n' +
-        '- 📞 Call Button\n' +
-        '- 🔑 Copy Code Button\n\n' +
+        '-  List Menu (dropdown)\n' +
+        '-  Quick Reply\n' +
+        '-  URL Button\n' +
+        '-  Call Button\n' +
+        '-  Copy Code Button\n\n' +
         '*3. UI khusus:* Slide Card (Carousel) \u00b7 VCard Kontak \u00b7 Polling \u00b7 Lokasi'
     await m.reply(intro)
 
-    // ============ 2) INTERACTIVE CARD — 6 JENIS TOMBOL ============
+    // ============ 2) INTERACTIVE CARD  6 JENIS TOMBOL ============
     const sections = [{
         title: 'NAVIGASI',
         highlight_label: 'PILIH',
@@ -75,65 +73,65 @@ let handler = async (m, { conn }) => {
     }]
 
     const native = [
-        singleSelect('LIST MENU ☰', sections),
-        quickReply('⚡ Quick Reply', '.menu'),
-        ctaUrl('🌐 URL Button', channelLink),
-        callBtn('📞 Call Owner', '+' + ownerNumber),
-        copyCode('🔑 Copy Code', 'Kode Bot: ' + botVersion)
+        singleSelect('LIST MENU ', sections),
+        quickReply(' Quick Reply', '.menu'),
+        ctaUrl(' URL Button', channelLink),
+        callBtn(' Call Owner', '+' + ownerNumber),
+        copyCode(' Copy Code', 'Kode Bot: ' + botVersion)
     ]
 
     try {
         const interactiveMsg = {
             interactiveMessage: {
-                header: { title: '🤖 *UI BUTTONS*', hasMediaAttachment: false },
+                header: { title: ' *UI BUTTONS*', hasMediaAttachment: false },
                 body: { text: '_Setiap tombol ini punya fungsi yang bisa kamu pakai._' },
-                footer: { text: botVersion + ' • Powered by Baileys' },
+                footer: { text: botVersion + '  Powered by Baileys' },
                 nativeFlowMessage: { messageVersion: 1, buttons: native }
             }
         }
         const msg = generateWAMessageFromContent(m.chat, interactiveMsg, { userJid: conn.user?.id || m.sender, quoted: m })
         await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
     } catch (e) {
-        await m.reply('❌ _Gagal kirim interactive card: ' + (e?.message || e) + '_')
+        await m.reply(' _Gagal kirim interactive card: ' + (e?.message || e) + '_')
     }
 
     // ============ 3) SLIDE CARD / CAROUSEL UI ============
     try {
         const carouselCards = [
             {
-                header: { title: '🤖 Perintah Bot', hasMediaAttachment: false },
+                header: { title: ' Perintah Bot', hasMediaAttachment: false },
                 body: { text: '_Pilih perintah cepat untuk dicoba._' },
                 footer: { text: 'Menu' },
                 nativeFlowMessage: carouselBtn(1, [
-                    quickReply('📖 Menu', '.menu'),
-                    quickReply('👤 Profil', '.profil'),
-                    quickReply('⚡ Ping', '.ping')
+                    quickReply(' Menu', '.menu'),
+                    quickReply(' Profil', '.profil'),
+                    quickReply(' Ping', '.ping')
                 ])
             },
             {
-                header: { title: '🌐 Sosial & Kode', hasMediaAttachment: false },
+                header: { title: ' Sosial & Kode', hasMediaAttachment: false },
                 body: { text: '_Buka link dan salin kode versi bot._' },
                 footer: { text: 'Komunitas' },
                 nativeFlowMessage: carouselBtn(1, [
-                    ctaUrl('🌐 Linktree', channelLink),
-                    copyCode('🔑 Salin Versi', botVersion)
+                    ctaUrl(' Linktree', channelLink),
+                    copyCode(' Salin Versi', botVersion)
                 ])
             },
             {
-                header: { title: '📞 Kontak Owner', hasMediaAttachment: false },
+                header: { title: ' Kontak Owner', hasMediaAttachment: false },
                 body: { text: '_Butuh bantuan? Hubungi owner langsung._' },
                 footer: { text: 'Support' },
                 nativeFlowMessage: carouselBtn(1, [
-                    callBtn('📞 Call Owner', '+' + ownerNumber),
-                    quickReply('🗣 Info', '.info')
+                    callBtn(' Call Owner', '+' + ownerNumber),
+                    quickReply(' Info', '.info')
                 ])
             }
         ]
 
         const carouselMsg = {
             interactiveMessage: {
-                header: { title: '🛒 *SLIDE CARD / CAROUSEL*', hasMediaAttachment: false },
-                body: { text: '_Geser kartu untuk melihat yang lain 👉_' },
+                header: { title: ' *SLIDE CARD / CAROUSEL*', hasMediaAttachment: false },
+                body: { text: '_Geser kartu untuk melihat yang lain _' },
                 footer: { text: botVersion },
                 carouselMessage: { cards: carouselCards }
             }
@@ -141,7 +139,7 @@ let handler = async (m, { conn }) => {
         const msg = generateWAMessageFromContent(m.chat, carouselMsg, { userJid: conn.user?.id || m.sender, quoted: m })
         await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
     } catch (e) {
-        await m.reply('❌ _Gagal kirim slide card: ' + (e?.message || e) + '_')
+        await m.reply(' _Gagal kirim slide card: ' + (e?.message || e) + '_')
     }
 
     // ============ 4) VCARD / CONTACT CARD ============
@@ -160,20 +158,20 @@ let handler = async (m, { conn }) => {
             }
         })
     } catch (e) {
-        await m.reply('❌ _Gagal kirim VCard: ' + (e?.message || e) + '_')
+        await m.reply(' _Gagal kirim VCard: ' + (e?.message || e) + '_')
     }
 
     // ============ 5) POLL UI ============
     try {
         await conn.sendMessage(m.chat, {
             poll: {
-                name: 'Apakah tampilan bot ini sudah keren? 🎨',
-                values: ['Sudah keren ✨', 'Biasa aja 😐', 'Perlu diperbaiki 😅'],
+                name: 'Apakah tampilan bot ini sudah keren? ',
+                values: ['Sudah keren ', 'Biasa aja ', 'Perlu diperbaiki '],
                 selectableCount: 1
             }
         })
     } catch (e) {
-        await m.reply('❌ _Gagal kirim poll: ' + (e?.message || e) + '_')
+        await m.reply(' _Gagal kirim poll: ' + (e?.message || e) + '_')
     }
 
     // ============ 6) LOCATION UI ============
@@ -187,10 +185,8 @@ let handler = async (m, { conn }) => {
             }
         })
     } catch (e) {
-        await m.reply('❌ _Gagal kirim lokasi: ' + (e?.message || e) + '_')
+        await m.reply(' _Gagal kirim lokasi: ' + (e?.message || e) + '_')
     }
-
-    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 
 handler.command = ['ui', 'preview']

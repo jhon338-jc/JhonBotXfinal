@@ -14,7 +14,7 @@ const HTML = `
     <button class="tbtn" data-t="B" style="flex:1;padding:8px;border:0;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;background:rgba(255,255,255,.08);color:#ddd">Desktop</button>
     <button class="tbtn" data-t="C" style="flex:1;padding:8px;border:0;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;background:rgba(255,255,255,.08);color:#ddd">Tablet</button>
   </div>
-  <div style="font-size:12px;font-weight:bold;color:#fff">💡 Traffic by hour</div>
+  <div style="font-size:12px;font-weight:bold;color:#fff"> Traffic by hour</div>
   <div id="chart" style="display:flex;align-items:flex-end;gap:6px;height:130px;margin-top:8px;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px"></div>
   <div style="display:flex;justify-content:space-between;margin-top:6px" class="muted"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
 </div>`
@@ -31,14 +31,11 @@ render();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '📊', key: m.key } })
     try {
-        const html = shell({ title: 'Dashboard', tag: 'APP', icon: '📊', html: HTML, script: GAME_JS })
+        const html = shell({ title: 'Dashboard', tag: 'APP', icon: '', html: HTML, script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Dashboard' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

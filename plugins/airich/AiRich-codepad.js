@@ -14,8 +14,8 @@ TA.style.cssText='flex:1;background:transparent;border:0;outline:none;color:#9ee
 ED.appendChild(TA);
 var SW=document.createElement('div');SW.style.cssText='display:flex;gap:6px;margin-top:8px';
 W.appendChild(SW);
-var RUN=document.createElement('button');RUN.textContent='▶ Run';RUN.style.cssText='flex:1;padding:10px;border:0;border-radius:10px;background:#2ecc71;color:#fff;font-size:12px;font-weight:bold;cursor:pointer';SW.appendChild(RUN);
-var CLR=document.createElement('button');CLR.textContent='✕ Clear';CLR.style.cssText='flex:1;padding:10px;border:0;border-radius:10px;background:rgba(231,76,60,.8);color:#fff;font-size:12px;font-weight:bold;cursor:pointer';SW.appendChild(CLR);
+var RUN=document.createElement('button');RUN.textContent=' Run';RUN.style.cssText='flex:1;padding:10px;border:0;border-radius:10px;background:#2ecc71;color:#fff;font-size:12px;font-weight:bold;cursor:pointer';SW.appendChild(RUN);
+var CLR=document.createElement('button');CLR.textContent=' Clear';CLR.style.cssText='flex:1;padding:10px;border:0;border-radius:10px;background:rgba(231,76,60,.8);color:#fff;font-size:12px;font-weight:bold;cursor:pointer';SW.appendChild(CLR);
 var CON=document.createElement('div');CON.style.cssText='margin-top:8px;background:#0a0a16;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;font-family:monospace;font-size:12px;color:#7ee787;min-height:20px;white-space:pre-wrap';
 CON.textContent='> Ready. Press Run.';
 W.appendChild(CON);
@@ -56,14 +56,11 @@ lineNo();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '💻', key: m.key } })
     try {
-        const html = shell({ title: 'Code Pad', tag: 'TOOL', icon: '💻', html: '', script: GAME_JS })
+        const html = shell({ title: 'Code Pad', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Code Pad' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

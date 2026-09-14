@@ -6,7 +6,7 @@ var hasImage=false;
 var showingBg=false;
 var uploadArea=document.createElement('div');
 uploadArea.style.cssText='border:2px dashed rgba(255,255,255,.2);border-radius:12px;padding:30px;text-align:center;margin:10px 0;cursor:pointer;transition:all .2s';
-uploadArea.innerHTML='<div style="font-size:32px;margin-bottom:6px">📤</div><div style="font-size:12px;color:rgba(255,255,255,.5)">Tap to add subject</div>';
+uploadArea.innerHTML='<div style="font-size:32px;margin-bottom:6px"></div><div style="font-size:12px;color:rgba(255,255,255,.5)">Tap to add subject</div>';
 document.querySelector('.wrap').appendChild(uploadArea);
 var preview=document.createElement('div');
 preview.style.cssText='position:relative;display:none;margin:8px 0;border-radius:12px;overflow:hidden';
@@ -88,11 +88,11 @@ btnRow.style.cssText='display:flex;gap:8px;margin:8px 0';
 document.querySelector('.wrap').appendChild(btnRow);
 var removeBtn=document.createElement('div');
 removeBtn.style.cssText='flex:1;text-align:center;padding:12px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-radius:12px;font-size:13px;font-weight:bold;color:#fff;cursor:pointer;transition:all .2s;display:none';
-removeBtn.textContent='✂️ Remove BG';
+removeBtn.textContent=' Remove BG';
 btnRow.appendChild(removeBtn);
 var toggleBtn=document.createElement('div');
 toggleBtn.style.cssText='flex:1;text-align:center;padding:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;font-size:13px;color:#fff;cursor:pointer;display:none';
-toggleBtn.textContent='👁️ Before';
+toggleBtn.textContent=' Before';
 btnRow.appendChild(toggleBtn);
 var statusText=document.createElement('div');
 statusText.style.cssText='text-align:center;font-size:11px;color:rgba(255,255,255,.5);min-height:16px;margin-top:4px';
@@ -129,7 +129,7 @@ statusText.textContent='Background removed!';
 removeBtn.style.display='none';
 removeBtn.style.opacity='1';
 toggleBtn.style.display='block';
-toggleBtn.textContent='👁️ Before';
+toggleBtn.textContent=' Before';
 processing=false;
 }
 },20);
@@ -139,23 +139,20 @@ e.preventDefault();
 showingBg=!showingBg;
 if(showingBg){
 afterCanvas.style.display='block';
-toggleBtn.textContent='👁️ Before';
+toggleBtn.textContent=' Before';
 }else{
 afterCanvas.style.display='none';
-toggleBtn.textContent='👁️ After';
+toggleBtn.textContent=' After';
 }
 });
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '✂️', key: m.key } })
     try {
-        const html = shell({ title: 'Remove BG', tag: 'TOOL', icon: '✂️', html: '', script: GAME_JS })
+        const html = shell({ title: 'Remove BG', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Remove BG' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

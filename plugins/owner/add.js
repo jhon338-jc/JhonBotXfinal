@@ -2,30 +2,17 @@ import { areJidsSameUser } from '@whiskeysockets/baileys'
 import { normalizeNumber } from '../../handler.js'
 
 let handler = async (m, { conn, args }) => {
-    if (!m.isGroup) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('> *GROUP ONLY*\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
+    if (!m.isGroup) {        return m.reply('> *GROUP ONLY*\n\n_ Fitur ini hanya bisa dipakai di grup._')
     }
 
     const num = normalizeNumber(args[0])
-    if (!num || !/^\d{8,15}$/.test(num)) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('⚠️ Masukkan nomor valid!\n\nContoh: .add 628xxx atau .add 08xxx')
+    if (!num || !/^\d{8,15}$/.test(num)) {        return m.reply(' Masukkan nomor valid!\n\nContoh: .add 628xxx atau .add 08xxx')
     }
 
     const who = num + '@s.whatsapp.net'
-    if (conn.user?.id && areJidsSameUser(who, conn.decodeJid(conn.user.id))) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❌ Tidak bisa menambahkan bot sendiri!')
-    }
-
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
-    try {
-        await conn.groupParticipantsUpdate(m.chat, [who], 'add')
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-    } catch (e) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        m.reply('❌ Gagal menambahkan user! Pastikan bot admin & nomor valid.')
+    if (conn.user?.id && areJidsSameUser(who, conn.decodeJid(conn.user.id))) {        return m.reply(' Tidak bisa menambahkan bot sendiri!')
+    }    try {
+        await conn.groupParticipantsUpdate(m.chat, [who], 'add')    } catch (e) {        m.reply(' Gagal menambahkan user! Pastikan bot admin & nomor valid.')
     }
 }
 

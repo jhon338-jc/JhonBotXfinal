@@ -20,14 +20,11 @@ document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '🦖', key: m.key } })
     try {
-        const html = shell({ title: 'Dino Runner', tag: 'GAME', icon: '🦖', html: stage(560, 200), script: GAME_JS })
+        const html = shell({ title: 'Dino Runner', tag: 'GAME', icon: '', html: stage(560, 200), script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Dino Runner' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

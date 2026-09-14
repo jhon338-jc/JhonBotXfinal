@@ -5,24 +5,22 @@ import { log, COLORS } from './lib/rgb.js'
 import { runAntiSpam } from './lib/antispam.js'
 
 // ============================================================
-//  JHONBOT v3.3.8 - BRAIN (OTAK BOT)
-//  Role: OWNER & USER SAJA (tidak ada admin)
+//  JHONXFINAL v3.3.8 - BRAIN (OTAK BOT)
+//  Role: OWNER, ADMIN, PREMIUM, USER
 // ============================================================
 
-export const BOT_NAME = 'JhonBot'
+export const BOT_NAME = 'JhonXfinal'
 export const BOT_VERSION = '3.3.8'
 
-// Versi bot dari config.json (biar caption/keterangan tidak stale saat versi diganti)
 export function getBotVersion() {
     try {
         const cfg = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8'))
-        return 'JhonBot v' + (cfg.version || BOT_VERSION)
+        return 'JhonXfinal v' + (cfg.version || BOT_VERSION)
     } catch {
-        return 'JhonBot v' + BOT_VERSION
+        return 'JhonXfinal v' + BOT_VERSION
     }
 }
 
-// Tanggal & jam WIB real-time saat pesan diproses (bukan timestamp statis)
 export function nowWIB(opt = {}) {
     try {
         return new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', ...opt })
@@ -38,11 +36,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginDir = path.join(__dirname, 'plugins')
 
 export const plugins = new Map()
-const summary = { owner: [], user: [], airich: [] }
+const summary = {
+    owner: [], user: [], airich: [], maker: [], tools: [],
+    download: [], asupan: [], group: [], premium: []
+}
+const CATEGORY_LABELS = {
+    owner: 'OWNER', user: 'USER', airich: 'AIRICH', maker: 'MAKER',
+    tools: 'TOOLS', download: 'DOWNLOAD', asupan: 'ASUPAN',
+    group: 'GRUP', premium: 'PREMIUM'
+}
+const VALID_CATEGORIES = Object.keys(CATEGORY_LABELS)
 
 const jsonCache = new Map()
 
-// Jalur absolut DB — konsisten apa pun working directory proses
 export const DB_FILES = {
     owner: path.join(__dirname, 'database', 'owner.json'),
     premium: path.join(__dirname, 'database', 'premium.json'),
@@ -73,8 +79,6 @@ const writeJSON = (file, data) => {
     invalidateJSONCache(file)
 }
 
-// ==================== NORMALISASI NOMOR ====================
-// Mendukung format 628xxx / 08xxx / +628xxx → 628xxx
 export function normalizeNumber(raw = '') {
     let n = String(raw).replace(/[^\d]/g, '')
     if (n.startsWith('0')) n = '62' + n.slice(1)
@@ -85,8 +89,6 @@ export function loadOwners() {
     const db = readJSON(DB_FILES.owner)
     try {
         const list = (db?.owner || []).map(n => normalizeNumber(n))
-        // Gabungkan creator dari config.json — nomor pairing bot selalu tersimpan
-        // di config, jadi owner dikenali meski database/ dihapus total.
         const cfg = readJSON(path.join(__dirname, 'config.json'))
         if (cfg && Array.isArray(cfg.creator)) {
             list.push(...cfg.creator.map(n => normalizeNumber(n)))
@@ -98,9 +100,6 @@ export function loadOwners() {
 }
 
 // ==================== PREMIUM ====================
-// Schema premium.json:
-//   { "premium": [ { "number": "628xxx", "tier": "premium1", "startDate": ms, "endDate": ms } ] }
-// Legacy format lama (array string polos) tetap didukung saat load.
 export const PREMIUM_TIERS = {
     premium1: { label: 'PREMIUM 1', price: 5000, days: 2 },
     premium2: { label: 'PREMIUM 2', price: 10000, days: 7 },
@@ -122,7 +121,6 @@ export function loadPremium() {
         const now = Date.now()
         const active = []
         for (const e of list) {
-            // Legacy: string polos → dianggap aktif tanpa batas waktu
             if (typeof e === 'string' || typeof e === 'number') {
                 active.push(normalizeNumber(e))
                 continue
@@ -139,7 +137,6 @@ export function loadPremium() {
     }
 }
 
-// ==================== PENYIMPANAN DATABASE PREMIUM ====================
 export function loadPremiumList() {
     const db = readJSON(DB_FILES.premium)
     return Array.isArray(db?.premium) ? db.premium : []
@@ -157,10 +154,6 @@ export function isPremiumActive(number = '') {
     return loadPremium().includes(num)
 }
 
-// Durasi dihitung dari langganan pertama (startDate dipertahankan).
-// - User baru         → startDate = sekarang, endDate = startDate + durasi
-// - User sudah aktif  → startDate tetap, endDate ditambah durasi dari startDate
-// - User sudah habis  → dimulai ulang dari sekarang (langganan pertama baru)
 export function addPremium(number = '', tier = 'premium2', { extend = true } = {}) {
     const num = normalizeNumber(number)
     const T = PREMIUM_TIERS[tier] || PREMIUM_TIERS.premium2
@@ -172,10 +165,8 @@ export function addPremium(number = '', tier = 'premium2', { extend = true } = {
     if (existing) {
         const startDate = Number(existing.startDate) || now
         if (Number(existing.endDate) > now && extend) {
-            // masih aktif → endDate ditambah durasi paket baru (menumpuk dari tanggal habis sekarang)
             existing.endDate = Math.max(now, Number(existing.endDate) || now) + duration
         } else {
-            // sudah habis → mulai dari sekarang
             existing.startDate = now
             existing.endDate = now + duration
         }
@@ -270,7 +261,12 @@ async function loadPlugin(file) {
         const handler = module.default
         if (!handler) return
         const category = path.relative(pluginDir, file).split(path.sep)[0]
-        if (category !== 'owner' && category !== 'user' && category !== 'airich') return
+        if (!VALID_CATEGORIES.includes(category)) return
+
+        // Airich category auto-premium: semua command airich butuh premium/owner
+        if (category === 'airich' && !handler.owner) {
+            handler.premium = true
+        }
 
         const cmds = Array.isArray(handler.command) ? handler.command : handler.command ? [handler.command] : []
         for (const cmd of cmds) {
@@ -278,9 +274,9 @@ async function loadPlugin(file) {
             plugins.set(key, handler)
             if (!summary[category].includes(key)) summary[category].push(key)
         }
-        console.log(log('PLUGIN', 'Loaded ' + path.relative(pluginDir, file), COLORS.plugin))
+        console.log(log('PLUGIN', `${category}/${path.basename(file)} [${cmds.length}]`, COLORS.plugin))
     } catch (e) {
-        console.error(log('PLUGIN', 'Failed ' + file + ' : ' + (e?.message || e), COLORS.error))
+        console.error(log('PLUGIN', `FAIL ${path.relative(pluginDir, file)}: ${e?.message || e}`, COLORS.error))
     }
 }
 
@@ -292,14 +288,22 @@ export async function initPlugins() {
 }
 
 export function getPluginSummary() {
-    return {
-        owner: [...summary.owner].sort(),
-        user: [...summary.user].sort(),
-        airich: [...summary.airich].sort()
+    const out = {}
+    for (const cat of VALID_CATEGORIES) {
+        out[cat] = [...summary[cat]].sort()
     }
+    return out
 }
 
-// ==================== PARSE PESAN (TEKS + BUTTON) ====================
+export function getCategoryLabels() {
+    return CATEGORY_LABELS
+}
+
+export function getValidCategories() {
+    return VALID_CATEGORIES
+}
+
+// ==================== PARSE PESAN ====================
 function extractCommandFromMessage(m) {
     let body = ''
     let isButtonResponse = false
@@ -360,8 +364,6 @@ async function resolveSenderNumbers(conn, m) {
     addJid(m.key?.participantAlt)
     addJid(m.key?.remoteJidAlt)
 
-    // Di chat pribadi, lawan bicara = pengirim (biar owner tetap dikenali
-    // meskipun field sender/participant kosong atau berupa LID)
     if (!m.isGroup) {
         addJid(m.chat)
         addJid(m.key?.remoteJid)
@@ -397,9 +399,6 @@ export default async function handleMessage(conn, m) {
     try {
         if (!m?.chat) return
         if (m.chat.includes('@newsletter') || m.chat === 'status@broadcast') return
-        // Hanya abaikan pesan yang DIBUAT bot sendiri (id Baileys BAE5).
-        // Pesan owner di chat pribadi/self-chat tetap fromMe=true karena bot
-        // ter-pairing di nomor owner, tapi id-nya bukan BAE5 → tetap dilayani.
         if (m.fromMe && m.isBaileys) return
 
         const { body, isButtonResponse } = extractCommandFromMessage(m)
@@ -407,8 +406,6 @@ export default async function handleMessage(conn, m) {
 
         const monitor = readJSON(DB_FILES.monitor) || { groups: [], waiting: false }
         const owners = new Set(loadOwners())
-        // Nomor bot sendiri (nomor yang dipakai pairing) selalu dianggap OWNER,
-        // supaya fitur owner tetap jalan meski owner.json sengaja/terhapus.
         const botNum = normalizeNumber(String(conn.decodeJid?.(conn.user?.id) || '').split('@')[0])
         if (botNum) owners.add(botNum)
         const premium = loadPremium()
@@ -416,7 +413,6 @@ export default async function handleMessage(conn, m) {
         m.isOwner = nums.some(n => owners.has(n))
         m.isPremium = m.isOwner || nums.some(n => premium.includes(n))
 
-        // Parsing command (stripPrefix hanya SEKALI)
         const raw = isButtonResponse ? body : body.trim()
         const cleaned = stripPrefix(raw)
         if (!cleaned) return
@@ -424,16 +420,15 @@ export default async function handleMessage(conn, m) {
         const command = args.shift().toLowerCase()
         m.command = command
 
-        // Cache untuk plugin lain
         if (!conn.__data) conn.__data = {}
         conn.__data.owners = [...owners]
 
-        // ============ PEMILIHAN GRUP (balas nomor: "2,5") ============
+        // ============ PEMILIHAN GRUP ============
         if (/^[\d,\s]+$/.test(cleaned) && !isButtonResponse) {
             if (!m.isGroup && m.isOwner && monitor.waiting) {
                 const picked = cleaned.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
-                const nums = [...new Set(picked)]
-                if (!nums.length || nums.length > 5) return
+                const selectedNums = [...new Set(picked)]
+                if (!selectedNums.length || selectedNums.length > 5) return
                 let groups = []
                 try {
                     const fetched = await conn.groupFetchAllParticipating()
@@ -442,24 +437,23 @@ export default async function handleMessage(conn, m) {
                     console.error(log('HANDLER', 'Gagal ambil daftar grup: ' + (e?.message || e), COLORS.error))
                     return
                 }
-                const outOfRange = nums.filter(n => n < 1 || n > groups.length)
+                const outOfRange = selectedNums.filter(n => n < 1 || n > groups.length)
                 if (outOfRange.length) {
-                    return m.reply(`> *NOMOR TIDAK VALID*\n\n_Nomor_\n- \`${outOfRange.join(', ')}\`\n\n_tidak ada di daftar grup. Balas nomor_ \`1-${groups.length}\`_._`)
+                    return m.reply(`> *NOMOR TIDAK VALID*\n\nNomor \`${outOfRange.join(', ')}\` tidak ada di daftar grup. Balas nomor \`1-${groups.length}\`.`)
                 }
-                const selected = nums.map(n => groups[n - 1]).filter(Boolean)
+                const selected = selectedNums.map(n => groups[n - 1]).filter(Boolean)
                 if (!selected.length) return
                 monitor.groups = selected.map(g => g.id)
                 monitor.waiting = false
                 writeJSON(DB_FILES.monitor, monitor)
-                let txt = '✅ *GRUP TERPILIH:*\n\n'
-                txt += selected.map((g, i) => `${i + 1}. ${g.subject}\n   👥 ${g.participants?.length || 0} member`).join('\n\n')
+                let txt = '> *GRUP TERPILIH:*\n\n'
+                txt += selected.map((g, i) => `${i + 1}. ${g.subject} (${g.participants?.length || 0} member)`).join('\n\n')
                 return await conn.sendMessage(m.chat, { text: txt }, { quoted: m })
             }
             return
         }
 
         // ============ ATURAN DM ============
-        // DM: owner bebas, USER hanya fitur publik tertentu
         if (!m.isGroup && !m.isOwner) {
             if (!DM_PUBLIC.has(command)) return
         }
@@ -473,7 +467,7 @@ export default async function handleMessage(conn, m) {
             }
         }
 
-        // ============ ANTI-SPAM (hanya grup yang dipantau) ============
+        // ============ ANTI-SPAM ============
         if (m.isGroup) {
             const blocked = await runAntiSpam({ conn, m, body })
             if (blocked) return
@@ -483,40 +477,39 @@ export default async function handleMessage(conn, m) {
         const handler = plugins.get(command)
         if (!handler) return
 
-        // ============ DIAGNOSTIK OWNER ============
-        if (['menu', 'profil', 'help'].includes(command) || (handler.owner && m.isOwner)) {
-            const who = m.pushName ? `${m.pushName} (+${m.sender?.split('@')[0] || '?'})` : `+${m.sender?.split('@')[0] || '?'}`
-            const jidInfo = `key=${m.key?.remoteJid}${m.key?.remoteJidAlt ? `(alt=${m.key.remoteJidAlt})` : ''} sender=${m.sender} fromMe=${m.fromMe} mchat=${m.chat}`
-            console.log(log('CMD', `.${command} ← ${who} [${jidInfo}]`, m.isOwner ? COLORS.success : COLORS.info))
-        }
+        // Full access: owner ATAU admin di grup
+        const isFullAccess = m.isOwner || (m.isGroup && m.isAdmin)
+
+        // ============ LOG COMMAND (satu baris) ============
+        const who = m.pushName || ('+' + (m.sender?.split('@')[0] || '?'))
+        console.log(log('CMD', `.${command} <${who}>`, isFullAccess ? COLORS.success : COLORS.info))
 
         // ============ ACCESS CONTROL ============
-        if (handler.owner && !m.isOwner) {
-            return m.reply('> *OWNER ONLY*\n\n_❌ Fitur ini khusus 👑 **Owner**._\n\n_Kamu bukan owner. Mau jadi owner? Hubungi kreator Jhon338._')
+        if (handler.owner && !isFullAccess) {
+            return m.reply('> *OWNER ONLY*\n\nFitur ini khusus Owner.\nHubungi Jhon338 untuk akses.')
         }
-        if (handler.premium && !m.isPremium) {
-            return m.reply('> *PREMIUM ONLY*\n\n_❌ Fitur ini khusus ⭐ **member premium**._\n\n_Mau jadi member premium? Ketik:_\n- `.premium`\n\n_👑 Atau hubungi owner untuk aktivasi._')
+        if (handler.premium && !m.isPremium && !isFullAccess) {
+            return m.reply('> *PREMIUM ONLY*\n\nFitur ini khusus member premium.\nKetik `.premium` untuk info langganan.')
         }
         if (handler.group && !m.isGroup) {
-            return m.reply('> *GROUP ONLY*\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
+            return m.reply('> *GROUP ONLY*\n\nFitur ini hanya bisa dipakai di grup.')
         }
         if (handler.botAdmin && m.isGroup && !m.isBotAdmin) {
-            return m.reply('> *BOT ADMIN REQUIRED*\n\n_❌ Bot harus menjadi **admin grup** untuk fitur ini._')
+            return m.reply('> *BOT ADMIN REQUIRED*\n\nBot harus menjadi admin grup.')
         }
         if (handler.admin && m.isGroup && !m.isAdmin && !m.isOwner) {
-            return m.reply('> *ADMIN ONLY*\n\n_❌ Fitur ini khusus **admin grup**._')
+            return m.reply('> *ADMIN ONLY*\n\nFitur ini khusus admin grup.')
         }
 
         // ============ WAJIB DAFTAR MEMBER ============
         if (!m.isOwner && !m.isPremium && !['daftar', 'register', 'reg'].includes(command) && !isRegisteredMember(m.sender || m.chat)) {
-            return m.reply('> *TERDAFTAR DULU YUK*\n\n_Untuk memakai fitur bot ini, kamu harus daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Contoh:_\n- `.daftar Jhon,20,pelajar`\n\n_📋 Status yang tersedia:_\n- *pelajar*\n- *mahasiswa*\n- *singgel*\n- *jomblo*\n- *kawin*')
+            return m.reply('> *DAFTAR DULU*\n\nKetik `.daftar nama,umur,status`\n\nContoh: `.daftar Jhon,20,pelajar`\n\nStatus: pelajar, mahasiswa, singgel, jomblo, kawin')
         }
 
         await handler(m, { conn, args, text: args.join(' '), command })
     } catch (e) {
         console.error(log('HANDLER', e?.message || e, COLORS.error))
         try {
-            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
         } catch {}
     }
 }

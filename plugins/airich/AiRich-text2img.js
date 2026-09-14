@@ -29,7 +29,7 @@ inputWrap.appendChild(input);
 document.querySelector('.wrap').appendChild(inputWrap);
 var genBtn=document.createElement('div');
 genBtn.style.cssText='text-align:center;padding:12px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;transition:all .2s';
-genBtn.textContent='🖌️ Generate';
+genBtn.textContent=' Generate';
 document.querySelector('.wrap').appendChild(genBtn);
 var canvasWrap=document.createElement('div');
 canvasWrap.style.cssText='margin-top:10px;display:none';
@@ -162,7 +162,7 @@ ctx.fillStyle='rgba(255,255,255,.8)';
 ctx.font='bold 11px Arial';
 ctx.fillText(prompt.substring(0,30),10,th-10);
 statusText.textContent='Done! Image generated.';
-genBtn.textContent='🖌️ Generate';
+genBtn.textContent=' Generate';
 genBtn.style.opacity='1';
 generating=false;
 }
@@ -170,7 +170,7 @@ generating=false;
 });
 var dlBtn=document.createElement('div');
 dlBtn.style.cssText='text-align:center;padding:10px;margin-top:8px;background:rgba(255,255,255,.06);border-radius:10px;font-size:12px;color:rgba(255,255,255,.6);cursor:pointer';
-dlBtn.textContent='💾 Download';
+dlBtn.textContent=' Download';
 dlBtn.addEventListener('pointerdown',function(e){
 e.preventDefault();
 if(canvasWrap.style.display==='none')return;
@@ -178,21 +178,18 @@ var link=document.createElement('a');
 link.download='text2img.png';
 link.href=canvas.toDataURL();
 link.click();
-dlBtn.textContent='✅ Saved!';
-setTimeout(function(){dlBtn.textContent='💾 Download';},1500);
+dlBtn.textContent=' Saved!';
+setTimeout(function(){dlBtn.textContent=' Download';},1500);
 });
 document.querySelector('.wrap').appendChild(dlBtn);
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '🖌️', key: m.key } })
     try {
-        const html = shell({ title: 'Text to Image', tag: 'TOOL', icon: '🖌️', html: '', script: GAME_JS })
+        const html = shell({ title: 'Text to Image', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Text to Image' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

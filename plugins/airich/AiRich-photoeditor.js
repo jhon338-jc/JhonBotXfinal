@@ -63,7 +63,7 @@ document.querySelector('.wrap').appendChild(BR);
 const TL=document.createElement('div');TL.style.cssText='display:flex;align-items:center;gap:6px;margin-top:8px';
 document.querySelector('.wrap').appendChild(TL);
 const BR2=document.createElement('span');BR2.style.cssText='width:24px;text-align:center;font-size:11px;color:rgba(255,255,255,.5)';BR2.textContent=bright;TL.appendChild(BR2);
-const UND=document.createElement('button');UND.textContent='↩ Undo';UND.style.cssText='flex:1;padding:9px;border:0;border-radius:8px;background:rgba(108,92,231,.8);color:#fff;font-size:11px;font-weight:bold;cursor:pointer';
+const UND=document.createElement('button');UND.textContent=' Undo';UND.style.cssText='flex:1;padding:9px;border:0;border-radius:8px;background:rgba(108,92,231,.8);color:#fff;font-size:11px;font-weight:bold;cursor:pointer';
 UND.onclick=function(){if(hist.length>1){hist.pop();const img=new Image();img.onload=function(){x.clearRect(0,0,cw,chh);x.drawImage(img,0,0)};img.src=hist[hist.length-1]}};
 TL.appendChild(UND);
 const RST=document.createElement('button');RST.textContent='↺ Reset';RST.style.cssText='flex:1;padding:9px;border:0;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-size:11px;cursor:pointer';
@@ -72,14 +72,11 @@ TL.appendChild(RST);
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '🖼️', key: m.key } })
     try {
-        const html = shell({ title: 'Photo Editor', tag: 'TOOL', icon: '🖼️', html: stage(560, 360), script: GAME_JS })
+        const html = shell({ title: 'Photo Editor', tag: 'TOOL', icon: '', html: stage(560, 360), script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Photo Editor' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

@@ -10,11 +10,11 @@ var BL=document.createElement('div');BL.style.cssText='display:flex;flex-directi
 document.querySelector('.wrap').appendChild(BL);
 var money=50,inc=0;
 var gens=[
-{name:'Lemonade Stand',icon:'\uD83C\uDF53',base:50,scale:1.4,owned:0,inc:2},
-{name:'Corner Store',icon:'\uD83D\uDED2',base:250,scale:1.5,owned:0,inc:10},
-{name:'Factory',icon:'\uD83C\uDFED',base:1200,scale:1.6,owned:0,inc:50},
-{name:'Tech Startup',icon:'\uD83D\uDCBB',base:8000,scale:1.7,owned:0,inc:250},
-{name:'Skyscraper',icon:'\uD83C\uDFD7\uFE0F',base:50000,scale:1.8,owned:0,inc:1500}
+{name:'Lemonade Stand',icon:'',base:50,scale:1.4,owned:0,inc:2},
+{name:'Corner Store',icon:'',base:250,scale:1.5,owned:0,inc:10},
+{name:'Factory',icon:'',base:1200,scale:1.6,owned:0,inc:50},
+{name:'Tech Startup',icon:'',base:8000,scale:1.7,owned:0,inc:250},
+{name:'Skyscraper',icon:'\uFE0F',base:50000,scale:1.8,owned:0,inc:1500}
 ];
 function c(i){return Math.floor(gens[i].base*Math.pow(gens[i].scale,gens[i].owned))}
 function fmt(n){if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.floor(n)}
@@ -34,14 +34,11 @@ upd();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '🏗️', key: m.key } })
     try {
-        const html = shell({ title: 'Tycoon', tag: 'GAME', icon: '🏗️', html: '', script: GAME_JS })
+        const html = shell({ title: 'Tycoon', tag: 'GAME', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Tycoon' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

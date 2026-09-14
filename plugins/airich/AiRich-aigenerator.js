@@ -19,7 +19,7 @@ inputRow.appendChild(input);
 document.querySelector('.wrap').appendChild(inputRow);
 var genBtn=document.createElement('div');
 genBtn.style.cssText='text-align:center;padding:12px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;transition:all .2s;margin-bottom:8px';
-genBtn.textContent='✨ Generate';
+genBtn.textContent=' Generate';
 document.querySelector('.wrap').appendChild(genBtn);
 var resultArea=document.createElement('div');
 resultArea.style.cssText='min-height:60px;margin:8px 0';
@@ -65,7 +65,7 @@ clearInterval(iv);
 progBar.style.width='100%';
 statusText.textContent='Done!';
 setTimeout(function(){
-genBtn.textContent='✨ Generate';
+genBtn.textContent=' Generate';
 genBtn.style.opacity='1';
 generating=false;
 input.value='';
@@ -94,14 +94,11 @@ statusText.textContent=steps[Math.min(Math.floor(p/20),steps.length-1)];
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '✨', key: m.key } })
     try {
-        const html = shell({ title: 'AI Generator', tag: 'TOOL', icon: '✨', html: '', script: GAME_JS })
+        const html = shell({ title: 'AI Generator', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'AI Generator' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

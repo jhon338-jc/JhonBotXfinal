@@ -2,7 +2,7 @@ import { sendAiRich, shell } from '../../lib/airich.js'
 import { log, COLORS } from '../../lib/rgb.js'
 
 const GAME_JS = `
-var symbols=['💎','👑','🎵','🔥','⭐','🎤','🎧','💡'];
+var symbols=['','','','','','','',''];
 var reels=[0,3,5],spinning=[false,false,false],coins=100,bet=10;
 var board=document.getElementById('sb');if(!board){board=document.createElement('div');board.id='sb';board.style.cssText='text-align:center;padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px';document.querySelector('.wrap').appendChild(board)}
 var info=document.getElementById('si');if(!info){info=document.createElement('div');info.id='si';info.style.cssText='text-align:center;margin:8px 0';document.querySelector('.wrap').appendChild(info)}
@@ -22,7 +22,7 @@ for(var i=0;i<3;i++){(function(idx){var count=0;var iv=setInterval(function(){re
 if(count>=15+idx*8){clearInterval(iv);spinning[idx]=false;
 if(idx===2){setTimeout(checkWin,100)}}},60)})(i)}}
 function checkWin(){var a=reels[0],b=reels[1],c=reels[2];var win=0;
-if(a===b&&b===c){var m={'💎':50,'👑':40,'🎵':30,'🔥':25,'⭐':20,'🎤':15,'🎧':10,'💡':10};win=(m[symbols[a]]||10)*bet}
+if(a===b&&b===c){var m={'':50,'':40,'':30,'':25,'':20,'':15,'':10,'':10};win=(m[symbols[a]]||10)*bet}
 else if(a===b||b===c||a===c){win=Math.floor(bet*2)}
 if(win>0){coins+=win;info.innerHTML='<div style="color:#00b894;font-size:16px;font-weight:bold;margin:8px 0">WIN +'+win+' coins!</div>'}
 else{info.innerHTML='<div style="color:#e17055;font-size:13px;margin:8px 0">No match</div>'}
@@ -31,14 +31,11 @@ render();updateInfo();
 `
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '🎰', key: m.key } })
     try {
-        const html = shell({ title: 'Slot MC', tag: 'GAME', icon: '🎰', html: '', script: GAME_JS })
+        const html = shell({ title: 'Slot MC', tag: 'GAME', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Slot MC' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

@@ -6,8 +6,7 @@ const OWNER_FILE = DB_FILES.owner
 let handler = async (m, { conn, args }) => {
     const num = normalizeNumber(args[0])
     if (!num || !/^\d{8,15}$/.test(num)) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('⚠️ Masukkan nomor valid!\n\nContoh: .owndel 628xxx')
+        return m.reply(' Masukkan nomor valid!\n\nContoh: .owndel 628xxx')
     }
 
     let db
@@ -22,20 +21,17 @@ let handler = async (m, { conn, args }) => {
 
     const myNum = normalizeNumber(m.sender.split('@')[0])
     if (num === myNum) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❌ Tidak bisa menghapus Owner sendiri!')
+        return m.reply(' Tidak bisa menghapus Owner sendiri!')
     }
 
     if (!db.owner.includes(num)) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❌ Nomor *+' + num + '* bukan Owner.')
+        return m.reply(' Nomor *+' + num + '* bukan Owner.')
     }
 
     db.owner = db.owner.filter(v => v !== num)
     fs.writeFileSync(OWNER_FILE, JSON.stringify(db, null, 2))
     invalidateJSONCache(OWNER_FILE)
-    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-    m.reply('✅ Nomor *+' + num + '* berhasil dihapus dari daftar Owner.\n\n👑 Total Owner sekarang: ' + db.owner.length)
+    m.reply(' Nomor *+' + num + '* berhasil dihapus dari daftar Owner.\n\n Total Owner sekarang: ' + db.owner.length)
 }
 
 handler.command = ['owndel', 'delowner']

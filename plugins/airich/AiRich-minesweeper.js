@@ -22,14 +22,11 @@ document.getElementById('newm').addEventListener('click',function(){init()});
 init();
 `
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '💣', key: m.key } })
     try {
-        const html = shell({ title: 'Minesweeper', tag: 'GAME', icon: '💣', html: '', script: GAME_JS })
+        const html = shell({ title: 'Minesweeper', tag: 'GAME', icon: '', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Minesweeper' })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 handler.command = ['minesweeper']
