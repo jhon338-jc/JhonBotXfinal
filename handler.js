@@ -486,6 +486,9 @@ export default async function handleMessage(conn, m) {
         if (['menu', 'profil', 'help'].includes(command) || (handler.owner && m.isOwner)) {
             const who = m.pushName ? `${m.pushName} (+${m.sender?.split('@')[0] || '?'})` : `+${m.sender?.split('@')[0] || '?'}`
             console.log(log('CMD', `.${command} ← ${who}`, m.isOwner ? COLORS.success : COLORS.info))
+            if (process.env.DEBUG_SEND) {
+                console.log('[DEBUG] msg chat=' + m.chat + ' sender=' + m.sender + ' fromMe=' + m.fromMe + ' isBaileys=' + m.isBaileys + ' isOwner=' + m.isOwner + ' push=' + m.pushName)
+            }
         }
 
         // ============ ACCESS CONTROL ============
