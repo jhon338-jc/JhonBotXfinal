@@ -85,6 +85,12 @@ export function loadOwners() {
     const db = readJSON(DB_FILES.owner)
     try {
         const list = (db?.owner || []).map(n => normalizeNumber(n))
+        // Gabungkan creator dari config.json — nomor pairing bot selalu tersimpan
+        // di config, jadi owner dikenali meski database/ dihapus total.
+        const cfg = readJSON(path.join(__dirname, 'config.json'))
+        if (cfg && Array.isArray(cfg.creator)) {
+            list.push(...cfg.creator.map(n => normalizeNumber(n)))
+        }
         return [...new Set(list.filter(Boolean))]
     } catch {
         return []

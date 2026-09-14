@@ -146,7 +146,7 @@ function ensureBotIsOwner(conn) {
         const botJid = conn.decodeJid(conn.user?.id) || ''
         const botNum = normalizeNumber(String(botJid).split('@')[0])
         if (!botNum) return
-        const db = readJSON(OWNER_FILE)
+        const db = readJSON(OWNER_FILE) || { owner: [] }
         db.owner ??= []
         db.owner = [...new Set(db.owner.map(n => normalizeNumber(n)).filter(Boolean))]
         if (!db.owner.includes(botNum)) {
@@ -160,7 +160,7 @@ function ensureBotIsOwner(conn) {
 // ==================== KIRIM DAFTAR GRUP KE OWNER ====================
 async function sendGroupListToOwner(conn) {
     try {
-        const monitor = readJSON(MONITOR_FILE)
+        const monitor = readJSON(MONITOR_FILE) || { groups: [], waiting: false }
         monitor.groups ??= []
         // Sudah ada grup tersimpan → jangan macet di mode "waiting".
         // Pakai grup yang sudah ada; owner bisa ganti grup kapan saja lewat .grup
@@ -208,7 +208,7 @@ async function sendGroupListToOwner(conn) {
 
 function loadOwnersFirst() {
     try {
-        return readJSON(OWNER_FILE).owner?.[0] || null
+        return readJSON(OWNER_FILE)?.owner?.[0] || null
     } catch {
         return null
     }
@@ -299,12 +299,24 @@ async function start() {
 
                 // Auto-set nomor pairing sebagai OWNER
                 const ownerNum = normalizeNumber(cleanNumber)
-                const db = readJSON(OWNER_FILE)
+                const db = readJSON(OWNER_FILE) || { owner: [] }
                 db.owner ??= []
                 db.owner = [...new Set(db.owner.map(n => normalizeNumber(n)).filter(Boolean))]
                 if (!db.owner.includes(ownerNum)) db.owner.push(ownerNum)
                 writeJSON(OWNER_FILE, db)
                 console.log(log('PAIRING', `Nomor ${ownerNum} di-set sebagai OWNER`, COLORS.success))
+
+                // Simpan nomor pairing ke config.json (creator), agar nomor bot tetap
+                // tersimpan di config walau auth/database dihapus total.
+                try {
+                    const CONFIG_FILE = path.join(__dirname, 'config.json')
+                    const cfg = readJSON(CONFIG_FILE)
+                    cfg.creator = [...new Set([...(cfg.creator || []).map(n => normalizeNumber(n)), ownerNum]).filter(Boolean)]
+                    writeJSON(CONFIG_FILE, cfg)
+                    console.log(log('PAIRING', `Nomor ${ownerNum} tersimpan di config.json`, COLORS.success))
+                } catch (cfgErr) {
+                    console.error(log('PAIRING', 'Gagal menulis config.json: ' + (cfgErr?.message || cfgErr), COLORS.error))
+                }
             } catch (err) {
                 console.error(log('PAIRING', 'Gagal mengirim kode pairing: ' + (err?.message || err), COLORS.error))
                 restartBot(5000)
