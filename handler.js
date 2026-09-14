@@ -38,7 +38,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginDir = path.join(__dirname, 'plugins')
 
 export const plugins = new Map()
-const summary = { owner: [], user: [] }
+const summary = { owner: [], user: [], airich: [] }
 
 const jsonCache = new Map()
 
@@ -270,7 +270,7 @@ async function loadPlugin(file) {
         const handler = module.default
         if (!handler) return
         const category = path.relative(pluginDir, file).split(path.sep)[0]
-        if (category !== 'owner' && category !== 'user') return
+        if (category !== 'owner' && category !== 'user' && category !== 'airich') return
 
         const cmds = Array.isArray(handler.command) ? handler.command : handler.command ? [handler.command] : []
         for (const cmd of cmds) {
@@ -294,7 +294,8 @@ export async function initPlugins() {
 export function getPluginSummary() {
     return {
         owner: [...summary.owner].sort(),
-        user: [...summary.user].sort()
+        user: [...summary.user].sort(),
+        airich: [...summary.airich].sort()
     }
 }
 
