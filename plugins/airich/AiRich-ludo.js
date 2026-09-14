@@ -13,7 +13,7 @@ function cur(){return turn===0?p1:p2}
 function opp(){return turn===0?p2:p1}
 function cellOf(t){return t.home?999:t.start+t.dist}
 function len(t){var l=51;return t.start===0?l:l}
-function dest(t,d){var raw=t.dist+d;if(raw>=51){t.home=true;t.dist=0;return}var p=(t.start+raw)%52;cur().forEach(function(u){if(u!==t&&!u.home&&(u.start+u.dist)%52===p){u.dist=0}})t.dist=raw}
+function dest(t,d){var raw=t.dist+d;if(raw>=51){t.home=true;t.dist=0;return}var p=(t.start+raw)%52;cur().forEach(function(u){if(u!==t&&!u.home&&(u.start+u.dist)%52===p){u.dist=0}});t.dist=raw}
 function canMove(t,d){if(t.home)return false;var mm=d;return true}
 function hasMove(d){return cur().some(function(t){return !t.home})}
 function rolle(){if(state!=='roll'||winner)return;state='mov';rolling=true;var tick=0;var iv=setInterval(function(){tick++;dice=Math.floor(Math.random()*6)+1;if(tick>=12){clearInterval(iv);rolling=false;dice=tick;resolve(dice)}},60)}
