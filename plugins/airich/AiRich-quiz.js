@@ -25,7 +25,7 @@ var BOX=document.createElement('div');document.querySelector('.wrap').appendChil
 function start(){pool=shuffle(QS.slice()).slice(0,totalQ);qi=0;score=0;answered=false;render()}
 function render(){
 if(qi>=pool.length){
-BOX.innerHTML='<div style="text-align:center"><div style="font-size:36px;margin:16px 0">'+(score>=8?'':score>=5?'':'')+'</div><div style="font-size:22px;font-weight:bold;color:#fff">'+score+' / '+totalQ+'</div><div style="font-size:12px;color:rgba(255,255,255,.5);margin:6px 0">'+(score>=8?'Amazing!':score>=5?'Good job!':'Keep trying!')+'</div><button id="again" style="padding:10px 24px;border:0;border-radius:10px;background:#6c5ce7;color:#fff;font-size:13px;font-weight:bold;cursor:pointer;margin-top:8px">Play Again</button></div>';
+BOX.innerHTML='<div style="text-align:center"><div style="font-size:36px;margin:16px 0">'+(score>=8?'\uD83C\uDFC6':score>=5?'\uD83C\uDF1F':'\uD83D\uDE14')+'</div><div style="font-size:22px;font-weight:bold;color:#fff">'+score+' / '+totalQ+'</div><div style="font-size:12px;color:rgba(255,255,255,.5);margin:6px 0">'+(score>=8?'Amazing!':score>=5?'Good job!':'Keep trying!')+'</div><button id="again" style="padding:10px 24px;border:0;border-radius:10px;background:#6c5ce7;color:#fff;font-size:13px;font-weight:bold;cursor:pointer;margin-top:8px">Play Again</button></div>';
 document.getElementById('again').onclick=start;return}
 var item=pool[qi];answered=false;
 var h='<div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px">Question '+(qi+1)+'/'+totalQ+' | Score: '+score+'</div>';
@@ -46,11 +46,14 @@ start();
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '❓', key: m.key } })
     try {
-        const html = shell({ title: 'Quiz', tag: 'GAME', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Quiz', tag: 'GAME', icon: '❓', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Quiz' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

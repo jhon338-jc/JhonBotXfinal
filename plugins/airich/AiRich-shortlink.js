@@ -22,12 +22,12 @@ left.style.cssText='color:#6c5ce7;font-weight:bold;flex:1;overflow:hidden;text-o
 left.textContent=h.short;
 var cpBtn=document.createElement('span');
 cpBtn.style.cssText='color:rgba(255,255,255,.4);cursor:pointer;margin-left:8px;font-size:10px';
-cpBtn.textContent=' Copy';
+cpBtn.textContent='📋 Copy';
 cpBtn.addEventListener('pointerdown',function(e){
 e.preventDefault();
 navigator.clipboard.writeText(h.short).then(function(){
-cpBtn.textContent=' Copied!';
-setTimeout(function(){cpBtn.textContent=' Copy';},1500);
+cpBtn.textContent='✅ Copied!';
+setTimeout(function(){cpBtn.textContent='📋 Copy';},1500);
 });
 });
 row.appendChild(left);
@@ -45,7 +45,7 @@ inputRow.appendChild(input);
 document.querySelector('.wrap').appendChild(inputRow);
 var shortBtn=document.createElement('div');
 shortBtn.style.cssText='text-align:center;padding:12px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;transition:all .2s;margin:8px 0';
-shortBtn.textContent=' Shorten';
+shortBtn.textContent='🔗 Shorten';
 document.querySelector('.wrap').appendChild(shortBtn);
 var result=document.createElement('div');
 result.style.cssText='display:none;margin:8px 0';
@@ -74,7 +74,7 @@ result.innerHTML='<div style="background:rgba(108,92,231,.1);border:1px solid rg
 '<div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px">Shortened URL</div>'+
 '<div style="font-size:15px;font-weight:bold;color:#6c5ce7;word-break:break-all">'+shortUrl+'</div>'+
 '<div style="display:flex;gap:8px;margin-top:8px">'+
-'<div id="cpShort" style="padding:6px 14px;background:#6c5ce7;border-radius:8px;font-size:11px;color:#fff;cursor:pointer"> Copy</div>'+
+'<div id="cpShort" style="padding:6px 14px;background:#6c5ce7;border-radius:8px;font-size:11px;color:#fff;cursor:pointer">📋 Copy</div>'+
 '</div></div>';
 var fadeS=document.createElement('style');
 fadeS.textContent='@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}';
@@ -83,13 +83,13 @@ var cpEl=document.getElementById('cpShort');
 cpEl.addEventListener('pointerdown',function(ev){
 ev.preventDefault();
 navigator.clipboard.writeText(shortUrl).then(function(){
-cpEl.textContent=' Copied!';
+cpEl.textContent='✅ Copied!';
 cpEl.style.background='#00b894';
-setTimeout(function(){cpEl.textContent=' Copy';cpEl.style.background='#6c5ce7';},2000);
+setTimeout(function(){cpEl.textContent='📋 Copy';cpEl.style.background='#6c5ce7';},2000);
 });
 });
 addHist(shortUrl,url);
-shortBtn.textContent=' Shorten';
+shortBtn.textContent='🔗 Shorten';
 shortBtn.style.opacity='1';
 processing=false;
 },600+Math.random()*400);
@@ -97,11 +97,14 @@ processing=false;
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🔗', key: m.key } })
     try {
-        const html = shell({ title: 'Short Link', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Short Link', tag: 'TOOL', icon: '🔗', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Short Link' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

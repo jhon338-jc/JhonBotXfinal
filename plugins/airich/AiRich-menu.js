@@ -4,9 +4,9 @@ import { log, COLORS } from '../../lib/rgb.js'
 const GAME_JS = `
 var wrap=document.createElement('div');document.querySelector('.wrap').appendChild(wrap);
 var cats=[
-{name:'GAMES',icon:'',items:['2048 - Puzzle sliding numbers','Dino Runner - Endless runner']},
-{name:'APPS',icon:'',items:['Calendar - Monthly calendar view','To-Do List - Task manager','Notes - Sticky note cards','Reminder - Timer alerts','Status - Bot dashboard']},
-{name:'TOOLS',icon:'',items:['Calculator - Math with history']}
+{name:'GAMES',icon:'\uD83C\uDFAE',items:['2048 - Puzzle sliding numbers','Dino Runner - Endless runner']},
+{name:'APPS',icon:'\uD83D\uDCF1',items:['Calendar - Monthly calendar view','To-Do List - Task manager','Notes - Sticky note cards','Reminder - Timer alerts','Status - Bot dashboard']},
+{name:'TOOLS',icon:'\uD83D\uDD27',items:['Calculator - Math with history']}
 ];
 var desc=document.createElement('div');desc.style.cssText='background:rgba(108,92,231,.12);border:1px solid rgba(108,92,231,.3);border-radius:10px;padding:12px;margin-bottom:10px;display:none;color:#eee;font-size:12px;line-height:1.5';
 wrap.appendChild(desc);
@@ -35,11 +35,14 @@ wrap.appendChild(footer);
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🧭', key: m.key } })
     try {
-        const html = shell({ title: 'AI Rich Menu', tag: 'MENU', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'AI Rich Menu', tag: 'MENU', icon: '🧭', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'AI Rich Menu' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

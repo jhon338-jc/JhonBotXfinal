@@ -49,7 +49,7 @@ function fmtYtDate(str = '') {
 
 function infoLine(label, value) {
     const v = String(value ?? '').trim()
-    return v ? ` *${label}:* ${v}` : ''
+    return v ? `▪️ *${label}:* ${v}` : ''
 }
 
 function detectPlatform(url = '') {
@@ -270,7 +270,7 @@ function ttInfoBlock(t = {}, r = {}) {
     const duration = v.duration || r.duration
     if (duration) lines.push(infoLine('Durasi', formatDuration(duration)))
     const musicTitle = m.title || r.music?.title
-    if (musicTitle) lines.push(infoLine('Musik', musicTitle + ((m.authorName || r.music?.author) && !String(musicTitle).includes(String(m.authorName || r.music?.author)) ? '  ' + (m.authorName || r.music?.author) : '')))
+    if (musicTitle) lines.push(infoLine('Musik', musicTitle + ((m.authorName || r.music?.author) && !String(musicTitle).includes(String(m.authorName || r.music?.author)) ? ' — ' + (m.authorName || r.music?.author) : '')))
     const tags = [...new Set([
         ...(Array.isArray(t.challenges) ? t.challenges.map(c => c.title) : []),
         ...(Array.isArray(t.channelTags) ? t.channelTags.map(c => c.title) : []),
@@ -279,11 +279,11 @@ function ttInfoBlock(t = {}, r = {}) {
     if (tags.length) lines.push(infoLine('Tag', tags.map(h => '#' + h.replace(/^#/, '')).join(' ')))
     if (v.ratio) lines.push(infoLine('Kualitas', v.ratio + (v.videoQuality && v.videoQuality !== 'normal' ? ' · ' + v.videoQuality : '')))
     const statsParts = []
-    if (s.playCount) statsParts.push(` ${formatCount(s.playCount)}`)
-    if (s.diggCount) statsParts.push(` ${formatCount(s.diggCount)}`)
-    if (s.commentCount) statsParts.push(` ${formatCount(s.commentCount)}`)
-    if (s.shareCount) statsParts.push(` ${formatCount(s.shareCount)}`)
-    if (s.collectCount) statsParts.push(` ${formatCount(s.collectCount)}`)
+    if (s.playCount) statsParts.push(`👁 ${formatCount(s.playCount)}`)
+    if (s.diggCount) statsParts.push(`❤️ ${formatCount(s.diggCount)}`)
+    if (s.commentCount) statsParts.push(`💬 ${formatCount(s.commentCount)}`)
+    if (s.shareCount) statsParts.push(`↪️ ${formatCount(s.shareCount)}`)
+    if (s.collectCount) statsParts.push(`🔖 ${formatCount(s.collectCount)}`)
     if (statsParts.length) lines.push(infoLine('Statistik', statsParts.join(' · ')))
     if (aStats.followerCount) lines.push(infoLine('Followers', formatCount(aStats.followerCount)))
     if (aStats.followingCount) lines.push(infoLine('Following', formatCount(aStats.followingCount)))
@@ -452,8 +452,11 @@ function mp4Duration(buffer) {
 let handler = async (m, { conn, text }) => {
     const url = pickUrl(text)
     if (!url) {
-        return m.reply(' *Penggunaan:*\n\n`.donlodall <link>`\n\nContoh:\n`.donlodall https://vt.tiktok.com/ZSquqFFSh/`\n\n Support TikTok, Instagram, Facebook, YouTube, dan lainnya.')
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('⚠️ *Penggunaan:*\n\n`.donlodall <link>`\n\nContoh:\n`.donlodall https://vt.tiktok.com/ZSquqFFSh/`\n\n✅ Support TikTok, Instagram, Facebook, YouTube, dan lainnya.')
     }
+
+    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
     try {
         const platform = detectPlatform(url)
         const clean = sanitizeUrl(url)
@@ -466,11 +469,12 @@ let handler = async (m, { conn, text }) => {
         }
 
         if (!json || isBad(json, platform)) {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
             const msg = String(lastErr || '').toLowerCase()
             if (/rate limit/i.test(msg)) {
-                return m.reply(' *API download sedang dibatasi (rate limit).*\n\nMohon tunggu beberapa menit lalu coba lagi.')
+                return m.reply('⏳ *API download sedang dibatasi (rate limit).*\n\nMohon tunggu beberapa menit lalu coba lagi.')
             }
-            return m.reply(' *Download gagal.*\n\n_' + (lastErr || 'Tidak ditemukan media dari link tersebut.') + '_\n\nPastikan link valid & publik (video belum dihapus/private), lalu coba lagi.')
+            return m.reply('❌ *Download gagal.*\n\n_' + (lastErr || 'Tidak ditemukan media dari link tersebut.') + '_\n\nPastikan link valid & publik (video belum dihapus/private), lalu coba lagi.')
         }
 
         const r = json.result || {}
@@ -481,7 +485,8 @@ let handler = async (m, { conn, text }) => {
         const multi = chosen.length > 1
 
         if (!chosen.length) {
-            return m.reply(' *Tidak ada media yang bisa diunduh* dari link tersebut.')
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+            return m.reply('❌ *Tidak ada media yang bisa diunduh* dari link tersebut.')
         }
 
         let infoLines = []
@@ -511,9 +516,10 @@ let handler = async (m, { conn, text }) => {
         }
 
         if (!multi) {
+            await conn.sendMessage(m.chat, { react: { text: '📥', key: m.key } })
         }
 
-        const header = `* ALL IN ONE DOWNLOAD*\n` +
+        const header = `*🎯 ALL IN ONE DOWNLOAD*\n` +
             (infoLines.length ? '─────────────\n' + infoLines.join('\n') : '')
 
         const dlResults = await Promise.all(chosen.map(async (it) => {
@@ -531,6 +537,7 @@ let handler = async (m, { conn, text }) => {
         }))
         const okList = dlResults.filter(x => x.ok)
         if (!okList.length) {
+            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
             throw new Error('Semua media gagal diunduh: ' + dlResults.map(x => x.err || '').filter(Boolean).join('; '))
         }
 
@@ -538,9 +545,9 @@ let handler = async (m, { conn, text }) => {
             const { it, buffer, type } = okList[idx]
             const origIdx = chosen.indexOf(it)
             const label = (it.label || '').replace(/^download/i, '').replace(/[()]/g, '').trim()
-            let cap = (multi ? ` Media ${origIdx + 1}/${chosen.length}\n\n` : '') + header
+            let cap = (multi ? `📦 Media ${origIdx + 1}/${chosen.length}\n\n` : '') + header
             if (label) cap += '\n' + infoLine('Tipe', label)
-            if (type === 'video' && !/^\s* \*Durasi:/m.test(cap)) {
+            if (type === 'video' && !/^\s*▪️ \*Durasi:/m.test(cap)) {
                 const d = mp4Duration(buffer)
                 if (d > 0) cap += '\n' + infoLine('Durasi', formatDuration(d))
             }
@@ -558,9 +565,12 @@ let handler = async (m, { conn, text }) => {
                 await conn.sendMessage(m.chat, { video: buffer, mimetype: 'video/mp4', caption }, { quoted: m })
             }
         }
+
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('DONLODALL', e?.message || e, COLORS.error))
-        m.reply(' *Gagal memproses download.*\n\n_' + (e?.message || e) + '_')
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        m.reply('❌ *Gagal memproses download.*\n\n_' + (e?.message || e) + '_')
     }
 }
 

@@ -42,11 +42,14 @@ render();
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '📝', key: m.key } })
     try {
-        const html = shell({ title: 'Notes', tag: 'APP', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Notes', tag: 'APP', icon: '📝', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Notes' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

@@ -1,10 +1,21 @@
 let handler = async (m, { conn, text }) => {
-    if (!m.isGroup) {        return m.reply('> *GROUP ONLY*\n\n_ Fitur ini hanya bisa dipakai di grup._')
+    if (!m.isGroup) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('> *GROUP ONLY*\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
     }
     const desc = (text || '').trim()
-    if (!desc) {        return m.reply(' Masukkan deskripsi grup!\n\nContoh: .setds Deskripsi Baru')
-    }    try {
-        await conn.groupUpdateDescription(m.chat, desc.slice(0, 500))    } catch (e) {        m.reply(' Gagal ganti deskripsi! Pastikan bot admin.')
+    if (!desc) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        return m.reply('⚠️ Masukkan deskripsi grup!\n\nContoh: .setds Deskripsi Baru')
+    }
+
+    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
+    try {
+        await conn.groupUpdateDescription(m.chat, desc.slice(0, 500))
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+    } catch (e) {
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+        m.reply('❌ Gagal ganti deskripsi! Pastikan bot admin.')
     }
 }
 

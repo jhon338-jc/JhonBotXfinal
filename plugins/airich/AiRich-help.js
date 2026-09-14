@@ -31,18 +31,21 @@ var txt=document.createElement('div');txt.textContent=s;txt.style.cssText='font-
 row.appendChild(dot);row.appendChild(txt);steps.appendChild(row)});
 wrap.appendChild(steps);
 var card=document.createElement('div');card.style.cssText='background:linear-gradient(135deg,rgba(108,92,231,.2),rgba(255,255,255,.05));border:1px solid rgba(108,92,231,.3);border-radius:12px;padding:14px;text-align:center';
-var ccIcon=document.createElement('div');ccIcon.textContent='';ccIcon.style.cssText='font-size:28px;margin-bottom:6px';
+var ccIcon=document.createElement('div');ccIcon.textContent='🤖';ccIcon.style.cssText='font-size:28px;margin-bottom:6px';
 var ccName=document.createElement('div');ccName.textContent='Jhon338 Bot';ccName.style.cssText='font-size:14px;font-weight:bold;color:#fff';
 var ccDesc=document.createElement('div');ccDesc.textContent='AI Rich Interactive Plugins';ccDesc.style.cssText='font-size:11px;color:rgba(255,255,255,.5);margin-top:2px';
 card.appendChild(ccIcon);card.appendChild(ccName);card.appendChild(ccDesc);wrap.appendChild(card);
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🆘', key: m.key } })
     try {
-        const html = shell({ title: 'Help', tag: 'MENU', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Help', tag: 'MENU', icon: '🆘', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Help' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

@@ -19,7 +19,7 @@ b.style.cssText='flex:1;padding:8px 0;border:1px solid '+(l===sel?'#6c5ce7':'rgb
 b.onclick=function(){sel=l;chips()};CH.appendChild(b)});
 }
 chips();
-var BTN=document.createElement('button');BTN.textContent=' Detect & Translate';
+var BTN=document.createElement('button');BTN.textContent='🌐 Detect & Translate';
 BTN.style.cssText='width:100%;padding:11px;border:0;border-radius:10px;background:#6c5ce7;color:#fff;font-size:13px;font-weight:bold;cursor:pointer';
 W.appendChild(BTN);
 var OUT=document.createElement('div');OUT.style.cssText='margin-top:10px;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);min-height:60px;font-size:13px;color:rgba(255,255,255,.7);display:none';
@@ -64,11 +64,14 @@ W.appendChild(CLR);
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🌐', key: m.key } })
     try {
-        const html = shell({ title: 'Translator', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Translator', tag: 'TOOL', icon: '🌐', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Translator' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

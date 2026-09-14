@@ -32,11 +32,14 @@ board.addEventListener('click',function(){selected=null;render()});
 init();
 `
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🃏', key: m.key } })
     try {
-        const html = shell({ title: 'Solitaire', tag: 'GAME', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Solitaire', tag: 'GAME', icon: '🃏', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Solitaire' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 handler.command = ['solitaire']

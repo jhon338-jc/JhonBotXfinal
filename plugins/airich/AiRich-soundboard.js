@@ -3,18 +3,18 @@ import { log, COLORS } from '../../lib/rgb.js'
 
 const GAME_JS = `
 var sounds=[
-{emoji:'',name:'Dog',color:'#e17055'},
-{emoji:'',name:'Cat',color:'#fd79a8'},
-{emoji:'',name:'Horn',color:'#fdcb6e'},
-{emoji:'',name:'Drum',color:'#6c5ce7'},
-{emoji:'',name:'Bell',color:'#00b894'},
-{emoji:'',name:'Guitar',color:'#e84393'},
-{emoji:'',name:'Piano',color:'#0984e3'},
-{emoji:'',name:'Sax',color:'#d63031'},
-{emoji:'',name:'Mic',color:'#a29bfe'},
-{emoji:'',name:'Boom',color:'#ff7675'},
-{emoji:'',name:'Note',color:'#55efc4'},
-{emoji:'',name:'Pop',color:'#fab1a0'}
+{emoji:'🐶',name:'Dog',color:'#e17055'},
+{emoji:'🐱',name:'Cat',color:'#fd79a8'},
+{emoji:'🎺',name:'Horn',color:'#fdcb6e'},
+{emoji:'🥁',name:'Drum',color:'#6c5ce7'},
+{emoji:'🔔',name:'Bell',color:'#00b894'},
+{emoji:'🎸',name:'Guitar',color:'#e84393'},
+{emoji:'🎹',name:'Piano',color:'#0984e3'},
+{emoji:'🎷',name:'Sax',color:'#d63031'},
+{emoji:'🎤',name:'Mic',color:'#a29bfe'},
+{emoji:'💥',name:'Boom',color:'#ff7675'},
+{emoji:'🎶',name:'Note',color:'#55efc4'},
+{emoji:'🎆',name:'Pop',color:'#fab1a0'}
 ];
 var grid=document.createElement('div');
 grid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0';
@@ -85,7 +85,7 @@ indicator.textContent='';
 }
 var surpriseBtn=document.createElement('div');
 surpriseBtn.style.cssText='text-align:center;margin-top:8px;padding:10px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-radius:10px;font-size:13px;font-weight:bold;color:#fff;cursor:pointer';
-surpriseBtn.textContent=' Random Surprise';
+surpriseBtn.textContent='🎲 Random Surprise';
 surpriseBtn.addEventListener('pointerdown',function(e){
 e.preventDefault();
 surpriseBtn.style.transform='scale(0.95)';
@@ -100,11 +100,14 @@ document.querySelector('.wrap').appendChild(surpriseBtn);
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🔊', key: m.key } })
     try {
-        const html = shell({ title: 'Soundboard', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Soundboard', tag: 'TOOL', icon: '🔊', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Soundboard' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

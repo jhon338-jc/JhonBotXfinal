@@ -30,11 +30,14 @@ function init(){solution=genSudoku();puzzle=makePuzzle(solution,40);selected=nul
 init();
 `
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '9️⃣', key: m.key } })
     try {
-        const html = shell({ title: 'Sudoku', tag: 'GAME', icon: '9', html: '', script: GAME_JS })
+        const html = shell({ title: 'Sudoku', tag: 'GAME', icon: '9️⃣', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Sudoku' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 handler.command = ['sudoku']

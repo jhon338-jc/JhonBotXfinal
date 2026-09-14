@@ -42,11 +42,14 @@ document.getElementById('refresh').onclick=refresh;
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🪙', key: m.key } })
     try {
-        const html = shell({ title: 'Crypto', tag: 'APP', icon: '', html: '<div class="row" style="justify-content:space-between"><span class="big">WATCHLIST</span><button class="btn" id="refresh" style="background:#6c5ce7">⟳ Refresh</button></div><div id="list" class="row"></div>' + stage(560, 150) + '<div class="muted">Tap coin untuk melihat sparkline</div>', script: GAME_JS })
+        const html = shell({ title: 'Crypto', tag: 'APP', icon: '🪙', html: '<div class="row" style="justify-content:space-between"><span class="big">WATCHLIST</span><button class="btn" id="refresh" style="background:#6c5ce7">⟳ Refresh</button></div><div id="list" class="row"></div>' + stage(560, 150) + '<div class="muted">Tap coin untuk melihat sparkline</div>', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Crypto' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

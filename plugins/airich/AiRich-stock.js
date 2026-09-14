@@ -26,7 +26,7 @@ function upd(){
 document.getElementById('sh').textContent=shares;
 document.getElementById('cash').textContent=cash.toFixed(2);
 var d=(price-open)/open*100,el=document.getElementById('dl');
-el.innerHTML='<span style="color:'+(d>=0?'#2ecc71':'#e74c3c')+'">'+(d>=0?' +':' ')+d.toFixed(2)+'%</span>';
+el.innerHTML='<span style="color:'+(d>=0?'#2ecc71':'#e74c3c')+'">'+(d>=0?'↗ +':'↘ ')+d.toFixed(2)+'%</span>';
 paint();
 }
 var txt=null;
@@ -49,11 +49,14 @@ setInterval(tick,700);
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '📉', key: m.key } })
     try {
-        const html = shell({ title: 'Stock', tag: 'APP', icon: '', html: '<div class="row" style="justify-content:space-between"><div><div class="big" id="pr">Apple Inc.</div><div id="dl" class="muted"></div></div><div class="chip">Portfolio</div></div>' + stage(560, 240) + '<div class="row"><button class="btn" id="buy1" style="background:#2ecc71">BELI 1</button><button class="btn" id="buy5" style="background:#27ae60">BELI 5</button><button class="btn" id="sell1" style="background:#e74c3c">JUAL 1</button><button class="btn" id="sell5" style="background:#c0392b">JUAL 5</button></div><div class="stat"><span class="chip">Saham: <b id="sh">0</b></span><span class="chip">Saldo: $<span id="cash">10000</span></span></div>', script: GAME_JS })
+        const html = shell({ title: 'Stock', tag: 'APP', icon: '📉', html: '<div class="row" style="justify-content:space-between"><div><div class="big" id="pr">Apple Inc.</div><div id="dl" class="muted"></div></div><div class="chip">Portfolio</div></div>' + stage(560, 240) + '<div class="row"><button class="btn" id="buy1" style="background:#2ecc71">BELI 1</button><button class="btn" id="buy5" style="background:#27ae60">BELI 5</button><button class="btn" id="sell1" style="background:#e74c3c">JUAL 1</button><button class="btn" id="sell5" style="background:#c0392b">JUAL 5</button></div><div class="stat"><span class="chip">Saham: <b id="sh">0</b></span><span class="chip">Saldo: $<span id="cash">10000</span></span></div>', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Stock' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

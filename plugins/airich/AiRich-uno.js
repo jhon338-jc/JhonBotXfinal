@@ -43,11 +43,14 @@ document.getElementById('dbtn').addEventListener('click',function(){if(turn==='p
 start();
 `
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '1️⃣', key: m.key } })
     try {
-        const html = shell({ title: 'UNO', tag: 'GAME', icon: '1', html: '', script: GAME_JS })
+        const html = shell({ title: 'UNO', tag: 'GAME', icon: '1️⃣', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'UNO' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 handler.command = ['uno']

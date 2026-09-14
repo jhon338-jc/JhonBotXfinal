@@ -3,7 +3,7 @@ import { log, COLORS } from '../../lib/rgb.js'
 
 const GAME_JS = `
 const c=document.getElementById('game'),x=c.getContext('2d'),W=560,GY=360;
-const lx=[W/2-96,W/2,W/2+96],EM=['','','',''];
+const lx=[W/2-96,W/2,W/2+96],EM=['🚗','🚕','🚚','🚌'];
 let lane,px,vehs,spT,speed,dist,last,over,started,off,psx,psy,t0;
 function reset(){lane=1;px=lx[1];vehs=[];spT=40;speed=3;dist=0;off=0;over=false;started=false;psx=null}
 function moveLane(d){let nl=lane+d;if(nl<0||nl>2)return;lane=nl}
@@ -27,9 +27,9 @@ let cbs=[(W/2-156+lx[0])/2,(lx[0]+lx[1])/2,(lx[1]+lx[2])/2,(lx[2]+W/2+156)/2];
 x.fillStyle='rgba(255,255,255,.3)';for(const cb of cbs)for(let i=0;i<5;i++){let yy=((i*80+off*1.4)%80);x.fillRect(cb-2,yy,4,38)}
 x.font='30px Arial';x.textAlign='center';
 for(const v of vehs){if(v.y>-60&&v.y<GY+40)x.fillText(v.em,lx[v.l],v.y+10)}
-x.font='32px Arial';x.fillText('',px,GY-54);
+x.font='32px Arial';x.fillText('🏍️',px,GY-54);
 x.fillStyle='rgba(255,255,255,.85)';x.font='bold 16px Arial';x.textAlign='left';x.fillText('SKOR  '+String(Math.floor(dist)).padStart(6,'0'),14,26);
-x.fillText(' '+Math.round(speed*10)+' km/j',W-120,26);
+x.fillText('🚀 '+Math.round(speed*10)+' km/j',W-120,26);
 if(!started){x.fillStyle='rgba(10,10,24,.72)';x.fillRect(0,0,W,GY);x.fillStyle='#fff';x.font='bold 26px Arial';x.textAlign='center';x.fillText('TRAFFIC RIDER',W/2,132);x.font='13px Arial';x.fillText('Hindari kendaraan, pindah lajur',W/2,160);x.fillText('Geser / panah kiri-kanan',W/2,184);x.fillText('TAP untuk MULAI',W/2,244)}
 if(over){x.fillStyle='rgba(10,10,24,.72)';x.fillRect(0,0,W,GY);x.fillStyle='#fff';x.font='bold 26px Arial';x.textAlign='center';x.fillText('TABRAKAN!',W/2,140);x.font='16px Arial';x.fillText('Skor '+Math.floor(dist),W/2,172);x.fillText('Tap untuk main lagi',W/2,236)}
 }
@@ -42,11 +42,14 @@ reset();frame(0);
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🏍️', key: m.key } })
     try {
-        const html = shell({ title: 'Traffic Rider', tag: 'GAME', icon: '', html: stage(560, 360), script: GAME_JS })
+        const html = shell({ title: 'Traffic Rider', tag: 'GAME', icon: '🏍️', html: stage(560, 360), script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Traffic Rider' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

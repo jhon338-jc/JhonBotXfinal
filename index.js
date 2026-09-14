@@ -10,7 +10,7 @@ import {
     Browsers
 } from '@whiskeysockets/baileys'
 import { makeWASocket, smsg, bind } from './lib/msg.js'
-import handleMessage, { initPlugins, getPluginSummary, normalizeNumber, invalidateJSONCache, getCategoryLabels } from './handler.js'
+import handleMessage, { initPlugins, getPluginSummary, normalizeNumber, invalidateJSONCache } from './handler.js'
 import { rgb, log, divider, timeWIB, COLORS } from './lib/rgb.js'
 import { ensureTemp } from './lib/autosave.js'
 
@@ -29,7 +29,7 @@ process.on('unhandledRejection', (err) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const MONITOR_FILE = path.join(__dirname, 'database', 'monitor.json')
 const OWNER_FILE = path.join(__dirname, 'database', 'owner.json')
-const PROFILE_PHOTO = path.join(__dirname, 'src', 'img', 'foto_menu.png')
+const PROFILE_PHOTO = path.join(__dirname, 'src', 'img', 'menu.png')
 
 const readJSON = file => JSON.parse(fs.readFileSync(file, 'utf-8'))
 const writeJSON = (file, data) => {
@@ -62,16 +62,17 @@ const question = t => {
 }
 
 let config = loadConfig()
-let BOT_NAME = config.botName || 'JhonXfinal'
+let BOT_NAME = config.botName || 'JhonBot'
 let VERSION = config.version || '3.3.8'
 let PAIR_CODE = config.pairingCode || 'JHON3382'
 
+// ==================== GAMBAR BOX LOG ====================
 function drawBox(lines, width = 44) {
-    const top = '+' + '-'.repeat(width) + '+'
-    const bottom = '+' + '-'.repeat(width) + '+'
+    const top = '╭' + '─'.repeat(width) + '╮'
+    const bottom = '╰' + '─'.repeat(width) + '╯'
     const out = [top]
     for (const line of lines) {
-        out.push('|  ' + line)
+        out.push('│  ' + line)
     }
     out.push(bottom)
     return out.join('\n')
@@ -80,11 +81,11 @@ function drawBox(lines, width = 44) {
 function bannerStart() {
     const c = COLORS.start
     const box = drawBox([
-        `   ${BOT_NAME} v${VERSION}`,
-        `   ${timeWIB()} WIB`,
-        '   Starting...',
-        `   Pairing Code: ${PAIR_CODE}`,
-        '   Waiting for connection...'
+        `   🤖 ${BOT_NAME} v${VERSION}`,
+        `   🕒 ${timeWIB()} WIB`,
+        '   ⚡ Starting...',
+        `   📱 Pairing Code: ${PAIR_CODE}`,
+        '   🔗 Waiting for connection...'
     ])
     return rgb(box, c.c1, c.c2)
 }
@@ -96,23 +97,22 @@ function chunk(arr, size) {
 }
 
 function bannerConnected() {
-    const summary = getPluginSummary()
-    const labels = getCategoryLabels()
+    const { owner, user } = getPluginSummary()
     const lines = [
-        '   CONNECTED',
-        `   ${BOT_NAME} v${VERSION}`,
-        '   Loaded Plugins:',
+        '   ✅ CONNECTED',
+        `   🤖 ${BOT_NAME} v${VERSION}`,
+        '   📦 Loaded Plugins:',
+        '',
+        '   👑 OWNER:'
     ]
-    for (const cat of Object.keys(summary)) {
-        const cmds = summary[cat]
-        if (!cmds.length) continue
-        lines.push('', `   ${labels[cat] || cat.toUpperCase()}:`)
-        for (const row of chunk(cmds, 5)) lines.push('   ' + row.map(c => '.' + c).join(' '))
-    }
+    for (const row of chunk(owner, 5)) lines.push('   • ' + row.map(c => '.' + c).join(' '))
+    lines.push('', '   👤 USER:')
+    for (const row of chunk(user, 5)) lines.push('   • ' + row.map(c => '.' + c).join(' '))
     const c = COLORS.success
     return rgb(drawBox(lines), c.c1, c.c2)
 }
 
+// ==================== PROFIL BOT (foto, nama, bio) ====================
 async function applyBotProfile(conn) {
     if (profileSynced) return
     profileSynced = true
@@ -120,26 +120,27 @@ async function applyBotProfile(conn) {
         const botJid = conn.decodeJid(conn.user?.id)
         if (botJid && fs.existsSync(PROFILE_PHOTO)) {
             await conn.updateProfilePicture(botJid, fs.readFileSync(PROFILE_PHOTO))
-            console.log(log('PROFILE', 'Foto profil bot terpasang', COLORS.success))
+            console.log(log('PROFILE', 'Foto profil bot terpasang: src/img/menu.png', COLORS.success))
         } else {
-            console.log(log('PROFILE', 'Skip foto profil: foto_menu.png belum ada', COLORS.warn))
+            console.log(log('PROFILE', 'Skip foto profil: src/img/menu.png belum ada', COLORS.warn))
         }
     } catch (e) {
         console.error(log('PROFILE', 'Gagal update foto profil: ' + (e?.message || e), COLORS.error))
     }
     try {
-        await conn.updateProfileName(BOT_NAME + ' v' + VERSION)
+        await conn.updateProfileName(`🤖 ${BOT_NAME} v${VERSION}`)
     } catch {}
     try {
-        const bio = BOT_NAME + ' BOT\n' +
-            'Aktif 24/7 Tanpa Henti\n' +
-            'Owner: ' + (config.ownerName || 'Jhon338') + '\n' +
-            'Mau pakai bot? Daftar dulu: .daftar'
+        const bio = '> *' + (config.botName || 'JhonBot') + ' BOT*\n' +
+            '> _Aktif 24/7 Tanpa Henti_\n' +
+            '> _👑 Owner: ' + (config.ownerName || 'Jhon338') + '_\n' +
+            '> _📋 Mau pakai bot? Daftar dulu: .daftar_'
         await conn.updateProfileStatus(bio)
         console.log(log('PROFILE', 'Nama & bio bot diperbarui', COLORS.success))
     } catch {}
 }
 
+// ==================== PASTIKAN NOMOR BOT = OWNER ====================
 function ensureBotIsOwner(conn) {
     try {
         const botJid = conn.decodeJid(conn.user?.id) || ''
@@ -156,10 +157,13 @@ function ensureBotIsOwner(conn) {
     } catch {}
 }
 
+// ==================== KIRIM DAFTAR GRUP KE OWNER ====================
 async function sendGroupListToOwner(conn) {
     try {
         const monitor = readJSON(MONITOR_FILE) || { groups: [], waiting: false }
         monitor.groups ??= []
+        // Sudah ada grup tersimpan → jangan macet di mode "waiting".
+        // Pakai grup yang sudah ada; owner bisa ganti grup kapan saja lewat .grup
         if (monitor.groups.length > 0) {
             if (monitor.waiting) {
                 monitor.waiting = false
@@ -167,6 +171,7 @@ async function sendGroupListToOwner(conn) {
                 console.log(log('STARTUP', 'Mode waiting dari sesi sebelumnya di-reset', COLORS.success))
             }
             console.log(log('STARTUP', `Menggunakan ${monitor.groups.length} grup tersimpan`, COLORS.info))
+            console.log(log('STARTUP', 'Ketik .grup ke bot untuk mengganti pilihan grup', COLORS.info))
             return
         }
 
@@ -177,17 +182,17 @@ async function sendGroupListToOwner(conn) {
         const groupList = Object.values(groups)
 
         if (!groupList.length) {
-            await conn.sendMessage(ownerJid, { text: '> Bot tidak ada di grup manapun!' })
+            await conn.sendMessage(ownerJid, { text: '❌ Bot tidak ada di grup manapun!' })
             console.log(log('STARTUP', 'Tidak ada grup ditemukan', COLORS.warn))
             return
         }
 
-        let text = '+-----------------------------------+\n|  DAFTAR GRUP\n|\n'
-        text += '|  Total Grup: ' + groupList.length + '\n|\n'
+        let text = `┌─────────────────────────────────────┐\n│  📋 DAFTAR GRUP\n│\n`
+        text += `│  Total Grup: ${groupList.length}\n│\n`
         groupList.forEach((g, i) => {
-            text += '|  ' + (i + 1) + '. ' + g.subject + '\n|     ' + (g.participants?.length || 0) + ' member\n|\n'
+            text += `│  ${i + 1}. ${g.subject}\n│     👥 ${g.participants?.length || 0} member\n│\n`
         })
-        text += '|  Balas dengan nomor grup\n|  Contoh: 2,5\n|  Maksimal 5 grup\n+-----------------------------------+'
+        text += `│  💡 Balas dengan nomor grup\n│  Contoh: 2,5\n│  Maksimal 5 grup\n└─────────────────────────────────────┘`
 
         monitor.waiting = true
         if (!monitor.groups.length) monitor.groups = []
@@ -195,6 +200,7 @@ async function sendGroupListToOwner(conn) {
 
         await conn.sendMessage(ownerJid, { text: text })
         console.log(log('STARTUP', 'Daftar grup terkirim ke owner', COLORS.success))
+        console.log(log('STARTUP', 'Menunggu pilihan grup dari owner...', COLORS.warn))
     } catch (err) {
         console.error(log('STARTUP', 'Gagal kirim daftar grup: ' + (err?.message || err), COLORS.error))
     }
@@ -208,6 +214,7 @@ function loadOwnersFirst() {
     }
 }
 
+// ==================== RECONNECT ====================
 function getStatusCode(lastDisconnect) {
     try {
         if (!lastDisconnect?.error) return 0
@@ -229,6 +236,7 @@ function restartBot(delay = 5000) {
     }, delay)
 }
 
+// ==================== START ====================
 async function start() {
     if (isConnecting) return
     isConnecting = true
@@ -236,7 +244,7 @@ async function start() {
     try {
         ensureTemp()
         config = loadConfig()
-        BOT_NAME = config.botName || 'JhonXfinal'
+        BOT_NAME = config.botName || 'JhonBot'
         VERSION = config.version || '3.3.8'
         PAIR_CODE = config.pairingCode || 'JHON3382'
         console.log(bannerStart())
@@ -265,6 +273,7 @@ async function start() {
 
         bind(socket)
 
+        // ============ PAIRING ============
         if (!state.creds.registered) {
             console.log(divider(' PAIRING ', COLORS.start))
             console.log(log('PAIRING', 'Masukkan nomor pemilik', COLORS.start))
@@ -288,6 +297,7 @@ async function start() {
                 console.log(log('PAIRING', '5. Masukkan kode pairing di atas', COLORS.info))
                 console.log(divider('', COLORS.start))
 
+                // Auto-set nomor pairing sebagai OWNER
                 const ownerNum = normalizeNumber(cleanNumber)
                 const db = readJSON(OWNER_FILE) || { owner: [] }
                 db.owner ??= []
@@ -296,6 +306,8 @@ async function start() {
                 writeJSON(OWNER_FILE, db)
                 console.log(log('PAIRING', `Nomor ${ownerNum} di-set sebagai OWNER`, COLORS.success))
 
+                // Simpan nomor pairing ke config.json (creator), agar nomor bot tetap
+                // tersimpan di config walau auth/database dihapus total.
                 try {
                     const CONFIG_FILE = path.join(__dirname, 'config.json')
                     const cfg = readJSON(CONFIG_FILE)
@@ -345,38 +357,20 @@ async function start() {
                 if (monitor.waiting || !Array.isArray(monitor.groups) || !monitor.groups.includes(id)) return
                 if (!participants?.length) return
                 const botJid = socket.decodeJid(socket.user?.id) || ''
-
-                const imgDir = path.join(__dirname, 'src', 'img')
-                const subject = socket.chats?.[id]?.subject || 'grup ini'
-
                 for (const p of participants) {
                     if (!p) continue
                     if (botJid && socket.decodeJid(String(p)) === botJid) continue
                     const num = String(p).split('@')[0]
-
+                    const subject = socket.chats?.[id]?.subject || 'grup ini'
                     if (action === 'add') {
-                        const imgPath = path.join(imgDir, 'masuk.png')
-                        if (fs.existsSync(imgPath)) {
-                            await socket.sendMessage(id, {
-                                image: fs.readFileSync(imgPath),
-                                mentions: [p]
-                            })
-                        }
                         await socket.sendMessage(id, {
-                            text: `> *WELCOME*\n\nHalo @${num}, selamat datang di *${subject}*.\n\nMau pakai fitur bot? Daftar dulu:\n- \`.daftar nama,umur,status\``,
+                            text: `> *WELCOME MEMBER BARU*\n\n_Halo @${num}, selamat datang di grup_ *${subject}* 🎉\n\n_Mau pakai fitur bot? Daftar dulu:_\n- \`.daftar nama,umur,status\`\n\n_Semoga betah & ramaikan grup! 🙏_`,
                             mentions: [p]
                         })
                         console.log(log('NOTIF', 'Welcome @' + num + ' di ' + subject, COLORS.success))
                     } else if (action === 'remove') {
-                        const imgPath = path.join(imgDir, 'keluar.png')
-                        if (fs.existsSync(imgPath)) {
-                            await socket.sendMessage(id, {
-                                image: fs.readFileSync(imgPath),
-                                mentions: [p]
-                            })
-                        }
                         await socket.sendMessage(id, {
-                            text: `> *GOODBYE*\n\n@${num} telah keluar dari *${subject}*.\nSampai jumpa.`,
+                            text: `> *MEMBER KELUAR*\n\n@${num} _telah keluar / dikeluarkan dari grup_ *${subject}* 👋\n\n_Terima kasih atas kebersamaannya, sampai jumpa!_`,
                             mentions: [p]
                         })
                         console.log(log('NOTIF', 'Bye @' + num + ' di ' + subject, COLORS.warn))
@@ -426,11 +420,12 @@ async function start() {
                 else if (statusCode === DisconnectReason.timedOut) delay = 10000
                 if (reconnectAttempt > 10) delay = 60000
 
-                console.log(log('DISCONNECT', `Status: ${statusCode} Attempt: ${reconnectAttempt} ${errorMessage}`, COLORS.warn))
+                console.log(log('DISCONNECT', `Status: ${statusCode} • Attempt: ${reconnectAttempt} • ${errorMessage}`, COLORS.warn))
                 restartBot(delay)
             }
         })
 
+        // Keep alive
         keepAliveTimer = setInterval(() => {
             try {
                 if (socket?.user && socket?.ws?.readyState === 1) {

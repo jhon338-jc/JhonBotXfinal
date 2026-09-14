@@ -7,7 +7,7 @@ document.querySelector('.wrap').appendChild(CNT);
 var PER=document.createElement('div');PER.style.cssText='text-align:center;font-size:11px;color:rgba(255,255,255,.5);margin-bottom:8px';
 document.querySelector('.wrap').appendChild(PER);
 var COOK=document.createElement('div');COOK.style.cssText='width:100px;height:100px;margin:0 auto;border-radius:50%;background:radial-gradient(circle,#f4a73c,#d4821e);font-size:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s;border:3px solid rgba(255,255,255,.2);box-shadow:0 4px 20px rgba(244,167,60,.3)';
-COOK.textContent='';
+COOK.textContent='\uD83C\uDF6A';
 document.querySelector('.wrap').appendChild(COOK);
 var UPD=document.createElement('div');UPD.style.cssText='margin-top:12px';
 document.querySelector('.wrap').appendChild(UPD);
@@ -38,11 +38,14 @@ updUI();
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '👆', key: m.key } })
     try {
-        const html = shell({ title: 'Clicker', tag: 'GAME', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Clicker', tag: 'GAME', icon: '👆', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Clicker' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

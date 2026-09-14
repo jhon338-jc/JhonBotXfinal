@@ -37,7 +37,7 @@ b.onclick=function(){cat=c;startGame()};BOX.appendChild(b)})}
 function startGame(){qs=DB[cat].slice();while(qs.length>totalQ)qs.pop();shuffle(qs);qi=0;score=0;streak=0;best=0;answ=false;render()}
 function render(){
 if(qi>=qs.length){
-BOX.innerHTML='<div style="text-align:center"><div style="font-size:36px;margin:12px 0">'+(score>=8?'':'')+'</div><div style="font-size:22px;font-weight:bold;color:#f1c40f">'+score+'/'+totalQ+'</div><div style="font-size:12px;color:rgba(255,255,255,.5);margin:4px 0">Best streak: '+best+'</div><div style="display:flex;gap:6px;justify-content:center;margin-top:10px"><button id="rr" style="padding:10px 20px;border:0;border-radius:10px;background:#6c5ce7;color:#fff;font-size:12px;font-weight:bold;cursor:pointer">Same</button><button id="rc" style="padding:10px 20px;border:0;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font-size:12px;cursor:pointer">Change</button></div></div>';
+BOX.innerHTML='<div style="text-align:center"><div style="font-size:36px;margin:12px 0">'+(score>=8?'\uD83C\uDFC6':'\uD83C\uDF1F')+'</div><div style="font-size:22px;font-weight:bold;color:#f1c40f">'+score+'/'+totalQ+'</div><div style="font-size:12px;color:rgba(255,255,255,.5);margin:4px 0">Best streak: '+best+'</div><div style="display:flex;gap:6px;justify-content:center;margin-top:10px"><button id="rr" style="padding:10px 20px;border:0;border-radius:10px;background:#6c5ce7;color:#fff;font-size:12px;font-weight:bold;cursor:pointer">Same</button><button id="rc" style="padding:10px 20px;border:0;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font-size:12px;cursor:pointer">Change</button></div></div>';
 document.getElementById('rr').onclick=startGame;document.getElementById('rc').onclick=pickCat;return}
 var item=qs[qi];answ=false;timer=tiq;
 BOX.innerHTML='<div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px"><span>'+(qi+1)+'/'+totalQ+' | '+cat.toUpperCase()+'</span><span style="color:#f1c40f">Score:'+score+'</span><span style="color:#e74c3c">Streak:'+streak+'</span></div><div id="tbar" style="height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:8px"><div id="tfill" style="height:100%;background:#6c5ce7;border-radius:2px;transition:width 1s linear;width:100%"></div></div><div style="font-size:14px;font-weight:bold;color:#fff;margin-bottom:10px">'+item.q+'</div><div id="abx"></div>';
@@ -65,11 +65,14 @@ pickCat();
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🧩', key: m.key } })
     try {
-        const html = shell({ title: 'Trivia', tag: 'GAME', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'Trivia', tag: 'GAME', icon: '🧩', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'Trivia' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

@@ -51,7 +51,7 @@ specList.appendChild(row);
 });
 var refreshBtn=document.createElement('div');
 refreshBtn.style.cssText='text-align:center;padding:10px;margin-top:8px;background:rgba(255,255,255,.06);border-radius:10px;font-size:12px;color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s';
-refreshBtn.textContent=' Refresh';
+refreshBtn.textContent='🔄 Refresh';
 refreshBtn.addEventListener('pointerdown',function(e){
 e.preventDefault();
 refreshBtn.style.opacity='.5';
@@ -85,11 +85,14 @@ document.querySelector('.wrap').appendChild(refreshBtn);
 `
 
 let handler = async (m, { conn }) => {
+    await conn.sendMessage(m.chat, { react: { text: '🖥️', key: m.key } })
     try {
-        const html = shell({ title: 'System Info', tag: 'TOOL', icon: '', html: '', script: GAME_JS })
+        const html = shell({ title: 'System Info', tag: 'TOOL', icon: '🖥️', html: '', script: GAME_JS })
         await sendAiRich(conn, m.chat, html, { title: 'System Info' })
+        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('AIRICH', e?.message || e, COLORS.error))
+        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 
