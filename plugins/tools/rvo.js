@@ -2,16 +2,13 @@ import { log, COLORS } from '../../lib/rgb.js'
 
 let handler = async (m, { conn }) => {
     if (!m.quoted) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❗ Reply pesan view-once!')
+        return m.reply(' Reply pesan view-once!')
     }
 
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         const buffer = await m.quoted.download()
         if (!buffer || !buffer.length) {
-            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-            return m.reply('❌ Gagal mengunduh! Media sudah expired / pernah dibuka.')
+            return m.reply(' Gagal mengunduh! Media sudah expired / pernah dibuka.')
         }
 
         const msg = m.quoted.msg || m.quoted
@@ -35,10 +32,8 @@ let handler = async (m, { conn }) => {
             }, { quoted: m })
         }
 
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('RVO', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

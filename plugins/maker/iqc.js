@@ -6,7 +6,6 @@ import { fetchWithTimeout } from '../../lib/kyzz/client.js'
 let handler = async (m, { conn, text }) => {
     const nama = text || m.pushName || 'User'
 
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     try {
         const res = await fetchWithTimeout('https://api.azbry.com/api/maker/iqc?text=' + encodeURIComponent(nama), {}, 20000)
@@ -15,10 +14,8 @@ let handler = async (m, { conn, text }) => {
         if (!buffer.length) throw new Error('Respons kosong dari API iqc')
         await saveImage(buffer)
         await conn.sendMessage(m.chat, { image: buffer }, { quoted: m })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('IQC', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

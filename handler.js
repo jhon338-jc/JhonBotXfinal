@@ -5,20 +5,20 @@ import { log, COLORS } from './lib/rgb.js'
 import { runAntiSpam } from './lib/antispam.js'
 
 // ============================================================
-//  JHONBOT v3.3.8 - BRAIN (OTAK BOT)
-//  Role: OWNER & USER SAJA (tidak ada admin)
+//  JHONXFINAL v3.3.8 - BRAIN (OTAK BOT)
+//  Role: OWNER & ADMIN (akses penuh di grup) / PREMIUM / USER
 // ============================================================
 
-export const BOT_NAME = 'JhonBot'
+export const BOT_NAME = 'JhonXfinal'
 export const BOT_VERSION = '3.3.8'
 
 // Versi bot dari config.json (biar caption/keterangan tidak stale saat versi diganti)
 export function getBotVersion() {
     try {
         const cfg = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8'))
-        return 'JhonBot v' + (cfg.version || BOT_VERSION)
+        return BOT_NAME + ' v' + (cfg.version || BOT_VERSION)
     } catch {
-        return 'JhonBot v' + BOT_VERSION
+        return BOT_NAME + ' v' + BOT_VERSION
     }
 }
 
@@ -38,7 +38,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginDir = path.join(__dirname, 'plugins')
 
 export const plugins = new Map()
-const summary = { owner: [], user: [], airich: [] }
+const summary = {} // kategori dinamis: owner, user, airich, maker, tools, download, asupan, group, premium
 
 const jsonCache = new Map()
 
@@ -270,7 +270,10 @@ async function loadPlugin(file) {
         const handler = module.default
         if (!handler) return
         const category = path.relative(pluginDir, file).split(path.sep)[0]
-        if (category !== 'owner' && category !== 'user' && category !== 'airich') return
+        if (!category || category === 'node_modules') return
+        if (!summary[category]) summary[category] = []
+        // Paket fitur Airich khusus PREMIUM + OWNER (file Airich tidak diubah)
+        if (category === 'airich') handler.premium = true
 
         const cmds = Array.isArray(handler.command) ? handler.command : handler.command ? [handler.command] : []
         for (const cmd of cmds) {
@@ -292,11 +295,11 @@ export async function initPlugins() {
 }
 
 export function getPluginSummary() {
-    return {
-        owner: [...summary.owner].sort(),
-        user: [...summary.user].sort(),
-        airich: [...summary.airich].sort()
+    const out = {}
+    for (const cat of Object.keys(summary)) {
+        out[cat] = [...summary[cat]].sort()
     }
+    return out
 }
 
 // ==================== PARSE PESAN (TEKS + BUTTON) ====================
@@ -414,7 +417,9 @@ export default async function handleMessage(conn, m) {
         const premium = loadPremium()
         const nums = await resolveSenderNumbers(conn, m)
         m.isOwner = nums.some(n => owners.has(n))
-        m.isPremium = m.isOwner || nums.some(n => premium.includes(n))
+        // OWNER + ADMIN di grup = akses PENUH semua fitur (m.isAdmin, m.isBotAdmin sudah di-set smsg)
+        m.hasFull = m.isOwner || (m.isGroup && m.isAdmin)
+        m.isPremium = m.hasFull || nums.some(n => premium.includes(n))
 
         // Parsing command (stripPrefix hanya SEKALI)
         const raw = isButtonResponse ? body : body.trim()
@@ -451,8 +456,8 @@ export default async function handleMessage(conn, m) {
                 monitor.groups = selected.map(g => g.id)
                 monitor.waiting = false
                 writeJSON(DB_FILES.monitor, monitor)
-                let txt = '✅ *GRUP TERPILIH:*\n\n'
-                txt += selected.map((g, i) => `${i + 1}. ${g.subject}\n   👥 ${g.participants?.length || 0} member`).join('\n\n')
+                let txt = '> *GRUP TERPILIH:*\n\n'
+                txt += selected.map((g, i) => `${i + 1}. ${g.subject}\n   ${g.participants?.length || 0} member`).join('\n\n')
                 return await conn.sendMessage(m.chat, { text: txt }, { quoted: m })
             }
             return
@@ -484,39 +489,40 @@ export default async function handleMessage(conn, m) {
         if (!handler) return
 
         // ============ DIAGNOSTIK OWNER ============
-        if (['menu', 'profil', 'help'].includes(command) || (handler.owner && m.isOwner)) {
+        if (['menu', 'profil', 'help'].includes(command) || (handler.owner && m.isOwner) || (handler.ownerOnly && m.isOwner)) {
             const who = m.pushName ? `${m.pushName} (+${m.sender?.split('@')[0] || '?'})` : `+${m.sender?.split('@')[0] || '?'}`
-            const jidInfo = `key=${m.key?.remoteJid}${m.key?.remoteJidAlt ? `(alt=${m.key.remoteJidAlt})` : ''} sender=${m.sender} fromMe=${m.fromMe} mchat=${m.chat}`
-            console.log(log('CMD', `.${command} ← ${who} [${jidInfo}]`, m.isOwner ? COLORS.success : COLORS.info))
+            console.log(log('CMD', `.${command} < ${who} [owner=${m.isOwner} full=${m.hasFull}]`, m.isOwner ? COLORS.success : COLORS.info))
         }
 
         // ============ ACCESS CONTROL ============
-        if (handler.owner && !m.isOwner) {
-            return m.reply('> *OWNER ONLY*\n\n_❌ Fitur ini khusus 👑 **Owner**._\n\n_Kamu bukan owner. Mau jadi owner? Hubungi kreator Jhon338._')
+        // ownerOnly: hanya owner asli (tanpa admin grup)
+        if (handler.ownerOnly && !m.isOwner) {
+            return m.reply('> *OWNER ONLY*\n\n_Fitur ini khusus Owner._\n_Kamu bukan owner. Hubungi: ' + BOT_NAME + '._')
+        }
+        // owner: owner + admin di grup = akses penuh
+        if (handler.owner && !m.hasFull) {
+            return m.reply('> *OWNER / ADMIN ONLY*\n\n_Fitur ini khusus Owner & Admin di grup._')
         }
         if (handler.premium && !m.isPremium) {
-            return m.reply('> *PREMIUM ONLY*\n\n_❌ Fitur ini khusus ⭐ **member premium**._\n\n_Mau jadi member premium? Ketik:_\n- `.premium`\n\n_👑 Atau hubungi owner untuk aktivasi._')
+            return m.reply('> *PREMIUM ONLY*\n\n_Fitur ini khusus member premium._\n_Mau jadi member premium? Ketik:_\n- `.premium`')
         }
         if (handler.group && !m.isGroup) {
-            return m.reply('> *GROUP ONLY*\n\n_❌ Fitur ini hanya bisa dipakai di grup._')
+            return m.reply('> *GROUP ONLY*\n\n_Fitur ini hanya bisa dipakai di grup._')
         }
         if (handler.botAdmin && m.isGroup && !m.isBotAdmin) {
-            return m.reply('> *BOT ADMIN REQUIRED*\n\n_❌ Bot harus menjadi **admin grup** untuk fitur ini._')
+            return m.reply('> *BOT ADMIN REQUIRED*\n\n_Bot harus jadi admin grup untuk fitur ini._')
         }
         if (handler.admin && m.isGroup && !m.isAdmin && !m.isOwner) {
-            return m.reply('> *ADMIN ONLY*\n\n_❌ Fitur ini khusus **admin grup**._')
+            return m.reply('> *ADMIN ONLY*\n\n_Fitur ini khusus admin grup._')
         }
 
         // ============ WAJIB DAFTAR MEMBER ============
-        if (!m.isOwner && !m.isPremium && !['daftar', 'register', 'reg'].includes(command) && !isRegisteredMember(m.sender || m.chat)) {
-            return m.reply('> *TERDAFTAR DULU YUK*\n\n_Untuk memakai fitur bot ini, kamu harus daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Contoh:_\n- `.daftar Jhon,20,pelajar`\n\n_📋 Status yang tersedia:_\n- *pelajar*\n- *mahasiswa*\n- *singgel*\n- *jomblo*\n- *kawin*')
+        if (!m.hasFull && !m.isPremium && !['daftar', 'register', 'reg'].includes(command) && !isRegisteredMember(m.sender || m.chat)) {
+            return m.reply('> *TERDAFTAR DULU*\n\n_Untuk memakai fitur bot ini, daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Status: pelajar / mahasiswa / singgel / jomblo / kawin_')
         }
 
         await handler(m, { conn, args, text: args.join(' '), command })
     } catch (e) {
         console.error(log('HANDLER', e?.message || e, COLORS.error))
-        try {
-            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        } catch {}
     }
 }

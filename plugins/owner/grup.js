@@ -2,27 +2,24 @@ import fs from 'fs'
 import { DB_FILES, invalidateJSONCache } from '../../handler.js'
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     let groupList = []
     try {
         const groups = await conn.groupFetchAllParticipating()
         groupList = Object.values(groups || {})
     } catch (e) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❌ Gagal mengambil daftar grup: ' + (e?.message || e))
+        return m.reply(' Gagal mengambil daftar grup: ' + (e?.message || e))
     }
 
     if (!groupList.length) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❌ Bot tidak ada di grup manapun!')
+        return m.reply(' Bot tidak ada di grup manapun!')
     }
 
-    let text = `┌─────────────────────────────────────┐\n│  📋 *DAFTAR GRUP*\n│\n`
-    text += `│  Total Grup: ${groupList.length}\n│\n`
+    let text = `â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”\nâ”‚   *DAFTAR GRUP*\nâ”‚\n`
+    text += `â”‚  Total Grup: ${groupList.length}\nâ”‚\n`
     groupList.forEach((g, i) => {
-        text += `│  ${i + 1}. ${g.subject}\n│     👥 ${g.participants?.length || 0} member\n│\n`
+        text += `â”‚  ${i + 1}. ${g.subject}\nâ”‚      ${g.participants?.length || 0} member\nâ”‚\n`
     })
-    text += `│  💡 Balas dengan nomor grup\n│  Contoh: 2,5\n│  Maksimal 5 grup\n└─────────────────────────────────────┘`
+    text += `â”‚   Balas dengan nomor grup\nâ”‚  Contoh: 2,5\nâ”‚  Maksimal 5 grup\nâ””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜`
 
     let monitor
     try {
@@ -37,10 +34,10 @@ let handler = async (m, { conn }) => {
     invalidateJSONCache(DB_FILES.monitor)
 
     await m.reply(text)
-    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 
 handler.command = ['grup', 'daftargrup']
 handler.owner = true
+handler.ownerOnly = true
 
 export default handler

@@ -7,7 +7,6 @@ import { fetchWithTimeout } from '../../lib/kyzz/client.js'
 let handler = async (m, { conn, text }) => {
     const teks = text || m.pushName || 'JhonBot'
 
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     try {
         const res = await fetchWithTimeout('https://api.azbry.com/api/maker/brat?text=' + encodeURIComponent(teks), {}, 20000)
@@ -17,10 +16,8 @@ let handler = async (m, { conn, text }) => {
         const sticker = await makeSticker(buffer)
         await saveSticker(sticker)
         await conn.sendMessage(m.chat, { sticker }, { quoted: m })
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('BRAT', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

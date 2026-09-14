@@ -13,7 +13,6 @@ const FFMPEG = process.env.FFMPEG_PATH || (() => {
 })()
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     try {
         let buffer
@@ -40,8 +39,7 @@ let handler = async (m, { conn }) => {
         isVideo = mime.startsWith('video/')
 
         if (!buffer || !buffer.length) {
-            await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-            return m.reply('⚠️ Reply gambar/video atau kirim langsung dengan caption **.img**')
+            return m.reply(' Reply gambar/video atau kirim langsung dengan caption **.img**')
         }
 
         if (isVideo) {
@@ -79,10 +77,8 @@ let handler = async (m, { conn }) => {
             await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
         }
 
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('IMG', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 

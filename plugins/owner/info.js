@@ -28,7 +28,6 @@ function copyCode(display_text, copy_code) {
 }
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     const { owner, user } = getPluginSummary()
     const runtime = process.uptime()
     const days = Math.floor(runtime / 86400)
@@ -41,25 +40,25 @@ let handler = async (m, { conn }) => {
     const botVersion = 'JhonBot v' + (botCfg.version || '3.3.8')
 
     const text = `> *${botVersion}*\n> _Aktif 24/7 Tanpa Henti_\n\n` +
-        `- 🤖 *Nama*        : JhonBot\n` +
-        `- 👑 *Developer*   : Jhon338\n` +
-        `- 📦 *Plugins*     : ${total}\n` +
-        `- ⚡ *Uptime*      : ${days}d ${hours}h ${minutes}m\n` +
-        `- 🔧 *Mode*        : PUBLIC\n\n` +
+        `-  *Nama*        : JhonBot\n` +
+        `-  *Developer*   : Jhon338\n` +
+        `-  *Plugins*     : ${total}\n` +
+        `-  *Uptime*      : ${days}d ${hours}h ${minutes}m\n` +
+        `-  *Mode*        : PUBLIC\n\n` +
         `*DEVELOPER BY JHON338 • POWERED BY BAILEYS*`
 
     await m.reply(text)
 
     try {
         const native = [
-            quickReply('📖 Menu', '.menu'),
-            quickReply('⚡ Ping', '.ping'),
-            ctaUrl('🌐 Linktree', channelLink),
-            copyCode('🔑 Salin Versi', botVersion)
+            quickReply(' Menu', '.menu'),
+            quickReply(' Ping', '.ping'),
+            ctaUrl(' Linktree', channelLink),
+            copyCode(' Salin Versi', botVersion)
         ]
         const interactiveMsg = {
             interactiveMessage: {
-                header: { title: 'ℹ️ *INFO BOT*', hasMediaAttachment: false },
+                header: { title: ' *INFO BOT*', hasMediaAttachment: false },
                 body: { text: '_Ketuk tombol di bawah untuk aksi cepat:_' },
                 footer: { text: botVersion + ' • Powered by Baileys' },
                 nativeFlowMessage: { messageVersion: 1, buttons: native }
@@ -71,7 +70,6 @@ let handler = async (m, { conn }) => {
         console.error(log('INFO', 'gagal kirim tombol: ' + (e?.message || e), COLORS.warn))
     }
 
-    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 
 handler.command = ['info']

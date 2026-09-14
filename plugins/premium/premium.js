@@ -37,9 +37,9 @@ function loadCreator() {
 
 async function getCardImage() {
     try {
-        const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'menu.png')
-        if (fs.existsSync(imgPath)) {
-            return await sharp(imgPath).resize({ width: 640 }).jpeg({ quality: 75 }).toBuffer()
+const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'premium.png')
+if (fs.existsSync(imgPath)) {
+return await sharp(imgPath).resize({ width: 640 }).jpeg({ quality: 75 }).toBuffer()
         }
     } catch {}
     return null
@@ -47,9 +47,9 @@ async function getCardImage() {
 
 async function getTroliThumb(conn) {
     try {
-        const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'menu.png')
-        if (fs.existsSync(imgPath)) {
-            return await sharp(imgPath).resize({ width: 180 }).jpeg({ quality: 70 }).toBuffer()
+const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'premium.png')
+if (fs.existsSync(imgPath)) {
+return await sharp(imgPath).resize({ width: 180 }).jpeg({ quality: 70 }).toBuffer()
         }
     } catch {}
     try {
@@ -74,7 +74,7 @@ async function fakeTroli(conn, jid) {
             status: 1,
             surface: 1,
             orderTitle: 'JhonBot • Premium',
-            message: 'Pilih paket langganan di bawah 👇',
+            message: 'Pilih paket langganan di bawah ',
             privateAttributes: '',
             ...(thumb ? { thumbnailJpeg: thumb } : {})
         }
@@ -121,13 +121,13 @@ function buildFormat(tierKey) {
     return {
         id: `.input ${tierKey}`,
         box: `┌──────────────────────────────┐
-│  🛒 *ORDER PREMIUM*
+│   *ORDER PREMIUM*
 │
 │  • Paket: *${T.label}*
 │  • Harga: *Rp ${T.price.toLocaleString('id-ID')}*
 │  • Durasi: *${T.days} hari*
 │
-│  📅 ${now}
+│   ${now}
 └──────────────────────────────┘`
     }
 }
@@ -142,12 +142,12 @@ let handler = async (m, { conn, args, command }) => {
         const list = loadPremiumList()
         const myFmt = formatPremiumEntry(list.find(e => e && normalizeNumber(e.number) === meNumber))
         let s
-        if (m.isOwner) s = '👑 *OWNER* — akses penuh tanpa batas.'
+        if (m.isOwner) s = ' *OWNER* — akses penuh tanpa batas.'
         else if (m.isPremium && myFmt?.active) {
             const dEnd = myFmt.endDate ? new Date(myFmt.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'
             const dur = Math.max(0, Math.ceil((myFmt.endDate - Date.now()) / 86400000))
-            s = `⭐ *PREMIUM ${(PREMIUM_TIERS[myFmt.tier]?.label || '')}*\n🗓️ Aktif s/d: ${dEnd}\n⏳ Sisa: ~${dur} hari`
-        } else s = '👤 *USER* — belum premium.\n\n_Gunakan `.premium` untuk melihat paket & cara aktivasi._'
+            s = ` *PREMIUM ${(PREMIUM_TIERS[myFmt.tier]?.label || '')}*\n Aktif s/d: ${dEnd}\n Sisa: ~${dur} hari`
+        } else s = ' *USER* — belum premium.\n\n_Gunakan `.premium` untuk melihat paket & cara aktivasi._'
         const status = [
             `> *STATUS AKUN KAMU*`,
             '',
@@ -156,20 +156,20 @@ let handler = async (m, { conn, args, command }) => {
             '',
             s,
             '',
-            `🕐 _Sekarang: ${nowWIB({ weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })} WIB_`,
+            ` _Sekarang: ${nowWIB({ weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })} WIB_`,
             '',
             '_Mau upgrade / perpanjang? Pilih paket di menu premium._'
         ].join('\n')
         const body = {
             interactiveMessage: {
-                header: { hasMediaAttachment: false, title: '👑 JhonBot Premium' },
+                header: { hasMediaAttachment: false, title: ' JhonBot Premium' },
                 body: { text: status },
                 footer: { text: 'Developer: Jhon338 • JhonBot' },
                 nativeFlowMessage: {
                     messageVersion: 1,
                     buttons: [
-                        quickReply('🛒 Lihat Paket', '.premium'),
-                        quickReply('🏠 Menu Utama', '.menu')
+                        quickReply(' Lihat Paket', '.premium'),
+                        quickReply(' Menu Utama', '.menu')
                     ]
                 }
             }
@@ -195,39 +195,39 @@ let handler = async (m, { conn, args, command }) => {
             `Paket: *${Tsel.label}* (Rp ${Tsel.price.toLocaleString('id-ID')} / ${Tsel.days} hari)`,
             `Nomor saya: +${m.sender?.split('@')[0] || '?'}`,
             '',
-            'Mohon aktifkan premium saya ya, terima kasih 🙏'
+            'Mohon aktifkan premium saya ya, terima kasih '
         ].join('\n')
         const waLink = `https://wa.me/${creator}?text=${encodeURIComponent(copyText)}`
 
         const caption = [
             `> *ORDER PREMIUM ${Tsel.label}*`,
             '',
-            `🗒️ *RINCIAN PESANAN:*`,
+            ` *RINCIAN PESANAN:*`,
             `- Paket : *${Tsel.label}*`,
             `- Harga : *Rp ${Tsel.price.toLocaleString('id-ID')}*`,
             `- Durasi: *${Tsel.days} hari*`,
             `- Tier  : *${chosen}*`,
             '',
-            `💵 *CARA BAYAR & AKTIVASI:*`,
-            `1. Tekan tombol *👤 Chat Owner* di bawah`,
+            ` *CARA BAYAR & AKTIVASI:*`,
+            `1. Tekan tombol * Chat Owner* di bawah`,
             `2. Format pesan sudah terisi otomatis (berisi tier + nomor kamu)`,
             `3. Kirim bukti transfer, lalu owner akan aktivasi dengan:`,
             `   \`.addprem ${m.sender?.split('@')[0] || 'NOMOR'} ${chosen}\``,
             '',
-            `⏳ _Durasi dihitung dari langganan pertama._`
+            ` _Durasi dihitung dari langganan pertama._`
         ].join('\n')
 
         const body = {
             interactiveMessage: {
-                header: { hasMediaAttachment: false, title: '🛒 ' + Tsel.label },
+                header: { hasMediaAttachment: false, title: ' ' + Tsel.label },
                 body: { text: caption },
                 footer: { text: 'Developer: Jhon338 • JhonBot' },
                 nativeFlowMessage: {
                     messageVersion: 1,
                     buttons: [
-                        ctaUrl('👤 Chat Owner', waLink),
-                        copyCode('📋 Salin Format Pesan', copyText),
-                        quickReply('🏠 Menu Utama', '.menu')
+                        ctaUrl(' Chat Owner', waLink),
+                        copyCode(' Salin Format Pesan', copyText),
+                        quickReply(' Menu Utama', '.menu')
                     ]
                 }
             }
@@ -236,7 +236,6 @@ let handler = async (m, { conn, args, command }) => {
         const troli = await fakeTroli(conn, m.chat)
         const msg = generateWAMessageFromContent(m.chat, body, { userJid: conn.user?.id || m.sender, quoted: troli })
         await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
-        await conn.sendMessage(m.chat, { react: { text: '🛒', key: m.key } })
         return
     }
 
@@ -244,18 +243,18 @@ let handler = async (m, { conn, args, command }) => {
     const list = loadPremiumList()
     const myFmt = formatPremiumEntry(list.find(e => e && e.number === m.sender?.split('@')[0]))
 
-    const keuntungan = '📌 *Fitur premium aktif:*\n• .pap · .paptt · .papmmk\n• .papbgl · .asp · .ccn'
+    const keuntungan = ' *Fitur premium aktif:*\n• .pap · .paptt · .papmmk\n• .papbgl · .asp · .ccn'
     const deskripsi = {
-        premium1: 'Paket *2 hari*\nCocok buat coba-coba dulu 😉',
-        premium2: 'Paket *1 minggu*\nBuat yang mau pakai lebih lama 👍',
-        premium3: 'Paket *1 bulan*\nPaling irit & hemat maksimal 💯'
+        premium1: 'Paket *2 hari*\nCocok buat coba-coba dulu ',
+        premium2: 'Paket *1 minggu*\nBuat yang mau pakai lebih lama ',
+        premium3: 'Paket *1 bulan*\nPaling irit & hemat maksimal '
     }
 
-    let statLine = '👤 *_Status: Member_*'
-    if (m.isOwner) statLine = '👑 *_Status: OWNER_*'
+    let statLine = ' *_Status: Member_*'
+    if (m.isOwner) statLine = ' *_Status: OWNER_*'
     else if (m.isPremium) {
         const dur = myFmt?.endDate ? Math.max(0, Math.ceil((myFmt.endDate - Date.now()) / 86400000)) : null
-        statLine = '⭐ *_Status: Premium' + (dur && myFmt?.active ? ` (sisa ~${dur} hari)_*` : '_*')
+        statLine = ' *_Status: Premium' + (dur && myFmt?.active ? ` (sisa ~${dur} hari)_*` : '_*')
     }
 
     const imgBuff = await getCardImage()
@@ -264,28 +263,28 @@ let handler = async (m, { conn, args, command }) => {
         const cardBody = [
             deskripsi[t],
             '',
-            `💵 *Rp ${tinfo.price.toLocaleString('id-ID')}* / ${tinfo.days} hari`,
+            ` *Rp ${tinfo.price.toLocaleString('id-ID')}* / ${tinfo.days} hari`,
             '',
             keuntungan,
             '',
             '_Klik tombol *PILIH PAKET* di bawah untuk pesan & bayar._'
         ].join('\n')
-        let header = { title: '🛒 ' + tinfo.label, hasMediaAttachment: false }
+        let header = { title: ' ' + tinfo.label, hasMediaAttachment: false }
         if (imgBuff) {
             try {
                 const media = await prepareWAMessageMedia({ image: imgBuff }, { upload: conn.waUploadToServer })
-                header = { title: '🛒 ' + tinfo.label, ...media, hasMediaAttachment: true }
+                header = { title: ' ' + tinfo.label, ...media, hasMediaAttachment: true }
             } catch {}
         }
         return {
             header,
             body: { text: cardBody },
-            footer: { text: 'JhonBot Premium • geser 👉 lihat paket lain' },
+            footer: { text: 'JhonBot Premium • geser  lihat paket lain' },
             nativeFlowMessage: {
                 messageVersion: 1,
                 buttons: [
-                    quickReply('✅ PILIH PAKET', '.premium ' + t),
-                    quickReply('🖨️ Status Saya', '.premium status')
+                    quickReply(' PILIH PAKET', '.premium ' + t),
+                    quickReply(' Status Saya', '.premium status')
                 ]
             }
         }
@@ -304,10 +303,9 @@ let handler = async (m, { conn, args, command }) => {
             return `• *${tinfo.label}* — Rp ${tinfo.price.toLocaleString('id-ID')} / ${tinfo.days} hari\n   _Ketik_ \`.premium ${t}\`_ untuk order._`
         }).join('\n\n')
         await conn.sendMessage(m.chat, {
-            text: `> *MENU LANGGANAN PREMIUM*\n\n${statLine}\n\n📦 *PAKET TERSEDIA:*\n${rows}\n\n👆 _Ketik nomor paket untuk memesan._`
+            text: `> *MENU LANGGANAN PREMIUM*\n\n${statLine}\n\n *PAKET TERSEDIA:*\n${rows}\n\n _Ketik nomor paket untuk memesan._`
         }, { quoted: m })
     }
-    await conn.sendMessage(m.chat, { react: { text: '👑', key: m.key } })
 }
 
 handler.command = ['premium', 'langganan']

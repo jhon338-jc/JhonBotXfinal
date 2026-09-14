@@ -13,17 +13,14 @@ const FFMPEG = process.env.FFMPEG_PATH || (() => {
 })()
 
 let handler = async (m, { conn }) => {
-    await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
 
     if (!m.quoted) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('⚠️ Reply stiker! Contoh: Reply stiker + .toimg')
+        return m.reply(' Reply stiker! Contoh: Reply stiker + .toimg')
     }
 
     const buffer = await m.quoted.download()
     if (!buffer) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-        return m.reply('❌ Gagal mengunduh stiker!')
+        return m.reply(' Gagal mengunduh stiker!')
     }
 
     let isAnimated = false
@@ -75,10 +72,8 @@ let handler = async (m, { conn }) => {
             await conn.sendMessage(m.chat, { image: imgBuffer }, { quoted: m })
         }
 
-        await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
     } catch (e) {
         console.error(log('TOIMG', e?.message || e, COLORS.error))
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     }
 }
 
