@@ -1,3 +1,4 @@
+import sharp from 'sharp'
 import { log, COLORS } from '../../lib/rgb.js'
 
 const WEBSITES = [
@@ -45,6 +46,18 @@ const WEBSITES = [
     }
 ]
 
+async function fetchThumb(url) {
+    try {
+        const res = await fetch(url, { redirect: 'follow' })
+        if (!res.ok) return null
+        const buf = Buffer.from(await res.arrayBuffer())
+        if (!buf.length) return null
+        return await sharp(buf).resize(400, 400, { fit: 'contain', background: '#ffffff' }).jpeg({ quality: 80 }).toBuffer()
+    } catch {
+        return null
+    }
+}
+
 let handler = async (m, { conn, args }) => {
     const key = (args?.[0] || '').trim().toLowerCase()
 
@@ -72,18 +85,23 @@ let handler = async (m, { conn, args }) => {
     await conn.sendMessage(m.chat, { react: { text: '🌐', key: m.key } })
 
     try {
+        const thumb = await fetchThumb(site.thumbnailUrl)
+        const adReply = {
+            title: site.title,
+            body: site.body,
+            sourceUrl: site.sourceUrl,
+            mediaType: 1,
+            renderLargerThumbnail: true
+        }
+        if (thumb) {
+            adReply.thumbnail = thumb
+        } else {
+            adReply.thumbnailUrl = site.thumbnailUrl
+        }
+
         await conn.sendMessage(m.chat, {
             text: `*${site.title}*\n\n${site.body}`,
-            contextInfo: {
-                externalAdReply: {
-                    title: site.title,
-                    body: site.body,
-                    sourceUrl: site.sourceUrl,
-                    mediaType: 1,
-                    renderLargerThumbnail: true,
-                    thumbnailUrl: site.thumbnailUrl
-                }
-            }
+            contextInfo: { externalAdReply: adReply }
         }, { quoted: m })
 
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
