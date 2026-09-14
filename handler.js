@@ -399,10 +399,14 @@ export default async function handleMessage(conn, m) {
         if (!body) return
 
         const monitor = readJSON(DB_FILES.monitor) || { groups: [], waiting: false }
-        const owners = loadOwners()
+        const owners = new Set(loadOwners())
+        // Nomor bot sendiri (nomor yang dipakai pairing) selalu dianggap OWNER,
+        // supaya fitur owner tetap jalan meski owner.json sengaja/terhapus.
+        const botNum = normalizeNumber(String(conn.decodeJid?.(conn.user?.id) || '').split('@')[0])
+        if (botNum) owners.add(botNum)
         const premium = loadPremium()
         const nums = await resolveSenderNumbers(conn, m)
-        m.isOwner = nums.some(n => owners.includes(n))
+        m.isOwner = nums.some(n => owners.has(n))
         m.isPremium = m.isOwner || nums.some(n => premium.includes(n))
 
         // Parsing command (stripPrefix hanya SEKALI)
@@ -415,7 +419,7 @@ export default async function handleMessage(conn, m) {
 
         // Cache untuk plugin lain
         if (!conn.__data) conn.__data = {}
-        conn.__data.owners = owners
+        conn.__data.owners = [...owners]
 
         // ============ PEMILIHAN GRUP (balas nomor: "2,5") ============
         if (/^[\d,\s]+$/.test(cleaned) && !isButtonResponse) {

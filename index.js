@@ -162,7 +162,14 @@ async function sendGroupListToOwner(conn) {
     try {
         const monitor = readJSON(MONITOR_FILE)
         monitor.groups ??= []
-        if (!monitor.waiting && monitor.groups.length > 0) {
+        // Sudah ada grup tersimpan → jangan macet di mode "waiting".
+        // Pakai grup yang sudah ada; owner bisa ganti grup kapan saja lewat .grup
+        if (monitor.groups.length > 0) {
+            if (monitor.waiting) {
+                monitor.waiting = false
+                writeJSON(MONITOR_FILE, monitor)
+                console.log(log('STARTUP', 'Mode waiting dari sesi sebelumnya di-reset', COLORS.success))
+            }
             console.log(log('STARTUP', `Menggunakan ${monitor.groups.length} grup tersimpan`, COLORS.info))
             console.log(log('STARTUP', 'Ketik .grup ke bot untuk mengganti pilihan grup', COLORS.info))
             return
