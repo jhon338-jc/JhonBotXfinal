@@ -2,8 +2,8 @@
 
 ## Aturan penting
 
-- **Setiap kali user mengupdate projek ini, WAJIB otomatis push ke GitHub:**
-  `git add -A && git commit -m "update" && git push origin main`
+- **JANGAN otomatis push ke GitHub.** Kerjakan update kode dulu; commit & push HANYA dilakukan kalau user menyuruh (misalnya "push", "upload").
+- Kalau disuruh push: `git add -A && git commit -m "update" && git push origin main`
 - Remote yang benar: **https://github.com/jhon338-jc/JhonBotXfinal.git**
   (jangan push ke repo lain)
 - Jangan commit file `auth/`, `node_modules/`, `tmp/` (sudah ada di `.gitignore`).

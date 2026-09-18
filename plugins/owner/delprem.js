@@ -12,7 +12,6 @@ let handler = async (m, { conn, args }) => {
 }
 
 handler.command = ['delprem', 'removepremium']
-handler.owner = true
 handler.ownerOnly = true
 
 export default handler

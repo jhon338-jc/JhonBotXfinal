@@ -3,17 +3,19 @@ import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { log, COLORS } from './lib/rgb.js'
 import { runAntiSpam } from './lib/antispam.js'
+import { pushChatLog } from './lib/serverlog.js'
+import { consumeAsupanQuota } from './lib/asupan-limit.js'
 
 // ============================================================
-//  JHONXFINAL v3.3.8 - BRAIN (OTAK BOT)
+//  JHONBOTXFINAL v3.3.8 - BRAIN (OTAK BOT)
 //  Role: OWNER & ADMIN (akses penuh di grup) / PREMIUM / USER
 // ============================================================
 
-export const BOT_NAME = 'JhonXfinal'
-export const BOT_VERSION = '3.3.8'
+const BOT_NAME = 'JhonBotXfinal'
+const BOT_VERSION = '3.3.8'
 
 // Versi bot dari config.json (biar caption/keterangan tidak stale saat versi diganti)
-export function getBotVersion() {
+function getBotVersion() {
     try {
         const cfg = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8'))
         return BOT_NAME + ' v' + (cfg.version || BOT_VERSION)
@@ -31,8 +33,8 @@ export function nowWIB(opt = {}) {
     }
 }
 
-// Command publik yang BOLEH dipakai di DM (selain itu DM tidak dilayani)
-const DM_PUBLIC = new Set(['rvo', 'brat', 'img', 'toimg', 'iqc', 'lirik', 'donlodall', 'daftar'])
+// Command yang TIDAK butuh status terdaftar (menu = pintu masuk ke .daftar)
+const PRE_REGISTER_FREE = new Set(['daftar', 'register', 'reg', 'menu', 'help', 'profil', 'premium', 'langganan'])
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginDir = path.join(__dirname, 'plugins')
@@ -115,6 +117,30 @@ export function resolveTier(input = '') {
     return TIER_ALIAS[String(input).toLowerCase()] || null
 }
 
+// ==================== FITUR PER PAKET PREMIUM ====================
+// premium1 → list dasar.   premium2 → premium1 + daftar tambahan.
+// premium3 → SEMUA fitur premium (termasuk fitur baru yang muncul nanti,
+//            karena command premium yang tidak terdaftar di bawah dianggap premium3).
+export const PREMIUM_TIER_CMDS = {
+    premium1: ['asp', 'asupan', 'ccn', 'cecan', 'pap', 'paptt', 'papmmk'],
+    premium2: ['papbgl', 'kitsune', 'freyajkt', 'cishani', 'livyrenata', 'onicvonzy']
+}
+const TIER_RANK = { premium1: 1, premium2: 2, premium3: 3 }
+const TIER_BY_RANK = ['', 'premium1', 'premium2', 'premium3']
+const CMD_REQUIRED_RANK = {}
+for (const [tier, cmds] of Object.entries(PREMIUM_TIER_CMDS)) {
+    for (const cmd of cmds) CMD_REQUIRED_RANK[String(cmd).toLowerCase()] = TIER_RANK[tier]
+}
+
+// Rank minimum yang dibutuhkan sebuah command premium.
+// Command premium yang tidak terdaftar → premium3 (semua fitur).
+export function premiumCmdRank(cmd = '') {
+    return CMD_REQUIRED_RANK[String(cmd).toLowerCase()] || 3
+}
+export function tierOfRank(rank) {
+    return TIER_BY_RANK[rank] || 'premium3'
+}
+
 export function loadPremium() {
     const db = readJSON(DB_FILES.premium)
     try {
@@ -149,12 +175,6 @@ export function savePremiumList(list) {
     const db = readJSON(DB_FILES.premium) || {}
     db.premium = list
     writeJSON(DB_FILES.premium, db)
-}
-
-export function isPremiumActive(number = '') {
-    const num = normalizeNumber(number)
-    if (!num) return false
-    return loadPremium().includes(num)
 }
 
 // Durasi dihitung dari langganan pertama (startDate dipertahankan).
@@ -274,6 +294,8 @@ async function loadPlugin(file) {
         if (!summary[category]) summary[category] = []
         // Paket fitur Airich khusus PREMIUM + OWNER (file Airich tidak diubah)
         if (category === 'airich') handler.premium = true
+        // Kategori plugin (dipakai enforce kuota harian asupan)
+        handler.category = category
 
         const cmds = Array.isArray(handler.command) ? handler.command : handler.command ? [handler.command] : []
         for (const cmd of cmds) {
@@ -335,7 +357,8 @@ function extractCommandFromMessage(m) {
                 body = m.message.buttonsResponseMessage.selectedButtonId || ''
                 isButtonResponse = true
             } else if (m.message.listResponseMessage) {
-                body = m.message.listResponseMessage.title || m.message.listResponseMessage.description || ''
+                const lr = m.message.listResponseMessage
+                body = lr.singleSelectReply?.selectedRowId || lr.title || lr.description || ''
                 isButtonResponse = true
             }
         }
@@ -397,6 +420,16 @@ async function resolveSenderNumbers(conn, m) {
 
 // ==================== HANDLER UTAMA ====================
 export default async function handleMessage(conn, m) {
+    // Helper: react emoji ke pesan user — function-scoped, bisa dipakai di try & catch
+    function reactText(text) {
+        conn.sendMessage(m.chat, { react: { text, key: m.key } }).catch(() => {})
+    }
+    // Helper: react ❌ + reply pesan penolakan
+    function deny(text) {
+        reactText('❌')
+        return m.reply(text)
+    }
+
     try {
         if (!m?.chat) return
         if (m.chat.includes('@newsletter') || m.chat === 'status@broadcast') return
@@ -408,7 +441,20 @@ export default async function handleMessage(conn, m) {
         const { body, isButtonResponse } = extractCommandFromMessage(m)
         if (!body) return
 
-        const monitor = readJSON(DB_FILES.monitor) || { groups: [], waiting: false }
+        // Catat aktivitas chat terbaru untuk dashboard .server (AiRich)
+        try {
+            pushChatLog({
+                chat: m.chat,
+                sender: m.sender,
+                participant: m.participant,
+                pushName: m.pushName,
+                isGroup: m.isGroup,
+                body,
+                isButtonResponse
+            })
+        } catch {}
+
+        const monitor = readJSON(DB_FILES.monitor) || { off: [] }
         const owners = new Set(loadOwners())
         // Nomor bot sendiri (nomor yang dipakai pairing) selalu dianggap OWNER,
         // supaya fitur owner tetap jalan meski owner.json sengaja/terhapus.
@@ -433,49 +479,16 @@ export default async function handleMessage(conn, m) {
         if (!conn.__data) conn.__data = {}
         conn.__data.owners = [...owners]
 
-        // ============ PEMILIHAN GRUP (balas nomor: "2,5") ============
-        if (/^[\d,\s]+$/.test(cleaned) && !isButtonResponse) {
-            if (!m.isGroup && m.isOwner && monitor.waiting) {
-                const picked = cleaned.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n))
-                const nums = [...new Set(picked)]
-                if (!nums.length || nums.length > 5) return
-                let groups = []
-                try {
-                    const fetched = await conn.groupFetchAllParticipating()
-                    groups = Object.values(fetched || {})
-                } catch (e) {
-                    console.error(log('HANDLER', 'Gagal ambil daftar grup: ' + (e?.message || e), COLORS.error))
-                    return
-                }
-                const outOfRange = nums.filter(n => n < 1 || n > groups.length)
-                if (outOfRange.length) {
-                    return m.reply(`> *NOMOR TIDAK VALID*\n\n_Nomor_\n- \`${outOfRange.join(', ')}\`\n\n_tidak ada di daftar grup. Balas nomor_ \`1-${groups.length}\`_._`)
-                }
-                const selected = nums.map(n => groups[n - 1]).filter(Boolean)
-                if (!selected.length) return
-                monitor.groups = selected.map(g => g.id)
-                monitor.waiting = false
-                writeJSON(DB_FILES.monitor, monitor)
-                let txt = '> *GRUP TERPILIH:*\n\n'
-                txt += selected.map((g, i) => `${i + 1}. ${g.subject}\n   ${g.participants?.length || 0} member`).join('\n\n')
-                return await conn.sendMessage(m.chat, { text: txt }, { quoted: m })
-            }
-            return
-        }
-
         // ============ ATURAN DM ============
-        // DM: owner bebas, USER hanya fitur publik tertentu
-        if (!m.isGroup && !m.isOwner) {
-            if (!DM_PUBLIC.has(command)) return
-        }
+        // Bot TIDAK merespon sama sekali di DM pribadi (mati total)
+        if (!m.isGroup) return
 
         // ============ ATURAN GRUP (monitor) ============
-        if (m.isGroup) {
-            if (monitor.waiting) {
-                if (!m.isOwner) return
-            } else if (!monitor.groups.includes(m.chat)) {
-                return
-            }
+        // .on / .off selalu bisa dipakai owner meski grup sedang dimatikan
+        if (command === 'on' || command === 'off') {
+            if (!m.isOwner) return
+        } else if ((monitor.off || []).includes(m.chat)) {
+            return // Bot di-.off di grup ini → silent total
         }
 
         // ============ ANTI-SPAM (hanya grup yang dipantau) ============
@@ -497,32 +510,58 @@ export default async function handleMessage(conn, m) {
         // ============ ACCESS CONTROL ============
         // ownerOnly: hanya owner asli (tanpa admin grup)
         if (handler.ownerOnly && !m.isOwner) {
-            return m.reply('> *OWNER ONLY*\n\n_Fitur ini khusus Owner._\n_Kamu bukan owner. Hubungi: ' + BOT_NAME + '._')
+            return deny('> *OWNER ONLY*\n\n_Fitur ini khusus Owner._\n_Kamu bukan owner. Hubungi: ' + BOT_NAME + '._')
         }
         // owner: owner + admin di grup = akses penuh
         if (handler.owner && !m.hasFull) {
-            return m.reply('> *OWNER / ADMIN ONLY*\n\n_Fitur ini khusus Owner & Admin di grup._')
+            return deny('> *OWNER / ADMIN ONLY*\n\n_Fitur ini khusus Owner & Admin di grup._')
         }
         if (handler.premium && !m.isPremium) {
-            return m.reply('> *PREMIUM ONLY*\n\n_Fitur ini khusus member premium._\n_Mau jadi member premium? Ketik:_\n- `.premium`')
+            return deny('> *PREMIUM ONLY*\n\n_Fitur ini khusus member premium._\n_Mau jadi member premium? Ketik:_\n- `.premium`')
+        }
+        // Gerbang TIER premium: owner/admin penuh & pembuat tetap bisa semua fitur.
+        // Member premium dicek per command — kalau tier-nya kurang → minta upgrade.
+        if (handler.premium && m.isPremium && !m.hasFull && !m.isOwner) {
+            const requiredRank = premiumCmdRank(command)
+            const entry = formatPremiumEntry(getPremiumEntry(m.sender?.split('@')[0]))
+            const myTier = entry?.tier || 'premium2'
+            const myRank = TIER_RANK[myTier] || 2
+            if (myRank < requiredRank) {
+                const needTier = tierOfRank(requiredRank)
+                const needLabel = PREMIUM_TIERS[needTier]?.label || needTier
+                return deny(`> *BUTUH TIER LEBIH TINGGI*\n\n_Fitur *\`.${command}\`* termasuk paket *${needLabel}*._\n_Paket kamu: *${PREMIUM_TIERS[myTier]?.label || myTier}*_\n\n_Upgrade paket dulu yuk, ketik:_\n- \`.premium\``)
+            }
+        }
+        // ============ KUOTA HARIAN ASUPAN (5x/hari, reset WIB) ============
+        if (handler.category === 'asupan' && !m.isOwner && !m.hasFull) {
+            const num = String(m.sender || '').split('@')[0]
+            if (num) {
+                const res = consumeAsupanQuota(num, command)
+                if (!res.ok) {
+                    return deny('> *KUOTA ASUPAN HABIS*\n\n_Fitur *.${command}* dibatasi *5x per hari per command*._\n_Kuota kamu untuk command ini hari ini sudah habis._\n\n_Kuota reset otomatis besok (WIB)._\n\n_Owner & admin grup bebas tanpa batas._')
+                }
+            }
         }
         if (handler.group && !m.isGroup) {
-            return m.reply('> *GROUP ONLY*\n\n_Fitur ini hanya bisa dipakai di grup._')
+            return deny('> *GROUP ONLY*\n\n_Fitur ini hanya bisa dipakai di grup._')
         }
         if (handler.botAdmin && m.isGroup && !m.isBotAdmin) {
-            return m.reply('> *BOT ADMIN REQUIRED*\n\n_Bot harus jadi admin grup untuk fitur ini._')
+            return deny('> *BOT ADMIN REQUIRED*\n\n_Bot harus jadi admin grup untuk fitur ini._')
         }
         if (handler.admin && m.isGroup && !m.isAdmin && !m.isOwner) {
-            return m.reply('> *ADMIN ONLY*\n\n_Fitur ini khusus admin grup._')
+            return deny('> *ADMIN ONLY*\n\n_Fitur ini khusus admin grup._')
         }
 
         // ============ WAJIB DAFTAR MEMBER ============
-        if (!m.hasFull && !m.isPremium && !['daftar', 'register', 'reg'].includes(command) && !isRegisteredMember(m.sender || m.chat)) {
-            return m.reply('> *TERDAFTAR DULU*\n\n_Untuk memakai fitur bot ini, daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Status: pelajar / mahasiswa / singgel / jomblo / kawin_')
+        if (!m.hasFull && !m.isPremium && !PRE_REGISTER_FREE.has(command) && !isRegisteredMember(m.sender)) {
+            return deny('> *TERDAFTAR DULU*\n\n_Untuk memakai fitur bot ini, daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Status: pelajar / mahasiswa / singgel / jomblo / kawin_')
         }
 
+        reactText('⚙️')
         await handler(m, { conn, args, text: args.join(' '), command })
+        reactText('✅')
     } catch (e) {
+        reactText('❌')
         console.error(log('HANDLER', e?.message || e, COLORS.error))
     }
 }

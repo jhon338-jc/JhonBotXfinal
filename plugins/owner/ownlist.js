@@ -26,7 +26,6 @@ let handler = async (m, { conn }) => {
 }
 
 handler.command = ['ownlist', 'daftarowner']
-handler.owner = true
 handler.ownerOnly = true
 
 export default handler

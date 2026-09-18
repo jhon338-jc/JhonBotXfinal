@@ -4,57 +4,133 @@ import { fileURLToPath } from 'url'
 import { generateWAMessageFromContent, prepareWAMessageMedia } from '@whiskeysockets/baileys'
 import sharp from 'sharp'
 import { plugins } from '../../handler.js'
+import { getTroli } from '../../lib/shop.js'
 import { log, COLORS } from '../../lib/rgb.js'
 
 // ============================================================
-//  MENU JHONXFINAL — tampilan menu dengan tombol interaktif
-//  • External Ad Reply di bagian atas (card)
-//  • Interactive List popup (single_select / sections)
-//  • Nested Sub-Menu: klik kategori -> subkonten perintah
-//  Tanpa emoji, tanpa caption berlebihan
+//  MENU JHONXFINAL — button-first
+//  • Menu utama: gambar + info bot simpel + 4 tombol
+//  • Tombol BUKA MENU (single_select): pilih kategori > pilih command langsung jalan
+//  • Tombol LINKTREE (cta_url) & KONTAK OWNER (call)
+//  • Sub-menu per kategori tetap jalan via `.menu <kategori>`
+//  • Tanpa emoji
 // ============================================================
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const IMG_PATH = path.join(__dirname, '..', '..', 'src', 'img', 'foto_menu.png')
 
-// Kategori & perintah (Airich TIDAK dimasukkan ke menu)
+function quickReply(display_text, id) {
+    return { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text, id }) }
+}
+
+function ctaUrl(display_text, url) {
+    return { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text, url }) }
+}
+
+function ownerVCard(botCfg, ownerNumber) {
+    const ownerName = botCfg.ownerName || 'Jhon338'
+    const botName = botCfg.botName || 'JhonBotXfinal'
+    const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
+    return 'BEGIN:VCARD\n' +
+        'VERSION:3.0\n' +
+        'FN:' + ownerName + '\n' +
+        'ORG:' + botName + ';\n' +
+        'TEL;type=CELL;type=VOICE;waid=' + ownerNumber + ':+' + ownerNumber + '\n' +
+        'URL:' + channelLink + '\n' +
+        'END:VCARD\n'
+}
+
+function singleSelect(title, sections) {
+    return { name: 'single_select', buttonParamsJson: JSON.stringify({ title, sections }) }
+}
+
 const CATS = {
-    maker: { label: 'MAKER', desc: 'Buat gambar / stiker', cmds: [
+    maker: { label: 'MAKER', cmds: [
         { name: 'brat', desc: 'Buat stiker BRAT dari teks' },
         { name: 'iqc', desc: 'Generate gambar IQC' },
         { name: 'img', desc: 'Jadikan stiker dari gambar/video' }
     ]},
-    tools: { label: 'TOOLS', desc: 'Tool umum', cmds: [
+    tools: { label: 'TOOLS', cmds: [
         { name: 'toimg', desc: 'Ubah stiker jadi gambar/video' },
         { name: 'rvo', desc: 'Buka pesan view once' },
         { name: 'lirik', desc: 'Cari lirik lagu' }
     ]},
-    download: { label: 'DOWNLOAD', desc: 'Download media', cmds: [
+    download: { label: 'DOWNLOAD', cmds: [
         { name: 'donlodall', desc: 'Download TikTok, IG, dan lainnya' }
     ]},
-    asupan: { label: 'ASUPAN (PREMIUM)', desc: 'Asupan & pap (khusus premium)', cmds: [
+    asupan: { label: 'ASUPAN (LIMIT 5/HARI)', cmds: [
         { name: 'asp', desc: 'Asupan random' },
         { name: 'ccn', desc: 'Cecan random' },
         { name: 'pap', desc: 'PAP random' },
         { name: 'paptt', desc: 'PAP TT random' },
         { name: 'papmmk', desc: 'PAP MMK random' },
-        { name: 'papbgl', desc: 'PAP BGL random' }
+        { name: 'papbgl', desc: 'PAP BGL random' },
+        { name: 'bule1', desc: 'Foto premium bule-1' },
+        { name: 'bule2', desc: 'Foto premium bule-2' },
+        { name: 'bule3', desc: 'Foto premium bule-3' },
+        { name: 'bule4', desc: 'Foto premium bule-4' },
+        { name: 'bule5', desc: 'Foto premium bule-5' },
+        { name: 'bule6', desc: 'Foto premium bule-6' },
+        { name: 'bule7', desc: 'Foto premium bule-7' },
+        { name: 'cishani', desc: 'Foto premium ci-shani' },
+        { name: 'freyajkt', desc: 'Foto premium freya-jkt' },
+        { name: 'kitsune', desc: 'Foto premium kitsune' },
+        { name: 'lesbi1', desc: 'Foto premium lesbi-1' },
+        { name: 'livyrenata', desc: 'Foto premium livy-renata' },
+        { name: 'onicvonzy', desc: 'Foto premium onic-vonzy' },
+        { name: 'pink1', desc: 'Foto premium pink-1' },
+        { name: 'pink2', desc: 'Foto premium pink-2' },
+        { name: 'pink3', desc: 'Foto premium pink-3' },
+        { name: 'pink4', desc: 'Foto premium pink-4' },
+        { name: 'pink5', desc: 'Foto premium pink-5' },
+        { name: 'pink6', desc: 'Foto premium pink-6' },
+        { name: 'pink7', desc: 'Foto premium pink-7' },
+        { name: 'pink8', desc: 'Foto premium pink-8' },
+        { name: 'pink9', desc: 'Foto premium pink-9' },
+        { name: 'pink10', desc: 'Foto premium pink-10' },
+        { name: 'pink11', desc: 'Foto premium pink-11' },
+        { name: 'sofifoxy', desc: 'Foto premium sofi-foxy' },
+        { name: 'asian1', desc: 'Foto premium asian-1' },
+        { name: 'china1', desc: 'Foto premium china-1' },
+        { name: 'china2', desc: 'Foto premium china-2' },
+        { name: 'china3', desc: 'Foto premium china-3' },
+        { name: 'evaelfie', desc: 'Foto premium eva-elfie' },
+        { name: 'group1', desc: 'Foto premium group-1' },
+        { name: 'japan1', desc: 'Foto premium japan-1' },
+        { name: 'korea1', desc: 'Foto premium korea-1' },
+        { name: 'korea2', desc: 'Foto premium korea-2' },
+        { name: 'korea3', desc: 'Foto premium korea-3' },
+        { name: 'korea4', desc: 'Foto premium korea-4' },
+        { name: 'melodymarks', desc: 'Foto premium melody-marks' },
+        { name: 'perpect1', desc: 'Foto premium perpect-1' },
+        { name: 'perpect2', desc: 'Foto premium perpect-2' },
+        { name: 'perpect3', desc: 'Foto premium perpect-3' },
+        { name: 'perpect4', desc: 'Foto premium perpect-4' },
+        { name: 'perpect5', desc: 'Foto premium perpect-5' },
+        { name: 'pregnant1', desc: 'Foto premium pregnant-1' },
+        { name: 'teen1', desc: 'Foto premium teen-1' },
+        { name: 'teen2', desc: 'Foto premium teen-2' },
+        { name: 'teen3', desc: 'Foto premium teen-3' }
     ]},
-    grup: { label: 'GRUP', desc: 'Fitur grup', cmds: [
+    grup: { label: 'GRUP', cmds: [
         { name: 'poll', desc: 'Buat polling grup' },
-        { name: 'daftar', desc: 'Daftar jadi member bot (nama,umur,status)' }
+        { name: 'daftar', desc: 'Daftar jadi member bot' }
     ]},
-    premium: { label: 'PREMIUM', desc: 'Paket & langganan', cmds: [
+    premium: { label: 'PREMIUM', cmds: [
         { name: 'premium', desc: 'Lihat paket premium & cara bayar' }
     ]},
-    airich: { label: 'AIRICH (PREMIUM)', desc: 'Khusus premium & owner', cmds: [] },
-    owner: { label: 'OWNER', desc: 'Khusus owner / admin grup', ownerOnly: true, cmds: [
+    airich: { label: 'AIRICH (PREMIUM)', cmds: [
+        { name: 'snake', desc: 'Main game Snake' }
+    ]},
+    owner: { label: 'OWNER', ownerOnly: true, cmds: [
         { name: 'add', desc: 'Tambah member grup' },
         { name: 'kick', desc: 'Kick member grup' },
         { name: 'setpp', desc: 'Ganti foto profil grup' },
         { name: 'setnm', desc: 'Ganti nama grup' },
         { name: 'setds', desc: 'Ganti deskripsi grup' },
         { name: 'htg', desc: 'Hidetag semua member' },
-        { name: 'grup', desc: 'Daftar & pilih grup' },
+        { name: 'on', desc: 'Aktifkan bot di grup ini' },
+        { name: 'off', desc: 'Matikan bot di grup ini' },
         { name: 'ownadd', desc: 'Tambah owner baru' },
         { name: 'owndel', desc: 'Hapus owner' },
         { name: 'ownlist', desc: 'Daftar owner' },
@@ -70,31 +146,29 @@ const CATS = {
 
 function exists(cmd) { return plugins.has(String(cmd).toLowerCase()) }
 
-function usableCats(m) {
-    return Object.entries(CATS).filter(([key, c]) => {
-        if (c.ownerOnly) return m.isOwner || m.hasFull
-        return true
-    })
+function rowsOf(cat, m) {
+    if (cat.ownerOnly && !(m.isOwner || m.hasFull)) return []
+    return cat.cmds.filter(cmd => exists(cmd.name))
 }
 
-function singleSelect(title, sections) {
-    return { name: 'single_select', buttonParamsJson: JSON.stringify({ title, sections }) }
-}
-
-function quickReply(display_text, id) {
-    return { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text, id }) }
-}
-
-function ctaUrl(display_text, url) {
-    return { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text, url }) }
-}
-
-function callBtn(display_text, phone_number) {
-    return { name: 'call', buttonParamsJson: JSON.stringify({ display_text, phone_number }) }
-}
-
-function copyCode(display_text, copy_code) {
-    return { name: 'copy_code', buttonParamsJson: JSON.stringify({ display_text, copy_code }) }
+// Section dropdown (single_select) — BADGE DI JUDUL KATEGORI:
+// Satu section per kategori. Judul section = JUDUL KATEGORI + badge hijau/putih
+// "PILIH" (highlight_label → badge muncul di samping judul kategori).
+// Di bawahnya, command-command jadi row polos (tanpa badge) — tap langsung jalan.
+// Hasil: ADA judul kategori sebagai pembatas (dengan badge), di bawahnya command-nya.
+function catSections(cat, m) {
+    const rows = rowsOf(cat, m)
+    if (!rows.length) return []
+    return [{
+        title: ' ' + cat.label,
+        highlight_label: 'PILIH',
+        rows: rows.map(r => ({
+            title: `.${r.name}`,
+            rowId: `.${r.name}`,
+            description: cat.label + ' • ' + r.desc,
+            id: `.${r.name}`
+        }))
+    }]
 }
 
 function loadBotConfig() {
@@ -106,71 +180,9 @@ function loadBotConfig() {
 }
 
 function botVersion() {
-    return 'JhonXfinal v' + (loadBotConfig().version || '3.3.8')
+    return 'JhonBotXfinal v' + (loadBotConfig().version || '3.3.8')
 }
 
-async function getThumb() {
-    try {
-        const imgPath = path.join(__dirname, '..', '..', 'src', 'img', 'foto_menu.png')
-        if (!fs.existsSync(imgPath)) return null
-        return await sharp(imgPath).resize({ width: 300 }).jpeg({ quality: 70 }).toBuffer()
-    } catch {
-        return null
-    }
-}
-
-async function getHeaderImage(conn) {
-    let imgBuf = null
-    try {
-        const botJid = conn.user?.id
-        if (botJid) {
-            const url = await conn.profilePictureUrl(botJid, 'image')
-            if (url) {
-                const r = await fetch(url)
-                if (r.ok) imgBuf = Buffer.from(await r.arrayBuffer())
-            }
-        }
-    } catch {}
-    if (!imgBuf?.length) imgBuf = await getThumb()
-    if (!imgBuf?.length) return null
-    try {
-        const small = await sharp(imgBuf).resize({ width: 400 }).jpeg({ quality: 85 }).toBuffer()
-        const media = await prepareWAMessageMedia({ image: small }, {
-            upload: async (encFile, opts) => {
-                const result = await conn.waUploadToServer(encFile, opts)
-                return result
-            }
-        })
-        if (!media?.imageMessage) return null
-        return {
-            hasMediaAttachment: true,
-            imageMessage: media.imageMessage,
-            title: ' ' + botVersion()
-        }
-    } catch (e) {
-        console.error(log('MENU', 'header image gagal: ' + (e?.message || e), COLORS.warn))
-        return null
-    }
-}
-
-// Card External Ad Reply di bagian atas pesan
-function adReply(thumb) {
-    return {
-        title: '*JHONXFINAL*',
-        body: 'JhonXfinal v3.3.8 - Aktif 24/7',
-        mediaType: 1,
-        renderLargerThumbnail: true,
-        thumbnail: thumb || null,
-        sourceUrl: loadBotConfig().channelLink || 'https://jhon338-jc.github.io/Linktree/'
-    }
-}
-
-// Box kecil untuk teks menu
-function boxTxt(lines) {
-    return lines.join('\n')
-}
-
-// Status akses user
 function userStatus(m) {
     if (m.isOwner) return 'Owner'
     if (m.isAdmin) return 'Admin'
@@ -178,51 +190,55 @@ function userStatus(m) {
     return 'Member'
 }
 
-// ===== FAKE TROLI (QUOTE) =====
-async function getFakeTroli(conn, chatJid, senderJid) {
-    try {
-        const thumb = await getThumb()
-        const order = {
-            orderMessage: {
-                itemCount: 27948,
-                status: 1,
-                surface: 1,
-                orderTitle: 'JhonXfinal • Order',
-                message: 'Pengguna Bot',
-                privateAttributes: '',
-                ...(thumb ? { thumbnailJpeg: thumb } : {})
-            }
-        }
-        const msg = generateWAMessageFromContent(chatJid || '0@s.whatsapp.net', order, { userJid: senderJid || '0@s.whatsapp.net' })
-        return { key: msg.key, message: msg.message }
-    } catch (e) {
-        console.error(log('MENU', 'troli gagal: ' + (e?.message || e), COLORS.warn))
-        return null
-    }
+function infoBlock(m, totalPlugins) {
+    const runtime = process.uptime()
+    const days = Math.floor(runtime / 86400)
+    const hours = Math.floor((runtime % 86400) / 3600)
+    const minutes = Math.floor((runtime % 3600) / 60)
+    return [
+        '> *' + botVersion() + '*',
+        '> _Bot multifungsi, aktif 24/7_',
+        '',
+        'Nama   : ' + (m.pushName || '-'),
+        'Status : ' + userStatus(m),
+        'Uptime : ' + days + 'd ' + hours + 'j ' + minutes + 'm',
+        'Plugin : ' + totalPlugins,
+        'Node   : ' + (process.version || '-') + ' / ' + String(process.platform || '-').toUpperCase(),
+        '',
+        '_Klik tombol *BUKA MENU* untuk pilih kategori & command._'
+    ].join('\n')
 }
 
-async function sendMenu(conn, m, bodyText, sections, native) {
+async function getMenuImage(conn) {
     try {
-        let header = await getHeaderImage(conn)
-        if (!header) header = { title: ' ' + botVersion(), hasMediaAttachment: false }
-        const thumb = await getThumb()
-
-        const interactiveMsg = {
-            interactiveMessage: {
-                header,
-                body: { text: bodyText },
-                footer: { text: 'Developer: Jhon338 • Powered by Baileys' },
-                contextInfo: { externalAdReply: adReply(thumb) },
-                nativeFlowMessage: {
-                    messageVersion: 1,
-                    buttons: native
-                }
-            }
+        if (fs.existsSync(IMG_PATH)) {
+            const buff = await sharp(IMG_PATH).resize({ width: 640 }).jpeg({ quality: 78 }).toBuffer()
+            return await prepareWAMessageMedia({ image: buff }, { upload: conn.waUploadToServer })
         }
+    } catch {}
+    return null
+}
+
+async function sendInteractive(conn, m, title, bodyText, buttons) {
+    const media = await getMenuImage(conn).catch(() => null)
+    const header = {
+        title: ' ' + title,
+        ...(media ? { ...media, hasMediaAttachment: true } : { hasMediaAttachment: false })
+    }
+    const body = {
+        interactiveMessage: {
+            header,
+            body: { text: bodyText },
+            footer: { text: 'Developer: Jhon338 • Powered by Baileys' },
+            nativeFlowMessage: { messageVersion: 1, buttons }
+        }
+    }
+    try {
+        const troli = await getTroli(conn, m.chat)
         const msg = generateWAMessageFromContent(
             m.chat,
-            interactiveMsg,
-            { userJid: conn.user?.id || m.sender, quoted: (await getFakeTroli(conn, m.chat, m.sender)) || m }
+            body,
+            { userJid: conn.user?.id || m.sender, quoted: troli || m }
         )
         await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
         return true
@@ -235,138 +251,73 @@ async function sendMenu(conn, m, bodyText, sections, native) {
 // ==================== HANDLER ====================
 let handler = async (m, { conn, args }) => {
     const input = (args?.[0] || '').trim().toLowerCase()
-    const number = m.sender?.split('@')[0] || '?'
+    const botCfg = loadBotConfig()
+    const ownerNumber = (botCfg.creator?.[0] || '6285602288269').replace(/\D/g, '')
+    const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
+    const totalPlugins = [...new Set(plugins.values())].length
+
+    // Kartu kontak owner (.menu kontak)
+    if (input === 'kontak') {
+        const vcard = ownerVCard(botCfg, ownerNumber)
+        try {
+            await conn.sendMessage(m.chat, {
+                contacts: {
+                    displayName: botCfg.ownerName || 'Jhon338',
+                    contacts: [{ displayName: botCfg.ownerName || 'Jhon338', vcard }]
+                }
+            })
+        } catch (e) {
+            await m.reply(' _Gagal kirim kartu kontak: ' + (e?.message || e) + '_')
+        }
+        return
+    }
 
     // Profil view (.menu me / .profil)
     if (input === 'me' || m.command === 'profil') {
         const status = userStatus(m)
+        const number = m.sender?.split('@')[0] || '?'
         m.reply(`> *PROFIL KAMU*\n\n- *Nama* : ${m.pushName || '-'}\n- *Nomor* : +${number}\n- *Status* : ${status}\n\n_Mau ganti akses? Hubungi owner._`)
         return
     }
 
-    // ============ SUB-MENU KATEGORI (.menu maker / dl) ============
-    if (input && CATS[input]) {
-        const cat = CATS[input]
-        if (cat.ownerOnly) {
-            const ok = (m.isOwner || m.hasFull)
-            if (!ok) return m.reply('> *OWNER ONLY*\n\n_Fitur kategori OWNER khusus owner / admin grup._')
+    const text = infoBlock(m, totalPlugins)
+    const cats = Object.entries(CATS)
+    const sections = cats
+        .flatMap(([k, c]) => catSections(c, m))
+
+    // Sub-menu kategori (.menu maker / asupan / dll.)
+    if (CATS[input]) {
+        const sub = catSections(CATS[input], m)
+        const ok = await sendInteractive(conn, m, ' ' + CATS[input].label, ' _Pilih command di bawah, langsung jalan._', [
+            singleSelect(' PILIH COMMAND ', sub),
+            quickReply(' KEMBALI', '.menu')
+        ])
+        if (!ok) {
+            const list = rowsOf(CATS[input], m).map(r => '- `.' + r.name + '` - ' + r.desc).join('\n')
+            await m.reply('> *' + CATS[input].label + '*\n\n' + list + '\n\n_Ketik perintah langsung._')
         }
-
-        const botCfg = loadBotConfig()
-        const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
-        const ownerNumber = botCfg.creator?.[0] || ''
-
-        let bodyText
-        let rows = []
-        let label
-
-        if (input === 'airich') {
-            label = 'AIRICH'
-            bodyText = boxTxt([
-                '> *' + botVersion() + '*',
-                '> _Kategori: AIRICH_',
-                '',
-                'Fitur Airich (website & game) khusus Premium & Owner.',
-                'Ketik .airich untuk membuka daftar. Tersedia 100+ fitur.',
-                '',
-                'Mau jadi premium? Ketik .premium'
-            ])
-        } else {
-            label = cat.label
-            const listRows = cat.cmds.filter(c => exists(c.name))
-                .map(c => '- `.' + c.name + '` - ' + c.desc)
-            bodyText = boxTxt([
-                '> *' + botVersion() + '*',
-                '> _Kategori: ' + cat.label + '_',
-                '',
-                'List perintah di kategori ini  ' + cat.desc + ':',
-                '',
-                ...(listRows.length ? listRows : ['- (kosong)']),
-                '',
-                'Ketik langsung, atau pilih dari tombol PILIH COMAND.'
-            ])
-            rows = cat.cmds.filter(c => exists(c.name)).map(c => ({
-                id: '.' + c.name, rowId: '.' + c.name, header: '',
-                title: '.' + c.name, description: c.desc
-            }))
-        }
-
-        const sections = [{ title: label + ' - PILIH PERINTAH', highlight_label: '', rows }]
-        if (input !== 'airich') sections[0].rows = [ ...rows, { id: '.menu', rowId: '.menu', header: '', title: 'Kembali', description: 'Kembali ke menu utama' } ]
-        else sections[0].rows = [ { id: '.menu', rowId: '.menu', header: '', title: 'Kembali', description: 'Kembali ke menu utama' } ]
-
-        const native = [singleSelect('PILIH COMAND', sections)]
-        native.push(quickReply('Profil', '.profil'))
-        native.push(ctaUrl('Linktree', channelLink))
-        if (ownerNumber) native.push(callBtn('Call Owner', '+' + ownerNumber))
-        native.push(copyCode('Salin Versi', botVersion()))
-
-        const ok = await sendMenu(conn, m, bodyText, sections, native)
-        if (!ok) await m.reply(bodyText)
         return
     }
 
-    // ============ MENU UTAMA ============
-    const runtime = process.uptime()
-    const days = Math.floor(runtime / 86400)
-    const hours = Math.floor((runtime % 86400) / 3600)
-    const minutes = Math.floor((runtime % 3600) / 60)
-    const totalPlugins = [...new Set(plugins.values())].length
-    const status = userStatus(m)
-
-    const menuBox = boxTxt([
-        '> *' + botVersion() + '*',
-        '> _Bot multifungsi, cepat, aktif 24/7_',
-        '',
-        'Nama   : ' + (m.pushName || '-').slice(0, 20),
-        'Status : ' + status,
-        'Uptime : ' + days + 'd ' + hours + 'j ' + minutes + 'm',
-        'Plugin : ' + totalPlugins,
-        'Node   : ' + (process.version || '-') + ' / ' + String(process.platform || '-').toUpperCase(),
-        '',
-        'Pilih kategori lewat tombol BUKA MENU.',
-        'Klik kategori, lalu pilih perintahnya.'
-    ])
-
-    // Sections navigasi kategori (row mengarah ke sub-menu)
-    const catRows = usableCats(m).map(([key, c]) => {
-        const preview = (c.cmds.length ? c.cmds.slice(0, 4).map(x => x.name).join(', ') : (key === 'airich' ? 'Premium & Owner' : ''))
-        return { id: '.menu ' + key, rowId: '.menu ' + key, header: '', title: c.label, description: preview }
-    })
-    const sections = [{
-        title: 'NAVIGASI MENU',
-        highlight_label: '',
-        rows: [ ...catRows, { id: '.profil', rowId: '.profil', header: '', title: 'Profil', description: 'Lihat status akses kamu' } ]
-    }]
-
-    const botCfg = loadBotConfig()
-    const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
-    const ownerNumber = botCfg.creator?.[0] || ''
-
-    const native = [singleSelect('BUKA MENU', sections)]
-    native.push(quickReply('Profil', '.profil'))
-    if (m.isOwner || m.hasFull) native.push(quickReply('Daftar Owner', '.ownlist'))
-    native.push(ctaUrl('Linktree', channelLink))
-    if (ownerNumber) native.push(callBtn('Call Owner', '+' + ownerNumber))
-    native.push(copyCode('Salin Versi', botVersion()))
-
-    const ok = await sendMenu(conn, m, menuBox, sections, native)
-    if (ok) return
-
-    // Fallback: plain text
-    let plainText = `> *${botVersion().toUpperCase()}*\n> _Aktif 24/7_\n\n`
-    plainText += `Halo, *${m.pushName || 'User'}*\nTotal Plugin: *${totalPlugins}*\n\n`
-    for (const [key, c] of usableCats(m)) {
-        if (key === 'airich') {
-            plainText += `- *AIRICH (PREMIUM)* - khusus premium & owner\n`
-            continue
-        }
-        plainText += `*${c.label.toUpperCase()}*\n`
-        c.cmds.filter(x => exists(x.name)).forEach(x => { plainText += `- \`.${x.name}\` - ${x.desc}\n` })
-        plainText += '\n'
+    // ===== Menu utama =====
+    const buttons = [
+        singleSelect(' BUKA MENU', sections),
+        quickReply(' PROFIL SAYA', '.menu me'),
+        ctaUrl(' LINKTREE', channelLink),
+        quickReply(' KONTAK OWNER', '.menu kontak')
+    ]
+    const ok = await sendInteractive(conn, m, botVersion(), text, buttons)
+    if (!ok) {
+        const list = cats
+            .map(([k, c]) => {
+                const rows = rowsOf(c, m)
+                if (!rows.length) return ''
+                return '* ' + c.label + '*\n' + rows.map(r => '- `.' + r.name + '` - ' + r.desc).join('\n')
+            })
+            .filter(Boolean)
+            .join('\n\n')
+        await m.reply(text + '\n' + list + '\n\n_Ketik perintah langsung._')
     }
-    plainText += `\n_Ketik perintah sesuai contoh. Semoga bermanfaat!`
-    await m.reply(plainText)
 }
 
 handler.command = ['menu', 'help', 'profil']

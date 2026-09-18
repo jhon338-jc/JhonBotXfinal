@@ -29,7 +29,6 @@ let handler = async (m, { conn, args }) => {
 }
 
 handler.command = ['ownadd', 'addowner']
-handler.owner = true
 handler.ownerOnly = true
 
 export default handler

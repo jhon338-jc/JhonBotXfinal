@@ -39,7 +39,7 @@ function carouselBtn(messageVersion, buttons) {
 
 let handler = async (m, { conn }) => {
     const botCfg = loadBotConfig()
-    const botName = botCfg.botName || 'JhonBot'
+    const botName = botCfg.botName || 'JhonBotXfinal'
     const botVersion = botName + ' v' + (botCfg.version || '3.3.8')
     const ownerNumber = (botCfg.creator?.[0] || '').replace(/\D/g, '')
     const ownerName = botCfg.ownerName || 'Jhon338'
@@ -86,7 +86,7 @@ let handler = async (m, { conn }) => {
             interactiveMessage: {
                 header: { title: ' *UI BUTTONS*', hasMediaAttachment: false },
                 body: { text: '_Setiap tombol ini punya fungsi yang bisa kamu pakai._' },
-                footer: { text: botVersion + ' â€¢ Powered by Baileys' },
+                footer: { text: botVersion + ' • Powered by Baileys' },
                 nativeFlowMessage: { messageVersion: 1, buttons: native }
             }
         }
@@ -192,7 +192,6 @@ let handler = async (m, { conn }) => {
 }
 
 handler.command = ['ui', 'preview']
-handler.owner = true
 handler.ownerOnly = true
 
 export default handler

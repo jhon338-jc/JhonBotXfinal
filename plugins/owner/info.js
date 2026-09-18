@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
-import { getPluginSummary } from '../../handler.js'
+import { plugins } from '../../handler.js'
 import { log, COLORS } from '../../lib/rgb.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -28,21 +28,20 @@ function copyCode(display_text, copy_code) {
 }
 
 let handler = async (m, { conn }) => {
-    const { owner, user } = getPluginSummary()
     const runtime = process.uptime()
     const days = Math.floor(runtime / 86400)
     const hours = Math.floor((runtime % 86400) / 3600)
     const minutes = Math.floor((runtime % 3600) / 60)
-    const total = [...new Set([...owner, ...user])].length
 
     const botCfg = loadBotConfig()
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
-    const botVersion = 'JhonBot v' + (botCfg.version || '3.3.8')
+    const botName = botCfg.botName || 'JhonBotXfinal'
+    const botVersion = botName + ' v' + (botCfg.version || '3.3.8')
 
     const text = `> *${botVersion}*\n> _Aktif 24/7 Tanpa Henti_\n\n` +
-        `-  *Nama*        : JhonBot\n` +
+        `-  *Nama*        : ${botName}\n` +
         `-  *Developer*   : Jhon338\n` +
-        `-  *Plugins*     : ${total}\n` +
+        `-  *Plugins*     : ${plugins.size}\n` +
         `-  *Uptime*      : ${days}d ${hours}h ${minutes}m\n` +
         `-  *Mode*        : PUBLIC\n\n` +
         `*DEVELOPER BY JHON338 • POWERED BY BAILEYS*`

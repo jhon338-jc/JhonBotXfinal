@@ -1,9 +1,7 @@
 {
-  "botName": "JhonXfinal",
+  "botName": "JhonBotXfinal",
   "ownerName": "Jhon338",
-  "creator": [
-    "6285602288269"
-  ],
+  "creator": ["6285602288269"],
   "pairingCode": "JHON3382",
   "version": "3.3.8",
   "prefix": [
@@ -15,6 +13,7 @@
   ],
   "botMode": "public",
   "channelLink": "https://jhon338-jc.github.io/Linktree/",
+  "channelUrl": "https://whatsapp.com/channel/0029VbC0TW8545uvqe36Kv0b",
   "accessDenied": {
     "owner": "Fitur ini khusus Owner."
   }

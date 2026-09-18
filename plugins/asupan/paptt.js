@@ -14,8 +14,7 @@ let handler = async (m, { conn, args, command }) => {
 
     try {
         const found = randomImage('pap_susu')
-        if (!found) {
-        }
+        if (!found) return m.reply(' Folder paptt belum punya foto.')
         const buffer = fs.readFileSync(found.file)
         await saveImage(buffer)
         const data = {
@@ -32,6 +31,4 @@ let handler = async (m, { conn, args, command }) => {
 }
 
 handler.command = ['paptt']
-handler.premium = true
-handler.tags = ['premium']
 export default handler

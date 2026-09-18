@@ -1,28 +1,3 @@
 {
-  "premium": [
-    {
-      "number": "6285134895788",
-      "tier": "premium1",
-      "startDate": 1789284482627,
-      "endDate": 1789457282627
-    },
-    {
-      "number": "6285880789574",
-      "tier": "premium1",
-      "startDate": 1789299816834,
-      "endDate": 1789472616834
-    },
-    {
-      "number": "6287819795054",
-      "tier": "premium1",
-      "startDate": 1789305180115,
-      "endDate": 1789477980115
-    },
-    {
-      "number": "6285967238651",
-      "tier": "premium1",
-      "startDate": 1789306035877,
-      "endDate": 1789478835877
-    }
-  ]
+  "premium": []
 }

@@ -1,8 +1,8 @@
-# JhonBot
+# JhonBotXfinal
 
 > WhatsApp Bot multifungsi berbasis [Baileys](https://github.com/whiskeysockets/baileys) • v3.3.8
 
-JhonBot adalah bot WhatsApp yang hanya aktif di **grup yang dipilih Owner** lewat DM. Mendukung pairing code, menu tombol interaktif (native flow), akses berbasis peran (Owner & User & Premium), sistem premium berlangganan, dan UI preview lengkap.
+JhonBotXfinal adalah bot WhatsApp yang hanya aktif di **grup yang dipilih Owner** lewat DM. Mendukung pairing code, menu tombol interaktif (native flow), akses berbasis peran (Owner & User & Premium), sistem premium berlangganan, dan UI preview lengkap.
 
 ## Fitur
 
@@ -124,7 +124,7 @@ Edit `config.json`:
 
 ```json
 {
-  "botName": "JhonBot",
+  "botName": "JhonBotXfinal",
   "ownerName": "Jhon338",
   "creator": ["<no_owner_628xxx>"],
   "pairingCode": "JHON3382",
@@ -144,7 +144,7 @@ Edit `config.json`:
 ## Struktur Folder
 
 ```
-JhonBot/
+JhonBotXfinal/
 ├─ index.js            → Entry point, pairing, keep-alive
 ├─ handler.js          → Loader plugin, parser, akses, premium, monitor
 ├─ config.json         → Konfigurasi bot

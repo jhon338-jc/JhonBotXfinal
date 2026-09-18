@@ -53,6 +53,4 @@ let handler = async (m, { conn, args, command }) => {
 }
 
 handler.command = ['asp', 'asupan']
-handler.premium = true
-handler.tags = ['premium']
 export default handler

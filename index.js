@@ -10,6 +10,7 @@ import {
     Browsers
 } from '@whiskeysockets/baileys'
 import { makeWASocket, smsg, bind } from './lib/msg.js'
+import { resolveNewsletter } from './lib/shop.js'
 import handleMessage, { initPlugins, getPluginSummary, normalizeNumber, invalidateJSONCache } from './handler.js'
 import { rgb, log, divider, timeWIB, COLORS } from './lib/rgb.js'
 import { ensureTemp } from './lib/autosave.js'
@@ -29,7 +30,6 @@ process.on('unhandledRejection', (err) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const MONITOR_FILE = path.join(__dirname, 'database', 'monitor.json')
 const OWNER_FILE = path.join(__dirname, 'database', 'owner.json')
-const PROFILE_PHOTO = path.join(__dirname, 'src', 'img', 'foto_menu.png')
 const PHOTO_IN = path.join(__dirname, 'src', 'img', 'masuk.png')
 const PHOTO_OUT = path.join(__dirname, 'src', 'img', 'keluar.png')
 
@@ -64,7 +64,7 @@ const question = t => {
 }
 
 let config = loadConfig()
-let BOT_NAME = config.botName || 'JhonXfinal'
+let BOT_NAME = config.botName || 'JhonBotXfinal'
 let VERSION = config.version || '3.3.8'
 let PAIR_CODE = config.pairingCode || 'JHON3382'
 
@@ -121,21 +121,10 @@ async function applyBotProfile(conn) {
     if (profileSynced) return
     profileSynced = true
     try {
-        const botJid = conn.decodeJid(conn.user?.id)
-        if (botJid && fs.existsSync(PROFILE_PHOTO)) {
-            await conn.updateProfilePicture(botJid, fs.readFileSync(PROFILE_PHOTO))
-            console.log(log('PROFILE', 'Foto profil bot terpasang: src/img/foto_menu.png', COLORS.success))
-        } else {
-            console.log(log('PROFILE', 'Skip foto profil: src/img/foto_menu.png belum ada', COLORS.warn))
-        }
-    } catch (e) {
-        console.error(log('PROFILE', 'Gagal update foto profil: ' + (e?.message || e), COLORS.error))
-    }
-    try {
         await conn.updateProfileName(`${BOT_NAME} v${VERSION}`)
     } catch {}
     try {
-        const bio = '> ' + (config.botName || 'JhonXfinal') + ' BOT\n' +
+        const bio = '> ' + (config.botName || 'JhonBotXfinal') + ' BOT\n' +
             '> Aktif 24/7\n' +
             '> Owner: ' + (config.ownerName || 'Jhon338') + '\n' +
             '> Mau pakai bot? Daftar dulu: .daftar'
@@ -161,60 +150,18 @@ function ensureBotIsOwner(conn) {
     } catch {}
 }
 
-// ==================== KIRIM DAFTAR GRUP KE OWNER ====================
+// ==================== CATATAN STARTUP ====================
 async function sendGroupListToOwner(conn) {
     try {
-        const monitor = readJSON(MONITOR_FILE) || { groups: [], waiting: false }
-        monitor.groups ??= []
-        // Sudah ada grup tersimpan → jangan macet di mode "waiting".
-        // Pakai grup yang sudah ada; owner bisa ganti grup kapan saja lewat .grup
-        if (monitor.groups.length > 0) {
-            if (monitor.waiting) {
-                monitor.waiting = false
-                writeJSON(MONITOR_FILE, monitor)
-                console.log(log('STARTUP', 'Mode waiting dari sesi sebelumnya di-reset', COLORS.success))
-            }
-            console.log(log('STARTUP', `Menggunakan ${monitor.groups.length} grup tersimpan`, COLORS.info))
-            console.log(log('STARTUP', 'Ketik .grup ke bot untuk mengganti pilihan grup', COLORS.info))
-            return
+        const monitor = readJSON(MONITOR_FILE) || { off: [] }
+        monitor.off = Array.isArray(monitor.off) ? monitor.off : []
+        if (monitor.off.length > 0) {
+            console.log(log('STARTUP', `${monitor.off.length} grup dimatikan (.on/.off untuk kelola)`, COLORS.info))
+        } else {
+            console.log(log('STARTUP', 'Bot aktif di semua grup. Kelola lewat .on/.off di grup', COLORS.success))
         }
-
-        const ownerNumber = config.creator?.[0] || loadOwnersFirst()
-        if (!ownerNumber) return
-        const ownerJid = ownerNumber + '@s.whatsapp.net'
-        const groups = await conn.groupFetchAllParticipating()
-        const groupList = Object.values(groups)
-
-        if (!groupList.length) {
-            await conn.sendMessage(ownerJid, { text: 'Bot tidak ada di grup manapun!' })
-            console.log(log('STARTUP', 'Tidak ada grup ditemukan', COLORS.warn))
-            return
-        }
-
-        let text = `┌─────────────────────────────────────┐\n│  DAFTAR GRUP\n│\n`
-        text += `│  Total Grup: ${groupList.length}\n│\n`
-        groupList.forEach((g, i) => {
-            text += `│  ${i + 1}. ${g.subject}\n│     ${g.participants?.length || 0} member\n│\n`
-        })
-        text += `│  Balas dengan nomor grup\n│  Contoh: 2,5\n│  Maksimal 5 grup\n└─────────────────────────────────────┘`
-
-        monitor.waiting = true
-        if (!monitor.groups.length) monitor.groups = []
-        writeJSON(MONITOR_FILE, monitor)
-
-        await conn.sendMessage(ownerJid, { text: text })
-        console.log(log('STARTUP', 'Daftar grup terkirim ke owner', COLORS.success))
-        console.log(log('STARTUP', 'Menunggu pilihan grup dari owner...', COLORS.warn))
     } catch (err) {
-        console.error(log('STARTUP', 'Gagal kirim daftar grup: ' + (err?.message || err), COLORS.error))
-    }
-}
-
-function loadOwnersFirst() {
-    try {
-        return readJSON(OWNER_FILE)?.owner?.[0] || null
-    } catch {
-        return null
+        console.error(log('STARTUP', 'Gagal baca monitor: ' + (err?.message || err), COLORS.error))
     }
 }
 
@@ -248,7 +195,7 @@ async function start() {
     try {
         ensureTemp()
         config = loadConfig()
-        BOT_NAME = config.botName || 'JhonXfinal'
+        BOT_NAME = config.botName || 'JhonBotXfinal'
         VERSION = config.version || '3.3.8'
         PAIR_CODE = config.pairingCode || 'JHON3382'
         console.log(bannerStart())
@@ -315,7 +262,7 @@ async function start() {
                 try {
                     const CONFIG_FILE = path.join(__dirname, 'config.json')
                     const cfg = readJSON(CONFIG_FILE)
-                    cfg.creator = [...new Set([...(cfg.creator || []).map(n => normalizeNumber(n)), ownerNum]).filter(Boolean)]
+                    cfg.creator = [...new Set([...(cfg.creator || []).map(n => normalizeNumber(n)), ownerNum])].filter(Boolean)
                     writeJSON(CONFIG_FILE, cfg)
                     console.log(log('PAIRING', `Nomor ${ownerNum} tersimpan di config.json`, COLORS.success))
                 } catch (cfgErr) {
@@ -357,8 +304,8 @@ async function start() {
         socket.ev.on('group-participants.update', async ({ id, participants, action }) => {
             try {
                 if (!id || !id.endsWith('@g.us')) return
-                const monitor = readJSON(MONITOR_FILE) || {}
-                if (monitor.waiting || !Array.isArray(monitor.groups) || !monitor.groups.includes(id)) return
+                const monitor = readJSON(MONITOR_FILE) || { off: [] }
+                if ((monitor.off || []).includes(id)) return // bot aktif semua grup, tapi yang .off jangan kirim notif
                 if (!participants?.length) return
                 const botJid = socket.decodeJid(socket.user?.id) || ''
                 for (const p of participants) {
@@ -396,6 +343,7 @@ async function start() {
                 reconnectAttempt = 0
                 ensureBotIsOwner(socket)
                 await applyBotProfile(socket)
+                resolveNewsletter(socket).catch(() => {})
                 if (reconnectTimer) {
                     clearTimeout(reconnectTimer)
                     reconnectTimer = null

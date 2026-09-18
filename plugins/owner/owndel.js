@@ -35,7 +35,6 @@ let handler = async (m, { conn, args }) => {
 }
 
 handler.command = ['owndel', 'delowner']
-handler.owner = true
 handler.ownerOnly = true
 
 export default handler

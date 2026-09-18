@@ -4,17 +4,17 @@ let handler = async (m, { conn, text }) => {
 
     const raw = String(text || '').trim()
     if (!raw) {
-        return m.reply('> *CARA DAFTAR:*\n\n- `.daftar nama,umur,status`\n\n_Contoh:_\n- `.daftar Jhon,20,pelajar`\n\n_ Status yang tersedia:_\n- *pelajar* / *mahasiswa* / *singgel* / *jomblo* / *kawin*')
+        return m.reply('> *CARA DAFTAR:*\n\n- `.daftar nama,umur,status`\n\n_Contoh:_\n- `.daftar Jhon,20,pelajar`\n\n*Status yang tersedia:*\n- *pelajar* / *mahasiswa* / *singgel* / *jomblo* / *kawin*')
     }
 
     const parts = raw.split(',').map(s => s.trim())
     const [nama, umur, status] = parts
-    if (nama === undefined || umur === undefined || status === undefined) {
+    if (nama === undefined || umur === undefined || status === undefined || !String(nama).trim()) {
         return m.reply('> *FORMAT SALAH!*\n\n_Gunakan:_\n- `.daftar nama,umur,status`\n\n_Contoh:_\n- `.daftar Jhon,20,pelajar`')
     }
 
-    if (!/^\d+$/.test(umur)) {
-        return m.reply('> *UMUR HARUS ANGKA!*\n\n_Contoh:_ `.daftar Jhon,20,pelajar`')
+    if (!/^\d{1,2}$/.test(umur) || +umur < 1 || +umur > 50) {
+        return m.reply('> *UMUR TIDAK VALID!*\n\n_Umur harus angka 1 sampai 50._\n_Contoh:_ `.daftar Jhon,20,pelajar`')
     }
 
     const stMap = { single: 'singgel', lajang: 'singgel', singles: 'singgel' }
@@ -23,7 +23,7 @@ let handler = async (m, { conn, text }) => {
         return m.reply('> *STATUS TIDAK VALID!*\n\n_Pilih salah satu:_\n- *pelajar*\n- *mahasiswa*\n- *singgel*\n- *jomblo*\n- *kawin*\n\n_Contoh:_ `.daftar Jhon,20,pelajar`')
     }
 
-    const jid = m.sender || m.chat || ''
+    const jid = m.sender || ''
     const number = normalizeNumber(jid)
 
     if (isRegisteredMember(jid)) {
