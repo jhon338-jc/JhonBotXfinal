@@ -3,9 +3,9 @@
 > **WhatsApp Multi-Device Bot** berbasis [Baileys](https://github.com/whiskeysockets/baileys) • v3.3.8
 > Dibuat oleh [Jhon338](https://jhon338-jc.github.io/Linktree/)
 
-![Menu Utama](https://raw.githubusercontent.com/jhon338-jc/JhonBotXfinal/main/src/img/foto_menu.png)
+![Menu Utama](https://raw.githubusercontent.com/jhon338-jc/JhonBotXfinal/main/src/img/menu.png)
 
-**JhonBotXfinal** adalah bot WhatsApp multifungsi yang berjalan penuh di **grup** dengan tampilan **menu tombol interaktif native** (native flow). Bot aktif 24/7, memakai **warna log RGB gradient**, mendukung **pairing code**, akses berbasis peran (Owner / Member / Premium), **kuota asupan harian**, serta **notifikasi welcome & member keluar** otomatis.
+**JhonBotXfinal** adalah bot WhatsApp multifungsi yang berjalan penuh di **grup** dengan tampilan **menu tombol interaktif native** (native flow). Bot aktif 24/7, memakai **warna log RGB gradient**, mendukung **pairing code**, akses berbasis peran (**Creator > Owner > Admin > Premium 1/2/3 > User**), **kuota asupan harian per role**, wajib **.daftar** member, serta **notifikasi welcome & member keluar** real-time (tanpa replay saat bot mati).
 
 ---
 
@@ -227,7 +227,7 @@ JhonBotXfinal/
 │  ├─ airich/            → server, snake (Premium Only)
 │  └─ premium/           → premium (paket & status)
 ├─ src/
-│  ├─ img/               → foto_menu.png, masuk.png, keluar.png, premium.png
+│  ├─ img/               → menu.png, premium.png, welcome.png, goodbye.png, dana.png
 │  ├─ photos/            → 46 subfolder = 46 command foto asupan
 │  ├─ image_pap/         → Sumber foto `.pap` `.paptt` `.papmmk` `.papbgl`
 │  ├─ videos/            → Video pendukung

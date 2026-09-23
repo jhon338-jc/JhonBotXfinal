@@ -3,7 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { generateWAMessageFromContent, prepareWAMessageMedia } from '@whiskeysockets/baileys'
 import sharp from 'sharp'
-import { plugins } from '../../handler.js'
+import { plugins, canRunCommand, PREMIUM_TIERS } from '../../handler.js'
 import { getTroli } from '../../lib/shop.js'
 import { log, COLORS } from '../../lib/rgb.js'
 
@@ -17,7 +17,6 @@ import { log, COLORS } from '../../lib/rgb.js'
 // ============================================================
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const IMG_PATH = path.join(__dirname, '..', '..', 'src', 'img', 'foto_menu.png')
 
 function quickReply(display_text, id) {
     return { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text, id }) }
@@ -53,12 +52,25 @@ const CATS = {
     tools: { label: 'TOOLS', cmds: [
         { name: 'toimg', desc: 'Ubah stiker jadi gambar/video' },
         { name: 'rvo', desc: 'Buka pesan view once' },
-        { name: 'lirik', desc: 'Cari lirik lagu' }
+        { name: 'lirik', desc: 'Cari lirik lagu' },
+        { name: 'custom', desc: 'Bikin web/game Airich sendiri' },
+        { name: 'play', desc: 'Putar lagu YouTube + lirik' }
+    ]},
+    game: { label: 'GAME', cmds: [
+        { name: 'dino', desc: 'Dino Runner (lompat kaktus)' },
+        { name: 'flappy', desc: 'Flappy Bird' },
+        { name: 'slot', desc: 'Fruit Slot (spin rejeki)' },
+        { name: 'block', desc: 'Block Blast mini' },
+        { name: 'gd', desc: 'Geometry Dash mini' },
+        { name: 'tetris', desc: 'Tetris klasik' },
+        { name: 'catur', desc: 'Catur lawan bot' },
+        { name: 'dash', desc: 'Sonic Dash' },
+        { name: 'pou', desc: 'Pou Sky Jump' }
     ]},
     download: { label: 'DOWNLOAD', cmds: [
         { name: 'donlodall', desc: 'Download TikTok, IG, dan lainnya' }
     ]},
-    asupan: { label: 'ASUPAN (LIMIT 5/HARI)', cmds: [
+    asupan: { label: 'ASUPAN (KUOTA HARIAN)', cmds: [
         { name: 'asp', desc: 'Asupan random' },
         { name: 'ccn', desc: 'Cecan random' },
         { name: 'pap', desc: 'PAP random' },
@@ -119,21 +131,26 @@ const CATS = {
     premium: { label: 'PREMIUM', cmds: [
         { name: 'premium', desc: 'Lihat paket premium & cara bayar' }
     ]},
-    airich: { label: 'AIRICH (PREMIUM)', cmds: [
-        { name: 'snake', desc: 'Main game Snake' }
+    airich: { label: 'AIRICH (OWNER + PREMIUM 2/3)', cmds: [
+        { name: 'server', desc: 'Dashboard command center' },
+        { name: 'musik', desc: 'Player musik transparan + playlist' }
     ]},
-    owner: { label: 'OWNER', ownerOnly: true, cmds: [
+    admin: { label: 'ADMIN (KELOLA GRUP)', cmds: [
         { name: 'add', desc: 'Tambah member grup' },
         { name: 'kick', desc: 'Kick member grup' },
         { name: 'setpp', desc: 'Ganti foto profil grup' },
         { name: 'setnm', desc: 'Ganti nama grup' },
         { name: 'setds', desc: 'Ganti deskripsi grup' },
-        { name: 'htg', desc: 'Hidetag semua member' },
-        { name: 'on', desc: 'Aktifkan bot di grup ini' },
-        { name: 'off', desc: 'Matikan bot di grup ini' },
+        { name: 'htg', desc: 'Hidetag semua member' }
+    ]},
+    creator: { label: 'CREATOR', cmds: [
         { name: 'ownadd', desc: 'Tambah owner baru' },
         { name: 'owndel', desc: 'Hapus owner' },
-        { name: 'ownlist', desc: 'Daftar owner' },
+        { name: 'ownlist', desc: 'Daftar owner' }
+    ]},
+    owner: { label: 'OWNER', cmds: [
+        { name: 'on', desc: 'Aktifkan bot di grup ini' },
+        { name: 'off', desc: 'Matikan bot di grup ini' },
         { name: 'addprem', desc: 'Aktifkan member premium' },
         { name: 'delprem', desc: 'Hapus member premium' },
         { name: 'premlist', desc: 'Daftar premium' },
@@ -147,8 +164,7 @@ const CATS = {
 function exists(cmd) { return plugins.has(String(cmd).toLowerCase()) }
 
 function rowsOf(cat, m) {
-    if (cat.ownerOnly && !(m.isOwner || m.hasFull)) return []
-    return cat.cmds.filter(cmd => exists(cmd.name))
+    return cat.cmds.filter(cmd => exists(cmd.name) && canRunCommand(m, cmd.name))
 }
 
 // Section dropdown (single_select) — BADGE DI JUDUL KATEGORI:
@@ -184,9 +200,12 @@ function botVersion() {
 }
 
 function userStatus(m) {
+    if (m.isCreator) return 'Creator'
     if (m.isOwner) return 'Owner'
     if (m.isAdmin) return 'Admin'
-    if (m.isPremium) return 'Premium'
+    if (m.isPremium) {
+        return m.premiumTier && PREMIUM_TIERS[m.premiumTier] ? PREMIUM_TIERS[m.premiumTier].label : 'Premium'
+    }
     return 'Member'
 }
 
@@ -210,10 +229,21 @@ function infoBlock(m, totalPlugins) {
 }
 
 async function getMenuImage(conn) {
+    // Menu SELALU dapat gambar: menangani menu.png, premium.png, dana.png,
+    // lalu file lain apa pun di src/img — selama satu masih ada, gambar muncul.
     try {
-        if (fs.existsSync(IMG_PATH)) {
-            const buff = await sharp(IMG_PATH).resize({ width: 640 }).jpeg({ quality: 78 }).toBuffer()
-            return await prepareWAMessageMedia({ image: buff }, { upload: conn.waUploadToServer })
+        const imgDir = path.join(__dirname, '..', '..', 'src', 'img')
+        const candidates = ['menu.png', 'premium.png', 'dana.png']
+        const others = fs.existsSync(imgDir)
+            ? fs.readdirSync(imgDir).filter(f => /\.(png|jpe?g|webp)$/i.test(f)).sort()
+            : []
+        for (const name of [...candidates, ...others]) {
+            const p = path.join(imgDir, name)
+            if (!fs.existsSync(p)) continue
+            try {
+                const buff = await sharp(p).resize({ width: 640 }).jpeg({ quality: 78 }).toBuffer()
+                return await prepareWAMessageMedia({ image: buff }, { upload: conn.waUploadToServer })
+            } catch {}
         }
     } catch {}
     return null

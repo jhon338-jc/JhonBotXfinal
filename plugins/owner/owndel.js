@@ -1,13 +1,15 @@
 import fs from 'fs'
 import { normalizeNumber, DB_FILES, invalidateJSONCache } from '../../handler.js'
+import { resolveOwnerInput } from '../../lib/owner-util.js'
 
 const OWNER_FILE = DB_FILES.owner
 
 let handler = async (m, { conn, args }) => {
-    const num = normalizeNumber(args[0])
-    if (!num || !/^\d{8,15}$/.test(num)) {
-        return m.reply(' Masukkan nomor valid!\n\nContoh: .owndel 628xxx')
+    const res = await resolveOwnerInput({ conn, m, args })
+    if (!res) {
+        return m.reply(' Masukkan nomor valid atau *reply* pesan target!\n\nContoh:\n- `.owndel 628xxx`\n- `.owndel` + *reply* pesan orangnya')
     }
+    const { num } = res
 
     let db
     try {
@@ -19,7 +21,7 @@ let handler = async (m, { conn, args }) => {
     db.owner ??= []
     if (!Array.isArray(db.owner)) db.owner = []
 
-    const myNum = normalizeNumber(m.sender.split('@')[0])
+    const myNum = normalizeNumber(String(m.sender || '').split('@')[0])
     if (num === myNum) {
         return m.reply(' Tidak bisa menghapus Owner sendiri!')
     }
@@ -31,10 +33,10 @@ let handler = async (m, { conn, args }) => {
     db.owner = db.owner.filter(v => v !== num)
     fs.writeFileSync(OWNER_FILE, JSON.stringify(db, null, 2))
     invalidateJSONCache(OWNER_FILE)
-    m.reply(' Nomor *+' + num + '* berhasil dihapus dari daftar Owner.\n\n Total Owner sekarang: ' + db.owner.length)
+    m.reply(' Nomor *+' + num + '* berhasil dihapus dari daftar Owner.\n\nTotal Owner sekarang: ' + db.owner.length)
 }
 
 handler.command = ['owndel', 'delowner']
-handler.ownerOnly = true
+handler.creatorOnly = true
 
 export default handler

@@ -16,6 +16,6 @@ let handler = async (m, { conn, text }) => {
 }
 
 handler.command = ['htg', 'hidetag']
-handler.owner = true
+handler.admin = true
 
 export default handler

@@ -2,6 +2,7 @@ import os from 'os'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import sharp from 'sharp'
 import { plugins, loadOwners, loadPremium, loadMembers, loadPremiumList } from '../../handler.js'
 import { sendAiRich } from '../../lib/airich.js'
 import { getChatLog } from '../../lib/serverlog.js'
@@ -118,12 +119,35 @@ async function fetchWeather() {
     }
 }
 
+// Foto menu (banner landscape) → data URI kecil untuk dashboard
+async function loadPhoto() {
+    try {
+        const p = path.join(ROOT, 'src', 'img', 'menu.png')
+        if (!fs.existsSync(p)) return ''
+        const buf = await sharp(p).resize({ width: 600 }).jpeg({ quality: 78 }).toBuffer()
+        return 'data:image/jpeg;base64,' + buf.toString('base64')
+    } catch {
+        return ''
+    }
+}
+
+// Total grup yang benar-benar diikuti bot (real dari WhatsApp)
+async function fetchGroupTotal(conn) {
+    try {
+        const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 5000))
+        const res = await Promise.race([conn.groupFetchAllParticipating(), timeout])
+        return Object.keys(res || {}).length
+    } catch {
+        return '-'
+    }
+}
+
 let handler = async (m, { conn }) => {
     await conn.sendMessage(m.chat, { react: { text: '⚙️', key: m.key } })
     try {
         const cfg = loadConfig()
         const monitor = readDB('monitor.json') || { off: [] }
-        const groups = Array.isArray(monitor.off) ? (monitor.off.length || 'ALL') : 'ALL'
+        const groupsOff = Array.isArray(monitor.off) ? monitor.off.length : 0
         const members = loadMembers().length
         const premiumList = loadPremiumList()
         const premium = loadPremium().length
@@ -134,17 +158,19 @@ let handler = async (m, { conn }) => {
         const freeMem = os.freemem()
         const usedMem = Math.max(0, totalMem - freeMem)
         const ramPct = Math.min(100, Math.round((usedMem / (totalMem || 1)) * 100))
-        const load0 = (os.loadavg?.()[0] || 0)
 
-        const [cpuPct, weather, songs] = await Promise.all([
+        const [cpuPct, weather, songs, groupsTotal, photo] = await Promise.all([
             sampleCpu(),
             fetchWeather(),
             Promise.resolve(loadSongs(AUDIO_DIR, (msg, lvl) =>
-                console.log(log('SERVER', msg, lvl === 'warn' ? COLORS.warn : COLORS.info))))
+                console.log(log('SERVER', msg, lvl === 'warn' ? COLORS.warn : COLORS.info)))),
+            fetchGroupTotal(conn),
+            loadPhoto()
         ])
 
         const botName = cfg.botName || 'JhonBotXfinal'
         const ver = (botName + ' v' + (cfg.version || '3.3.8'))
+        const uptime = Math.floor(process.uptime())
 
         const ds = {
             bot: botName,
@@ -154,7 +180,8 @@ let handler = async (m, { conn }) => {
             owner: cfg.ownerName || 'Jhon338',
             created: dateStr(),
             plugins: plugins.size,
-            groups,
+            groupsOff,
+            groupsTotal,
             members,
             premium,
             premiumTotal,
@@ -167,23 +194,24 @@ let handler = async (m, { conn }) => {
                 totalFmt: fmtBytes(totalMem)
             },
             cpu: cpuPct,
-            load: load0,
-            uptime: Math.floor(process.uptime()),
-            uptimeFmt: fmtDur(process.uptime()),
+            cpus: (os.cpus() || []).length,
+            uptime,
+            uptimeFmt: fmtDur(uptime),
             sysUp: fmtDur(os.uptime()),
             node: process.version,
             plat: (os.platform() + ' ' + process.arch).toUpperCase(),
             host: os.hostname(),
             pid: process.pid,
             weather,
+            photo,
             sdk: {
                 tz: 7 * 3600,
-                uptime: Math.floor(process.uptime()),
+                uptime,
                 songs,
                 link: cfg.channelLink || '',
                 ver
             },
-            log: getChatLog().slice(0, 10)
+            log: getChatLog().slice(0, 20)
         }
 
         const html = buildServerHTML(ds)
@@ -197,6 +225,5 @@ let handler = async (m, { conn }) => {
 }
 
 handler.command = ['server']
-handler.owner = true
 
 export default handler

@@ -1,13 +1,15 @@
 import fs from 'fs'
-import { normalizeNumber, DB_FILES, invalidateJSONCache } from '../../handler.js'
+import { DB_FILES, invalidateJSONCache } from '../../handler.js'
+import { resolveOwnerInput } from '../../lib/owner-util.js'
 
 const OWNER_FILE = DB_FILES.owner
 
 let handler = async (m, { conn, args }) => {
-    const num = normalizeNumber(args[0])
-    if (!num || !/^\d{8,15}$/.test(num)) {
-        return m.reply(' Masukkan nomor valid!\n\nContoh: .ownadd 628xxx atau .ownadd 08xxx')
+    const res = await resolveOwnerInput({ conn, m, args })
+    if (!res) {
+        return m.reply(' Masukkan nomor valid atau *reply* pesan target!\n\nContoh:\n- `.ownadd 628xxx`\n- `.ownadd 08xxx`\n- `.ownadd` + *reply* pesan orangnya')
     }
+    const { num, via } = res
 
     let db
     try {
@@ -25,10 +27,10 @@ let handler = async (m, { conn, args }) => {
     db.owner.push(num)
     fs.writeFileSync(OWNER_FILE, JSON.stringify(db, null, 2))
     invalidateJSONCache(OWNER_FILE)
-    m.reply(' Nomor *+' + num + '* berhasil ditambahkan sebagai **Owner asli** (permanen, tanpa batas waktu).\n\n Total Owner sekarang: ' + db.owner.length + '\n\n_ Untuk member yang langganan, gunakan `.addprem <no> <tier>` â€” dia menjadi **member premium** dengan masa aktif sesuai paket._')
+    m.reply(' Nomor *+' + num + '* berhasil ditambahkan sebagai **Owner asli** (permanen, tanpa batas waktu).\n\nDikenali dari: *' + via + '*\nTotal Owner sekarang: ' + db.owner.length + '\n\n_ Untuk member yang langganan, gunakan `.addprem <no> <tier>` — dia menjadi **member premium** dengan masa aktif sesuai paket._')
 }
 
 handler.command = ['ownadd', 'addowner']
-handler.ownerOnly = true
+handler.creatorOnly = true
 
 export default handler

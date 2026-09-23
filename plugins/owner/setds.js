@@ -15,7 +15,7 @@ let handler = async (m, { conn, text }) => {
 }
 
 handler.command = ['setds', 'setdesc']
-handler.owner = true
+handler.admin = true
 handler.botAdmin = true
 
 export default handler

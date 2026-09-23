@@ -36,10 +36,11 @@ ${defs}
 }
 
 const images = {
-  'foto_menu.png': 'J',
+  'menu.png': 'J',
   'premium.png': 'P',
-  'masuk.png': '+',
-  'keluar.png': 'X',
+  'welcome.png': '+',
+  'goodbye.png': 'X',
+  'dana.png': 'D',
 }
 
 for (const [name, label] of Object.entries(images)) {

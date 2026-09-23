@@ -28,7 +28,7 @@ let handler = async (m, { conn }) => {
 }
 
 handler.command = ['setpp', 'setppgrup']
-handler.owner = true
+handler.admin = true
 handler.botAdmin = true
 
 export default handler

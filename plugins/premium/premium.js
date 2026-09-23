@@ -132,7 +132,9 @@ let handler = async (m, { conn, args, command }) => {
         const list = loadPremiumList()
         const myFmt = formatPremiumEntry(list.find(e => e && normalizeNumber(e.number) === meNumber))
         let s
-        if (m.isOwner) s = ' *OWNER* — akses penuh tanpa batas.'
+        if (m.isCreator) s = ' *CREATOR* — akses tertinggi semua fitur.'
+        else if (m.isOwner) s = ' *OWNER* — akses penuh tanpa batas.'
+        else if (m.isAdmin) s = ' *ADMIN GRUP* — akses konten premium gratis (kecuali Airich).'
         else if (m.isPremium && myFmt?.active) {
             const dEnd = myFmt.endDate ? new Date(myFmt.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'
             const dur = Math.max(0, Math.ceil((myFmt.endDate - Date.now()) / 86400000))
@@ -239,13 +241,15 @@ let handler = async (m, { conn, args, command }) => {
         premium3: 'Paket *1 bulan*\nPaling irit & hemat maksimal '
     }
     const fiturPaket = {
-        premium1: ' *Fitur Premium 1:*\n• .asp · .ccn · .pap\n• .paptt · .papmmk',
-        premium2: ' *Fitur Premium 2:*\n• .asp · .ccn · .pap\n• .paptt · .papmmk · .papbgl\n• .kitsune · .freyajkt · .cishani\n• .livyrenata · .onicvonzy',
-        premium3: ' *Fitur Premium 3 (all access):*\n• Semua fitur premium terbuka\n• 18 kategori foto acak premium\n• Fitur baru akan menyusul'
+        premium1: ' *Fitur Premium 1:*\n• .asp · .ccn · .pap\n• .paptt · .papmmk · .foto.\n• Kuota asupan *50x/hari* per command',
+        premium2: ' *Fitur Premium 2:*\n• Semua fitur Premium 1\n• .papbgl · .kitsune · .freyajkt\n• .cishani · .livyrenata · .onicvonzy\n• .musik (player Airich)\n• Kuota asupan *100x/hari* per command\n• Game Airich (Access)',
+        premium3: ' *Fitur Premium 3 (all access):*\n• Semua fitur premium terbuka\n• Semua game Airich (.catur .dino .slot dll)\n• Kuota asupan *150x/hari* per command\n• 18 kategori foto acak premium\n• Fitur baru akan menyusul'
     }
 
     let statLine = ' *_Status: Member_*'
-    if (m.isOwner) statLine = ' *_Status: OWNER_*'
+    if (m.isCreator) statLine = ' *_Status: CREATOR_*'
+    else if (m.isOwner) statLine = ' *_Status: OWNER_*'
+    else if (m.isAdmin) statLine = ' *_Status: Admin Grup (Premium Gratis)_*'
     else if (m.isPremium) {
         const dur = myFmt?.endDate ? Math.max(0, Math.ceil((myFmt.endDate - Date.now()) / 86400000)) : null
         statLine = ' *_Status: Premium' + (dur && myFmt?.active ? ` (sisa ~${dur} hari)_*` : '_*')

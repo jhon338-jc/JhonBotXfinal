@@ -8,7 +8,7 @@ import { consumeAsupanQuota } from './lib/asupan-limit.js'
 
 // ============================================================
 //  JHONBOTXFINAL v3.3.8 - BRAIN (OTAK BOT)
-//  Role: OWNER & ADMIN (akses penuh di grup) / PREMIUM / USER
+//  Role: CREATOR > OWNER > ADMIN (kelola grup) / PREMIUM 1-2-3 / USER
 // ============================================================
 
 const BOT_NAME = 'JhonBotXfinal'
@@ -99,6 +99,13 @@ export function loadOwners() {
     }
 }
 
+// CREATOR = nomor di config.json `creator` (paling tinggi, bisa ubah owner list).
+export function loadCreators() {
+    const cfg = readJSON(path.join(__dirname, 'config.json'))
+    if (!cfg || !Array.isArray(cfg.creator)) return []
+    return [...new Set(cfg.creator.map(n => normalizeNumber(n)).filter(Boolean))]
+}
+
 // ==================== PREMIUM ====================
 // Schema premium.json:
 //   { "premium": [ { "number": "628xxx", "tier": "premium1", "startDate": ms, "endDate": ms } ] }
@@ -122,7 +129,7 @@ export function resolveTier(input = '') {
 // premium3 → SEMUA fitur premium (termasuk fitur baru yang muncul nanti,
 //            karena command premium yang tidak terdaftar di bawah dianggap premium3).
 export const PREMIUM_TIER_CMDS = {
-    premium1: ['asp', 'asupan', 'ccn', 'cecan', 'pap', 'paptt', 'papmmk'],
+    premium1: ['asp', 'asupan', 'ccn', 'cecan', 'pap', 'paptt', 'papmmk', 'foto'],
     premium2: ['papbgl', 'kitsune', 'freyajkt', 'cishani', 'livyrenata', 'onicvonzy']
 }
 const TIER_RANK = { premium1: 1, premium2: 2, premium3: 3 }
@@ -292,8 +299,12 @@ async function loadPlugin(file) {
         const category = path.relative(pluginDir, file).split(path.sep)[0]
         if (!category || category === 'node_modules') return
         if (!summary[category]) summary[category] = []
-        // Paket fitur Airich khusus PREMIUM + OWNER (file Airich tidak diubah)
-        if (category === 'airich') handler.premium = true
+        // Paket fitur Airich khusus OWNER + PREMIUM 2/3 (file Airich tidak diubah).
+        // Kategori airich (AiRich-server/musik) + semua file AiRich-*.js di tools.
+        const fileBase = path.basename(file)
+        if (category === 'airich' || fileBase.startsWith('AiRich-')) handler.airich = true
+        // Kategori asupan: BUKAN hard premium — semua member terdaftar boleh pakai,
+        // dibatasi kuota harian per role (USER 5 · PREM1 50 · PREM2 100 · PREM3 150).
         // Kategori plugin (dipakai enforce kuota harian asupan)
         handler.category = category
 
@@ -322,6 +333,29 @@ export function getPluginSummary() {
         out[cat] = [...summary[cat]].sort()
     }
     return out
+}
+
+// Satu sumber kebenaran: bisakah role `m` menjalankan command ini?
+// Dipakai menu untuk menampilkan fitur sesuai role user.
+export function canRunCommand(m, command = '') {
+    try {
+        const handler = plugins.get(String(command).toLowerCase())
+        if (!handler || typeof handler !== 'function') return false
+        if (handler.creatorOnly && !m.isCreator) return false
+        if (handler.ownerOnly && !m.isOwner) return false
+        if (handler.owner && !m.isOwner) return false
+        if (handler.airich && !m.isOwner && (m.premiumRank || 0) < 2) return false
+        if (handler.premium && !m.isPremium) return false
+        if (handler.premium && m.isPremium && !m.isOwner && !m.isAdmin) {
+            if ((m.premiumRank || 2) < premiumCmdRank(command)) return false
+        }
+        if (handler.group && !m.isGroup) return false
+        if (handler.admin && m.isGroup && !m.isAdmin && !m.isOwner) return false
+        if (!m.isCreator && !PRE_REGISTER_FREE.has(String(command).toLowerCase()) && !isRegisteredMember(m.sender)) return false
+        return true
+    } catch {
+        return true
+    }
 }
 
 // ==================== PARSE PESAN (TEKS + BUTTON) ====================
@@ -460,12 +494,54 @@ export default async function handleMessage(conn, m) {
         // supaya fitur owner tetap jalan meski owner.json sengaja/terhapus.
         const botNum = normalizeNumber(String(conn.decodeJid?.(conn.user?.id) || '').split('@')[0])
         if (botNum) owners.add(botNum)
+
+        // ============ AUTO-HEAL OWNER (LID → KOMOR ASLI) ============
+        // Kalau ada entry owner yang ternyata berupa LID (Linked ID, bukan nomor
+        // telepon — misal tertulis "167143685496949" dari hasil salin profil),
+        // cocokkan dengan participant di grup & resolve otomatis ke nomor asli.
+        if (m.isGroup && m.chat) {
+            try {
+                const meta = conn.chats?.[m.chat]?.metadata || await conn.groupMetadata(m.chat).catch(() => null)
+                const parts = meta?.participants || []
+                if (parts.length) {
+                    let changed = false
+                    const db = readJSON(DB_FILES.owner) || { owner: [] }
+                    const list = Array.isArray(db.owner) ? db.owner : []
+                    for (const p of parts) {
+                        const lid = normalizeNumber(String(p?.lid || '').split('@')[0].split(':')[0])
+                        if (!lid || !owners.has(lid)) continue
+                        const pn = normalizeNumber(String(p?.id || '').split('@')[0].split(':')[0])
+                        if (pn && pn !== lid) {
+                            owners.add(pn)
+                            const idx = list.indexOf(lid)
+                            if (idx >= 0) list[idx] = pn
+                            changed = true
+                        }
+                    }
+                    if (changed) {
+                        db.owner = [...new Set(list.filter(Boolean))]
+                        writeJSON(DB_FILES.owner, db)
+                    }
+                }
+            } catch {}
+        }
+
         const premium = loadPremium()
         const nums = await resolveSenderNumbers(conn, m)
+        const creators = new Set(loadCreators())
         m.isOwner = nums.some(n => owners.has(n))
-        // OWNER + ADMIN di grup = akses PENUH semua fitur (m.isAdmin, m.isBotAdmin sudah di-set smsg)
-        m.hasFull = m.isOwner || (m.isGroup && m.isAdmin)
-        m.isPremium = m.hasFull || nums.some(n => premium.includes(n))
+        // CREATOR = nomor di config.json `creator` (paling tinggi semua fitur)
+        m.isCreator = nums.some(n => creators.has(n))
+        // OWNER = akses PENUH. Admin GRUP hanya punya fitur kelola grup (BUKAN owner fitur).
+        m.hasFull = m.isOwner
+        // Admin grup: akses konten premium gratis (tanpa harus langganan),
+        // tapi TIDAK mendapat fitur Airich (itu khusus premium 2/3).
+        m.isPremium = m.hasFull || (m.isGroup && m.isAdmin) || nums.some(n => premium.includes(n))
+        // Rank tier premium user (0 = bukan premium) — dipakai gerbang tier & Airich
+        const senderNum = String(m.sender || '').split('@')[0]
+        const premiumEntry = formatPremiumEntry(getPremiumEntry(senderNum))
+        m.premiumTier = premiumEntry?.tier || (nums.some(n => premium.includes(n)) ? 'premium2' : '')
+        m.premiumRank = m.premiumTier ? (TIER_RANK[m.premiumTier] || 2) : 0
 
         // Parsing command (stripPrefix hanya SEKALI)
         const raw = isButtonResponse ? body : body.trim()
@@ -508,37 +584,49 @@ export default async function handleMessage(conn, m) {
         }
 
         // ============ ACCESS CONTROL ============
+        // creatorOnly: hanya CREATOR (nomor di config.json `creator`)
+        if (handler.creatorOnly && !m.isCreator) {
+            return deny('> *CREATOR ONLY*\n\n_Fitur ini khusus Creator bot._')
+        }
         // ownerOnly: hanya owner asli (tanpa admin grup)
         if (handler.ownerOnly && !m.isOwner) {
             return deny('> *OWNER ONLY*\n\n_Fitur ini khusus Owner._\n_Kamu bukan owner. Hubungi: ' + BOT_NAME + '._')
         }
-        // owner: owner + admin di grup = akses penuh
-        if (handler.owner && !m.hasFull) {
-            return deny('> *OWNER / ADMIN ONLY*\n\n_Fitur ini khusus Owner & Admin di grup._')
+        // owner: hanya OWNER (admin grup TIDAK mendapat fitur owner)
+        if (handler.owner && !m.isOwner) {
+            return deny('> *OWNER ONLY*\n\n_Fitur ini khusus Owner._\n_Admin grup hanya bisa fitur kelola grup: .add .kick .htg .setnm .setds .setpp_')
         }
         if (handler.premium && !m.isPremium) {
             return deny('> *PREMIUM ONLY*\n\n_Fitur ini khusus member premium._\n_Mau jadi member premium? Ketik:_\n- `.premium`')
         }
-        // Gerbang TIER premium: owner/admin penuh & pembuat tetap bisa semua fitur.
-        // Member premium dicek per command — kalau tier-nya kurang → minta upgrade.
-        if (handler.premium && m.isPremium && !m.hasFull && !m.isOwner) {
+        // Airich: OWNER + PREMIUM 2/3 saja (admin grup & premium1 TIDAK dapat)
+        if (handler.airich && !m.isOwner && m.premiumRank < 2) {
+            return deny('> *AIRICH PACK*\n\n_Fitur game Airich hanya untuk *Owner* & *Premium 2/3*._\n_Upgrade paket dulu yuk, ketik:_\n- `.premium`')
+        }
+        // Gerbang TIER premium: owner & admin grup bebas semua konten premium.
+        if (handler.premium && m.isPremium && !m.isOwner && !m.isAdmin) {
             const requiredRank = premiumCmdRank(command)
-            const entry = formatPremiumEntry(getPremiumEntry(m.sender?.split('@')[0]))
-            const myTier = entry?.tier || 'premium2'
-            const myRank = TIER_RANK[myTier] || 2
+            const myTier = m.premiumTier || 'premium2'
+            const myRank = m.premiumRank || 2
             if (myRank < requiredRank) {
                 const needTier = tierOfRank(requiredRank)
                 const needLabel = PREMIUM_TIERS[needTier]?.label || needTier
                 return deny(`> *BUTUH TIER LEBIH TINGGI*\n\n_Fitur *\`.${command}\`* termasuk paket *${needLabel}*._\n_Paket kamu: *${PREMIUM_TIERS[myTier]?.label || myTier}*_\n\n_Upgrade paket dulu yuk, ketik:_\n- \`.premium\``)
             }
         }
-        // ============ KUOTA HARIAN ASUPAN (5x/hari, reset WIB) ============
-        if (handler.category === 'asupan' && !m.isOwner && !m.hasFull) {
+        // ============ KUOTA HARIAN ASUPAN (per role, reset WIB) ============
+        // USER 5 · PREM1 50 · PREM2 100 · PREM3 150 · CREATOR/OWNER/ADMIN bebas.
+        if (handler.category === 'asupan' && !m.isOwner && !m.isAdmin) {
             const num = String(m.sender || '').split('@')[0]
             if (num) {
-                const res = consumeAsupanQuota(num, command)
+                const quotaLimit = m.premiumRank === 3 ? 150 : m.premiumRank === 2 ? 100 : m.premiumRank === 1 ? 50 : 5
+                const res = consumeAsupanQuota(num, command, quotaLimit)
                 if (!res.ok) {
-                    return deny('> *KUOTA ASUPAN HABIS*\n\n_Fitur *.${command}* dibatasi *5x per hari per command*._\n_Kuota kamu untuk command ini hari ini sudah habis._\n\n_Kuota reset otomatis besok (WIB)._\n\n_Owner & admin grup bebas tanpa batas._')
+                    const roleLabel = m.premiumRank ? (PREMIUM_TIERS[m.premiumTier]?.label || 'PREMIUM') : 'USER'
+                    const upgradeTip = m.premiumRank ? '' : '\n\n_Mau kuota lebih besar? Upgrade jadi premium:_\n- `.premium`'
+                    return deny(`> *KUOTA ASUPAN HABIS*\n\n_Fitur *.\`${command}\`* dibatasi *${quotaLimit}x per hari per command* (${roleLabel} = ${quotaLimit}x/hari)._`
+                        + upgradeTip
+                        + '\n\n_Owner & admin grup bebas tanpa batas._')
                 }
             }
         }
@@ -553,7 +641,8 @@ export default async function handleMessage(conn, m) {
         }
 
         // ============ WAJIB DAFTAR MEMBER ============
-        if (!m.hasFull && !m.isPremium && !PRE_REGISTER_FREE.has(command) && !isRegisteredMember(m.sender)) {
+        // SEMUA (owner/admin/premium/user) wajib .daftar — hanya CREATOR & nomor bot yang bebas.
+        if (!m.isCreator && !PRE_REGISTER_FREE.has(command) && !isRegisteredMember(m.sender)) {
             return deny('> *TERDAFTAR DULU*\n\n_Untuk memakai fitur bot ini, daftar sebagai member dulu:_\n- `.daftar nama,umur,status`\n\n_Status: pelajar / mahasiswa / singgel / jomblo / kawin_')
         }
 

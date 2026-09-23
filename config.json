@@ -1,7 +1,10 @@
 {
   "botName": "JhonBotXfinal",
   "ownerName": "Jhon338",
-  "creator": ["6285602288269"],
+  "creator": [
+    "6285602288269",
+    "6285168112952"
+  ],
   "pairingCode": "JHON3382",
   "version": "3.3.8",
   "prefix": [

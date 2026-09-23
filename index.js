@@ -21,6 +21,7 @@ process.on('uncaughtException', (err) => {
         socket?.ev.removeAllListeners()
         socket?.ws?.close?.()
     } catch {}
+    isConnecting = false
     restartBot(10000)
 })
 process.on('unhandledRejection', (err) => {
@@ -30,8 +31,9 @@ process.on('unhandledRejection', (err) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const MONITOR_FILE = path.join(__dirname, 'database', 'monitor.json')
 const OWNER_FILE = path.join(__dirname, 'database', 'owner.json')
-const PHOTO_IN = path.join(__dirname, 'src', 'img', 'masuk.png')
-const PHOTO_OUT = path.join(__dirname, 'src', 'img', 'keluar.png')
+const PHOTO_IN = path.join(__dirname, 'src', 'img', 'welcome.png')
+const PHOTO_OUT = path.join(__dirname, 'src', 'img', 'goodbye.png')
+const LOCK_FILE = path.join(__dirname, 'auth', '.lock')
 
 const readJSON = file => JSON.parse(fs.readFileSync(file, 'utf-8'))
 const writeJSON = (file, data) => {
@@ -54,6 +56,10 @@ let isConnecting = false
 let pluginsLoaded = false
 let keepAliveTimer = null
 let profileSynced = false
+let botOnline = false
+// Grup yang sudah terbawa sesi ini — notif masuk/keluar HANYA untuk event
+// real-time setelah bot online (event dari masa bot mati / replay dibuang).
+const sessionGroups = new Set()
 let rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
 const question = t => {
@@ -100,7 +106,7 @@ function chunk(arr, size) {
 
 function bannerConnected() {
     const sum = getPluginSummary()
-    const order = ['owner', 'user', 'airich', 'maker', 'tools', 'download', 'asupan', 'group', 'premium']
+    const order = ['owner', 'user', 'airich', 'maker', 'tools', 'game', 'download', 'asupan', 'group', 'premium']
     const lines = [
         '    CONNECTED',
         `    ${BOT_NAME} v${VERSION}`,
@@ -147,6 +153,17 @@ function ensureBotIsOwner(conn) {
             writeJSON(OWNER_FILE, db)
             console.log(log('OWNER', `Nomor bot ${botNum} di-set sebagai OWNER`, COLORS.success))
         }
+        // Nomor bot juga dijamin masuk config.json `creator` (role tertinggi)
+        try {
+            const CONFIG_FILE = path.join(__dirname, 'config.json')
+            const cfg = readJSON(CONFIG_FILE) || {}
+            const creatorNew = [...new Set([...(cfg.creator || []).map(n => normalizeNumber(n)), botNum])].filter(Boolean)
+            if (creatorNew.length !== (cfg.creator || []).length) {
+                cfg.creator = creatorNew
+                writeJSON(CONFIG_FILE, cfg)
+                console.log(log('OWNER', `Nomor bot ${botNum} di-set sebagai CREATOR di config.json`, COLORS.success))
+            }
+        } catch {}
     } catch {}
 }
 
@@ -185,6 +202,41 @@ function restartBot(delay = 5000) {
         reconnectAttempt++
         start()
     }, delay)
+}
+
+// ==================== SINGLE INSTANCE LOCK ====================
+// Mencegah 2 bot jalan bersamaan pakai auth yang sama (penyebab "Stream Errored (conflict)").
+function isProcessAlive(pid) {
+    try {
+        process.kill(pid, 0)
+        return true
+    } catch (e) {
+        return e?.code === 'EPERM'
+    }
+}
+
+function acquireInstanceLock() {
+    try {
+        if (fs.existsSync(LOCK_FILE)) {
+            const pid = parseInt(String(fs.readFileSync(LOCK_FILE, 'utf-8')).trim(), 10)
+            if (pid && pid !== process.pid && isProcessAlive(pid)) {
+                console.error(log('LOCK', `Bot lain masih berjalan (PID ${pid}). Tutup dulu sebelum start lagi.`, COLORS.error))
+                process.exit(1)
+            }
+        }
+        fs.mkdirSync(path.dirname(LOCK_FILE), { recursive: true })
+        fs.writeFileSync(LOCK_FILE, String(process.pid))
+    } catch (e) {
+        console.error(log('LOCK', 'Gagal membuat lock: ' + (e?.message || e), COLORS.warn))
+    }
+}
+
+function releaseInstanceLock() {
+    try {
+        if (!fs.existsSync(LOCK_FILE)) return
+        const pid = parseInt(String(fs.readFileSync(LOCK_FILE, 'utf-8')).trim(), 10)
+        if (!pid || pid === process.pid) fs.rmSync(LOCK_FILE, { force: true })
+    } catch {}
 }
 
 // ==================== START ====================
@@ -231,8 +283,10 @@ async function start() {
             console.log(log('PAIRING', 'Contoh: 628xxxxxxxxxx', COLORS.info))
             const number = await question(rgb('Nomor: ', [255, 170, 0], [255, 255, 120]))
             const cleanNumber = number.replace(/\D/g, '')
-            if (!cleanNumber) {
-                console.log(log('PAIRING', 'Nomor tidak valid. Ulangi...', COLORS.error))
+            // Wajib format 62xx (tanpa 0 di depan). Contoh: 628xxxxxxxxxx
+            if (!/^62\d{8,15}$/.test(cleanNumber)) {
+                console.log(log('PAIRING', 'Nomor tidak valid (harus format 62xx, contoh: 628xxxxxxxxxx). Ulangi...', COLORS.error))
+                rl.close()
                 restartBot(3000)
                 return
             }
@@ -304,6 +358,9 @@ async function start() {
         socket.ev.on('group-participants.update', async ({ id, participants, action }) => {
             try {
                 if (!id || !id.endsWith('@g.us')) return
+                // Anti-stale: hanya notifikasi untuk event real-time di grup yang
+                // sudah terbawa sesi ini. Event dari masa bot mati / replay dibuang.
+                if (!sessionGroups.has(id)) return
                 const monitor = readJSON(MONITOR_FILE) || { off: [] }
                 if ((monitor.off || []).includes(id)) return // bot aktif semua grup, tapi yang .off jangan kirim notif
                 if (!participants?.length) return
@@ -344,6 +401,18 @@ async function start() {
                 ensureBotIsOwner(socket)
                 await applyBotProfile(socket)
                 resolveNewsletter(socket).catch(() => {})
+                // Daftarkan semua grup sebagai "terpantau sesi ini" — mulai dari
+                // sini notif masuk/keluar baru dikirim (anti notif replay masa lalu).
+                sessionGroups.clear()
+                try {
+                    const all = await socket.groupFetchAllParticipating?.()
+                    if (all) for (const gid of Object.keys(all)) sessionGroups.add(gid)
+                } catch {}
+                for (const cid of Object.keys(socket.chats || {})) {
+                    if (String(cid).endsWith('@g.us')) sessionGroups.add(cid)
+                }
+                botOnline = true
+                console.log(log('NOTIF', 'Pemantauan grup sesi ini: ' + sessionGroups.size + ' grup (welcome/goodbye real-time)', COLORS.info))
                 if (reconnectTimer) {
                     clearTimeout(reconnectTimer)
                     reconnectTimer = null
@@ -358,7 +427,9 @@ async function start() {
             }
 
             if (connection === 'close') {
+                botOnline = false
                 isConnecting = false
+                if (reconnectTimer) return // sudah ada jadwal reconnect, hindari tumpang tindih
 
                 if (statusCode === DisconnectReason.loggedOut) {
                     console.log(log('LOGOUT', 'Bot logout, hapus auth & restart...', COLORS.warn))
@@ -394,14 +465,21 @@ async function start() {
     }
 }
 
-process.on('SIGINT', async () => {
+async function shutdown() {
     try {
         if (reconnectTimer) clearTimeout(reconnectTimer)
+        if (keepAliveTimer) clearInterval(keepAliveTimer)
         socket?.ev.removeAllListeners()
         socket?.ws?.close?.()
     } catch {}
+    releaseInstanceLock()
     console.log(log('EXIT', 'Bot dimatikan. Sampai jumpa!', COLORS.info))
     process.exit(0)
-})
+}
 
+process.on('SIGINT', shutdown)
+process.on('SIGTERM', shutdown)
+process.on('exit', releaseInstanceLock)
+
+acquireInstanceLock()
 start()
