@@ -20,6 +20,3 @@ database/ledger.json
 
 # Kredensial
 .env
-
-# Custom Airich milik user (.custom save)
-src/custom/

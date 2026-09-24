@@ -1,11 +1,11 @@
-# JhonBotXfinal
+# JhonBot
 
-> **WhatsApp Multi-Device Bot** berbasis [Baileys](https://github.com/whiskeysockets/baileys) • v3.3.8
+> **WhatsApp Multi-Device Bot** berbasis [Baileys](https://github.com/whiskeysockets/baileys) • v3.8
 > Dibuat oleh [Jhon338](https://jhon338-jc.github.io/Linktree/)
 
 ![Menu Utama](https://raw.githubusercontent.com/jhon338-jc/JhonBotXfinal/main/src/img/menu.png)
 
-**JhonBotXfinal** adalah bot WhatsApp multifungsi yang berjalan penuh di **grup** dengan tampilan **menu tombol interaktif native** (native flow). Bot aktif 24/7, memakai **warna log RGB gradient**, mendukung **pairing code**, akses berbasis peran (**Creator > Owner > Admin > Premium 1/2/3 > User**), **kuota asupan harian per role**, wajib **.daftar** member, serta **notifikasi welcome & member keluar** real-time (tanpa replay saat bot mati).
+**JhonBot** adalah bot WhatsApp multifungsi yang berjalan penuh di **grup** dengan tampilan **menu tombol interaktif native** (native flow). Bot aktif 24/7, memakai **warna log RGB gradient**, mendukung **pairing code**, akses berbasis peran (**Creator > Owner > Admin > Premium 1/2/3 > User**), **kuota asupan harian per role**, wajib **.daftar** member, serta **notifikasi welcome & member keluar** real-time (tanpa replay saat bot mati).
 
 ---
 
@@ -173,13 +173,13 @@ Edit `config.json`:
 
 ```json
 {
-  "botName": "JhonBotXfinal",
+  "botName": "JhonBot",
   "ownerName": "Jhon338",
   "creator": ["<no_owner_628xxx>"],
   "pairingCode": "JHON3382",
   "prefix": [".", "#", "!", "/", "\\"],
   "botMode": "public",
-  "version": "3.3.8",
+  "version": "3.8",
   "channelLink": "https://jhon338-jc.github.io/Linktree/",
   "channelUrl": "https://whatsapp.com/channel/0029VbC0TW8545uvqe36Kv0b"
 }

@@ -3,12 +3,26 @@
 // YT Music search → Savetube download → FFmpeg compress → HTML player + lirik sinkron
 import { createDecipheriv } from 'crypto'
 import { spawn } from 'child_process'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import yts from 'yt-search'
 import YTMusic from 'ytmusic-api'
 import sharp from 'sharp'
 import ffmpegPath from 'ffmpeg-static'
 import { sendAiRich } from '../../lib/airich.js'
 import { log, COLORS } from '../../lib/rgb.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const ROOT = path.join(__dirname, '..', '..')
+
+function loadConfig() {
+    try {
+        return JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf-8'))
+    } catch {
+        return {}
+    }
+}
 
 // ==================== CONFIG ====================
 const METADATA_DECRYPTION_KEY = Buffer.from('C5D58EF67A7584E4A29F6C35BBC4EB12', 'hex')
@@ -326,7 +340,9 @@ async function getThumb(url) {
 }
 
 // ==================== HTML MUSIC PLAYER ====================
-function createMusicPlayer({ title, artist, duration, audioSrc, imageSrc, lyrics }) {
+function createMusicPlayer({ title, artist, duration, audioSrc, imageSrc, lyrics, botName, developer }) {
+    const safeBot = escapeHtml(botName || 'JhonBot')
+    const safeDev = escapeHtml(developer || 'Jhon338')
     const safeTitle = escapeHtml(title)
     const safeArtist = escapeHtml(artist)
     const safeDuration = escapeHtml(duration || '0:00')
@@ -377,6 +393,7 @@ function createMusicPlayer({ title, artist, duration, audioSrc, imageSrc, lyrics
   .controls { display: flex; align-items: center; justify-content: space-between; }
   .ctrl { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: var(--ink); background: none; border: none; cursor: pointer; padding: 0; transition: opacity .2s ease, transform .15s ease; }
   .ctrl:active { opacity: .6; transform: scale(.92); }
+  .ctrl.is-on { color: #ff5c8a; opacity: 1; }
   .play { width: 52px; height: 52px; border-radius: 50%; background: #fff; color: #12070b; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex: none; padding: 0; box-shadow: 0 6px 16px rgba(0,0,0,.4); transition: transform .15s ease; }
   .play:active { transform: scale(.93); }
   .note { margin-top: 12px; text-align: center; font-size: 10px; color: var(--muted); line-height: 1.6; }
@@ -390,7 +407,7 @@ function createMusicPlayer({ title, artist, duration, audioSrc, imageSrc, lyrics
       <div class="head">
         <svg class="head__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         <div class="head__mid">
-          <div class="head__from">YT Music Audio</div>
+          <div class="head__from">${safeBot} • YT Music Audio</div>
           <div class="head__album">${safeArtist}</div>
         </div>
         <svg class="head__icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
@@ -442,17 +459,17 @@ function createMusicPlayer({ title, artist, duration, audioSrc, imageSrc, lyrics
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><text x="12" y="16.5" font-size="7.5" font-family="sans-serif" font-weight="bold" stroke="none" fill="currentColor" text-anchor="middle">10</text></svg>
         </button>
 
-        <button class="ctrl" style="opacity:.5; cursor:default;">
+        <button class="ctrl is-on" id="btn-loop" aria-label="Putar terus menerus">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1 a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1 a4 4 0 0 1-4 4H3"/></svg>
         </button>
       </div>
 
-      <div class="note">putar lagu favorite kamu yaa</div>
+      <div class="note">${safeBot} × ${safeDev} · putar lagu favorite kamu yaa</div>
     </div>
   </div>
 </div>
 
-<audio id="audio" preload="metadata" src="${escapeAttr(audioSrc)}"></audio>
+<audio id="audio" preload="metadata" loop autoplay src="${escapeAttr(audioSrc)}"></audio>
 
 <script>
 (function() {
@@ -472,6 +489,7 @@ function createMusicPlayer({ title, artist, duration, audioSrc, imageSrc, lyrics
   const lyricsText = document.getElementById('lyrics-text');
   const btnRw = document.getElementById('btn-rw');
   const btnFw = document.getElementById('btn-fw');
+  const btnLoop = document.getElementById('btn-loop');
 
   let lyrics = [];
   try {
@@ -701,6 +719,28 @@ function createMusicPlayer({ title, artist, duration, audioSrc, imageSrc, lyrics
   });
   audio.addEventListener('error', setPaused);
 
+  let loopOn = true;
+  audio.loop = true;
+  btnLoop.addEventListener('click', () => {
+    loopOn = !loopOn;
+    audio.loop = loopOn;
+    btnLoop.classList.toggle('is-on', loopOn);
+  });
+
+  audio.muted = false;
+  const bootPlay = () => {
+    const pr = audio.play();
+    if (pr && typeof pr.catch === 'function') pr.catch(() => {});
+  };
+  audio.addEventListener('loadeddata', bootPlay, { once: true });
+  document.addEventListener('pointerdown', function firstTap() {
+    if (audio.paused) {
+      const pr = audio.play();
+      if (pr && typeof pr.catch === 'function') pr.catch(() => {});
+    }
+    document.removeEventListener('pointerdown', firstTap);
+  });
+
   setPaused();
 })();
 </script>
@@ -816,7 +856,12 @@ let handler = async (m, { conn, text, command }) => {
             throw new Error('Audio Base64 masih terlalu besar, kurangi bitrate FFMPEG.')
         }
 
-        const html = createMusicPlayer({ title, artist, duration, audioSrc, imageSrc, lyrics: syncedLyrics })
+        const cfg = loadConfig()
+        const html = createMusicPlayer({
+            title, artist, duration, audioSrc, imageSrc, lyrics: syncedLyrics,
+            botName: cfg.botName || 'JhonBot',
+            developer: cfg.ownerName || 'Jhon338'
+        })
 
         await sendAiRich(conn, m.chat, html, { title: 'YT Music' })
         await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })

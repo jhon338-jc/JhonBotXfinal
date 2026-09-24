@@ -35,8 +35,8 @@ let handler = async (m, { conn }) => {
 
     const botCfg = loadBotConfig()
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
-    const botName = botCfg.botName || 'JhonBotXfinal'
-    const botVersion = botName + ' v' + (botCfg.version || '3.3.8')
+    const botName = botCfg.botName || 'JhonBot'
+    const botVersion = botName + ' v' + (botCfg.version || '3.8')
 
     const text = `> *${botVersion}*\n> _Aktif 24/7 Tanpa Henti_\n\n` +
         `-  *Nama*        : ${botName}\n` +

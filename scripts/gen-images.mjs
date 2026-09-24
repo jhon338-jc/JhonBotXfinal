@@ -30,8 +30,8 @@ ${defs}
 <rect x="52" y="52" width="536" height="536" rx="28" fill="none" stroke="#6366f1" stroke-opacity="0.25" stroke-width="2"/>
 <text x="320" y="230" text-anchor="middle" font-family="Segoe UI, Arial" font-size="150" font-weight="bold" fill="#22d3ee" opacity="0.9">${label}</text>
 <rect x="200" y="360" width="240" height="6" rx="3" fill="url(#accent)"/>
-<text x="320" y="440" text-anchor="middle" font-family="Segoe UI, Arial" font-size="52" font-weight="bold" fill="#e2e8f0">JhonBotXfinal</text>
-<text x="320" y="500" text-anchor="middle" font-family="Segoe UI, Arial" font-size="30" fill="#94a3b8">v3.3.8</text>
+<text x="320" y="440" text-anchor="middle" font-family="Segoe UI, Arial" font-size="52" font-weight="bold" fill="#e2e8f0">JhonBot</text>
+<text x="320" y="500" text-anchor="middle" font-family="Segoe UI, Arial" font-size="30" fill="#94a3b8">v3.8</text>
 </svg>`
 }
 

@@ -168,8 +168,8 @@ let handler = async (m, { conn }) => {
             loadPhoto()
         ])
 
-        const botName = cfg.botName || 'JhonBotXfinal'
-        const ver = (botName + ' v' + (cfg.version || '3.3.8'))
+        const botName = cfg.botName || 'JhonBot'
+        const ver = (botName + ' v' + (cfg.version || '3.8'))
         const uptime = Math.floor(process.uptime())
 
         const ds = {

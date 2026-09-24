@@ -7,12 +7,12 @@ import { pushChatLog } from './lib/serverlog.js'
 import { consumeAsupanQuota } from './lib/asupan-limit.js'
 
 // ============================================================
-//  JHONBOTXFINAL v3.3.8 - BRAIN (OTAK BOT)
+//  JHONBOT v3.8 - BRAIN (OTAK BOT)
 //  Role: CREATOR > OWNER > ADMIN (kelola grup) / PREMIUM 1-2-3 / USER
 // ============================================================
 
-const BOT_NAME = 'JhonBotXfinal'
-const BOT_VERSION = '3.3.8'
+const BOT_NAME = 'JhonBot'
+const BOT_VERSION = '3.8'
 
 // Versi bot dari config.json (biar caption/keterangan tidak stale saat versi diganti)
 function getBotVersion() {

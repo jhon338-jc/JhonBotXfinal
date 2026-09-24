@@ -1,7 +1,7 @@
 {
   "name": "jhonbot",
-  "version": "3.3.8",
-  "description": "JhonBotXfinal v3.3.8 - WhatsApp Multi Device Bot berbasis Baileys (Termux / Linux / PowerShell)",
+  "version": "3.8",
+  "description": "JhonBot v3.8 - WhatsApp Multi Device Bot berbasis Baileys (Termux / Linux / PowerShell)",
   "type": "module",
   "main": "index.js",
   "author": "Jhon338",

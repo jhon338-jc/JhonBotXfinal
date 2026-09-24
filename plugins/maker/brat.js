@@ -5,7 +5,7 @@ import { saveSticker } from '../../lib/autosave.js'
 import { fetchWithTimeout } from '../../lib/kyzz/client.js'
 
 let handler = async (m, { conn, text }) => {
-    const teks = text || m.pushName || 'JhonBotXfinal'
+    const teks = text || m.pushName || 'JhonBot'
 
 
     try {

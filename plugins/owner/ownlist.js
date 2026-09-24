@@ -15,12 +15,12 @@ let handler = async (m, { conn }) => {
         rows.push({ pair, o, name })
     }
 
-    let text = '> *DAFTAR OWNER*\n> _Khusus  Owner bot_\n\n'
-    text += `***Total:*** ${rows.length}\n\n`
+let text = '> *DAFTAR OWNER*\n> _Khusus owner bot_\n\n'
+    text += `Total: *${rows.length}*\n\n`
     rows.forEach((r, i) => {
-        text += `${i + 1}. ${r.name ? `*${r.name}*` : '_Member_'} â€” \`${r.o}\`\n`
+        text += `${i + 1}. ${r.name ? `*${r.name}*` : '_Member_'} — \`${r.o}\`\n`
     })
-    text += '\n_Ketik_ \`.ownadd <nomor>\` _untuk menambah owner._'
+    text += '\n_Ketik_ `.ownadd <nomor>` _untuk menambah owner._'
 
     await m.reply(text)
 }

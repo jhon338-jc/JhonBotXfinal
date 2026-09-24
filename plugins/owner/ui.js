@@ -39,8 +39,8 @@ function carouselBtn(messageVersion, buttons) {
 
 let handler = async (m, { conn }) => {
     const botCfg = loadBotConfig()
-    const botName = botCfg.botName || 'JhonBotXfinal'
-    const botVersion = botName + ' v' + (botCfg.version || '3.3.8')
+    const botName = botCfg.botName || 'JhonBot'
+    const botVersion = botName + ' v' + (botCfg.version || '3.8')
     const ownerNumber = (botCfg.creator?.[0] || '').replace(/\D/g, '')
     const ownerName = botCfg.ownerName || 'Jhon338'
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'

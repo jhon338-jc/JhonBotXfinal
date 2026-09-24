@@ -26,7 +26,7 @@ let handler = async (m, { conn }) => {
             console.log(log('MUSIK', msg, lvl === 'warn' ? COLORS.warn : COLORS.info)))
 
         const html = buildMusicHTML({
-            bot: (cfg.botName || 'JhonBotXfinal') + ' v' + (cfg.version || '3.3.8'),
+            bot: (cfg.botName || 'JhonBot') + ' v' + (cfg.version || '3.8'),
             owner: cfg.ownerName || 'Jhon338',
             link: cfg.channelLink || '',
             songs

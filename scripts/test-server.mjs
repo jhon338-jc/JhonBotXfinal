@@ -12,13 +12,13 @@ const songs = loadSongs(tmp)
 const musicURILike = (songs || []).some(s => /^data:audio\/mpeg;base64,/.test(s.url || ''))
 
 const ds = {
-    bot: 'JhonBotXfinal', ver: 'JhonBotXfinal v3.3.8', mode: 'public', prefix: '.', owner: 'Jhon338',
+    bot: 'JhonBot', ver: 'JhonBot v3.8', mode: 'public', prefix: '.', owner: 'Jhon338',
     created: 'Senin, 15 September 2026', plugins: 36, groups: 3, members: 6, premium: 4, premiumTotal: 6, owners: 2,
     ram: { usedFmt: '1.2 GB', totalFmt: '8.0 GB', pct: 15, used: 1234567890, total: 8589934592 },
     cpu: 23, load: 0.45, uptime: 3661, uptimeFmt: '01:01:01', sysUp: '1d 02:00:00',
     node: 'v22.0.0', plat: 'WIN32 X64', host: 'DESKTOP', pid: 1234,
     weather: { city: 'Jakarta', temp: 31, feel: 33, hum: 70, wind: 12, icon: '⛅', cond: 'Sedikit Berawan', isDay: true, time: '2026-09-15 12:30' },
-    sdk: { tz: 25200, uptime: 3661, songs, link: 'https://x', ver: 'JhonBotXfinal v3.3.8' },
+    sdk: { tz: 25200, uptime: 3661, songs, link: 'https://x', ver: 'JhonBot v3.8' },
     log: [{ time: '12:30:01', isButton: false, isGroup: true, name: 'Budi', sender: '62812', chat: '12036@g.us', body: '.menu' }]
 }
 

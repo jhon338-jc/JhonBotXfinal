@@ -70,8 +70,8 @@ const question = t => {
 }
 
 let config = loadConfig()
-let BOT_NAME = config.botName || 'JhonBotXfinal'
-let VERSION = config.version || '3.3.8'
+let BOT_NAME = config.botName || 'JhonBot'
+let VERSION = config.version || '3.8'
 let PAIR_CODE = config.pairingCode || 'JHON3382'
 
 // ==================== GAMBAR BOX LOG ====================
@@ -130,7 +130,7 @@ async function applyBotProfile(conn) {
         await conn.updateProfileName(`${BOT_NAME} v${VERSION}`)
     } catch {}
     try {
-        const bio = '> ' + (config.botName || 'JhonBotXfinal') + ' BOT\n' +
+        const bio = '> ' + (config.botName || 'JhonBot') + ' BOT\n' +
             '> Aktif 24/7\n' +
             '> Owner: ' + (config.ownerName || 'Jhon338') + '\n' +
             '> Mau pakai bot? Daftar dulu: .daftar'
@@ -247,8 +247,8 @@ async function start() {
     try {
         ensureTemp()
         config = loadConfig()
-        BOT_NAME = config.botName || 'JhonBotXfinal'
-        VERSION = config.version || '3.3.8'
+        BOT_NAME = config.botName || 'JhonBot'
+        VERSION = config.version || '3.8'
         PAIR_CODE = config.pairingCode || 'JHON3382'
         console.log(bannerStart())
 

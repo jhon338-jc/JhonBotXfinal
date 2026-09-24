@@ -28,7 +28,7 @@ function ctaUrl(display_text, url) {
 
 function ownerVCard(botCfg, ownerNumber) {
     const ownerName = botCfg.ownerName || 'Jhon338'
-    const botName = botCfg.botName || 'JhonBotXfinal'
+    const botName = botCfg.botName || 'JhonBot'
     const channelLink = botCfg.channelLink || 'https://jhon338-jc.github.io/Linktree/'
     return 'BEGIN:VCARD\n' +
         'VERSION:3.0\n' +
@@ -53,7 +53,6 @@ const CATS = {
         { name: 'toimg', desc: 'Ubah stiker jadi gambar/video' },
         { name: 'rvo', desc: 'Buka pesan view once' },
         { name: 'lirik', desc: 'Cari lirik lagu' },
-        { name: 'custom', desc: 'Bikin web/game Airich sendiri' },
         { name: 'play', desc: 'Putar lagu YouTube + lirik' }
     ]},
     game: { label: 'GAME', cmds: [
@@ -196,7 +195,7 @@ function loadBotConfig() {
 }
 
 function botVersion() {
-    return 'JhonBotXfinal v' + (loadBotConfig().version || '3.3.8')
+    return 'JhonBot v' + (loadBotConfig().version || '3.8')
 }
 
 function userStatus(m) {

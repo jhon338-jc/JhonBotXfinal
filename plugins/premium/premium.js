@@ -63,7 +63,7 @@ async function fakeTroli(conn, jid) {
             itemCount: 27948,
             status: 1,
             surface: 1,
-            orderTitle: 'JhonBotXfinal • Premium',
+            orderTitle: 'JhonBot • Premium',
             message: 'Pilih paket langganan di bawah ',
             privateAttributes: '',
             ...(thumb ? { thumbnailJpeg: thumb } : {})
@@ -154,9 +154,9 @@ let handler = async (m, { conn, args, command }) => {
         ].join('\n')
         const body = {
             interactiveMessage: {
-                header: { hasMediaAttachment: false, title: ' JhonBotXfinal Premium' },
+                header: { hasMediaAttachment: false, title: ' JhonBot Premium' },
                 body: { text: status },
-                footer: { text: 'Developer: Jhon338 • JhonBotXfinal' },
+                footer: { text: 'Developer: Jhon338 • JhonBot' },
                 nativeFlowMessage: {
                     messageVersion: 1,
                     buttons: [
@@ -183,7 +183,7 @@ let handler = async (m, { conn, args, command }) => {
         // Berisi tier asli (premium1/2/3) supaya owner tinggal copy-paste:
         //   .addprem <nomor> <tier>
         const copyText = [
-            'Halo Admin JhonBotXfinal, saya mau *langganan premium*.',
+            'Halo Admin JhonBot, saya mau *langganan premium*.',
             `Paket: *${Tsel.label}* (Rp ${Tsel.price.toLocaleString('id-ID')} / ${Tsel.days} hari)`,
             `Nomor saya: +${m.sender?.split('@')[0] || '?'}`,
             '',
@@ -213,7 +213,7 @@ let handler = async (m, { conn, args, command }) => {
             interactiveMessage: {
                 header: { hasMediaAttachment: false, title: ' ' + Tsel.label },
                 body: { text: caption },
-                footer: { text: 'Developer: Jhon338 • JhonBotXfinal' },
+                footer: { text: 'Developer: Jhon338 • JhonBot' },
                 nativeFlowMessage: {
                     messageVersion: 1,
                     buttons: [
@@ -277,7 +277,7 @@ let handler = async (m, { conn, args, command }) => {
         return {
             header,
             body: { text: cardBody },
-            footer: { text: 'JhonBotXfinal Premium • geser  lihat paket lain' },
+            footer: { text: 'JhonBot Premium • geser  lihat paket lain' },
             nativeFlowMessage: {
                 messageVersion: 1,
                 buttons: [

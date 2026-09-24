@@ -1,16 +1,16 @@
 # PROMPT DESKRIPSI — Grup, Saluran, dan Bot WA
 
-Prompt siap pakai untuk membuat deskripsi grup WhatsApp, saluran (channel), dan about/bio bot JhonBotXfinal.
+Prompt siap pakai untuk membuat deskripsi grup WhatsApp, saluran (channel), dan about/bio bot JhonBot.
 
 ---
 
 ## Prompt 1 — Deskripsi Grup WhatsApp
 
 ```
-Buatkan deskripsi grup WhatsApp untuk grup bot JhonBotXfinal yang menarik dan informatif dalam bahasa Indonesia.
+Buatkan deskripsi grup WhatsApp untuk grup bot JhonBot yang menarik dan informatif dalam bahasa Indonesia.
 
 Info bot:
-- Nama: JhonBotXfinal v3.3.8
+- Nama: JhonBot v3.8
 - Developer/owner: Jhon338
 - Bot berbasis Baileys (multi-device), aktif 24/7 tanpa henti
 - Hanya beroperasi di grup pilihan owner
@@ -48,11 +48,11 @@ Tulis deskripsi yang singkat, rapi pakai emotikon, jelas memisahkan bagian info 
 ## Prompt 2 — Deskripsi Saluran (Channel) WhatsApp/HTML
 
 ```
-Buatkan deskripsi singkat untuk saluran/katalog JhonBotXfinal dalam bahasa Indonesia.
+Buatkan deskripsi singkat untuk saluran/katalog JhonBot dalam bahasa Indonesia.
 
 Profil:
-- Nama: JhonBotXfinal — WhatsApp Bot Multifungsi
-- Versi: 3.3.8
+- Nama: JhonBot — WhatsApp Bot Multifungsi
+- Versi: 3.8
 - Developer: Jhon338
 - Status: Aktif 24/7, gratis, berbasis Baileys multi-device
 - Slogan: cepat, multifungsi, dan mudah dipakai
@@ -75,7 +75,7 @@ Fitur member:
 - .premium — lihat paket & langganan
 - .menu — menu utama
 
-Akhiri deskripsi dengan ajakan: ikuti saluran untuk info terbaru JhonBotXfinal, dan hubungi melalui linktree: https://jhon338-jc.github.io/Linktree/
+Akhiri deskripsi dengan ajakan: ikuti saluran untuk info terbaru JhonBot, dan hubungi melalui linktree: https://jhon338-jc.github.io/Linktree/
 ```
 
 ---
@@ -83,10 +83,10 @@ Akhiri deskripsi dengan ajakan: ikuti saluran untuk info terbaru JhonBotXfinal, 
 ## Prompt 3 — Deskripsi Bot WhatsApp (About/bio bot)
 
 ```
-Buatkan status/about WhatsApp untuk bot JhonBotXfinal dalam bahasa Indonesia.
+Buatkan status/about WhatsApp untuk bot JhonBot dalam bahasa Indonesia.
 
 Profil bot:
-- Nama: JhonBotXfinal v3.3.8
+- Nama: JhonBot v3.8
 - Kepemilikan: Jhon338
 - Platform: Baileys multi-device (Termux / Linux / Windows)
 - Pairing code: JHON3382 (muncul otomatis saat start)
